@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@media print {
+  body { background: #fff !important; }
+  button, select, input { display: none !important; }
+  #report-content { display: grid !important; }
+  div[style*="overflowX"] { overflow: visible !important; }
+  div[style*="borderBottom: 3px"] { display: none !important; }
+  div[style*="background: linear-gradient"] {
+    background: #6366f1 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @page { margin: 1cm; size: A4; }
+}

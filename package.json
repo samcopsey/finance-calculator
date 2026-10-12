@@ -1,0 +1,45 @@
+{
+  "name": "finance-calculator",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A UK personal and household finance calculator that runs entirely on your own device: take-home pay, budgets, savings, mortgages, house-purchase planning and projections.",
+  "license": "MIT",
+  "homepage": "https://github.com/samcopsey/finance-calculator#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samcopsey/finance-calculator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/samcopsey/finance-calculator/issues"
+  },
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "allowScripts": {
+    "fsevents": false
+  },
+  "scripts": {
+    "start": "vite build && vite preview --open",
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "recharts": "^3.8.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.4.0",
+    "vite": "^8.0.4"
+  }
+}
