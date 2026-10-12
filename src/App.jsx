@@ -45,18 +45,19 @@ function calculateIncomeTax(gross) {
   if (gross > 100000) {
     personalAllowance = Math.max(0, TAX_FREE_ALLOWANCE - (gross - 100000) / 2);
   }
-  // Tax bands are based on GROSS thresholds (not taxable income widths)
-  // 0 → PA: 0%, PA → £50,270: 20%, £50,270 → £125,140: 40%, £125,140+: 45%
+  // Bands apply to income above the allowance, so the £37,700 basic band doesn't widen as the allowance tapers.
+  // The allowance is nil from £125,140, where taxable income equals gross.
+  const taxable = Math.max(0, gross - personalAllowance);
+  const basicBand = BASIC_RATE_LIMIT - TAX_FREE_ALLOWANCE;
   let tax = 0;
   const bands = [
-    { from: 0, to: personalAllowance, rate: 0 },
-    { from: personalAllowance, to: BASIC_RATE_LIMIT, rate: BASIC_RATE },
-    { from: BASIC_RATE_LIMIT, to: HIGHER_RATE_LIMIT, rate: HIGHER_RATE },
+    { from: 0, to: basicBand, rate: BASIC_RATE },
+    { from: basicBand, to: HIGHER_RATE_LIMIT, rate: HIGHER_RATE },
     { from: HIGHER_RATE_LIMIT, to: Infinity, rate: ADDITIONAL_RATE },
   ];
   for (const b of bands) {
-    if (gross <= b.from) break;
-    const inBand = Math.min(gross, b.to) - b.from;
+    if (taxable <= b.from) break;
+    const inBand = Math.min(taxable, b.to) - b.from;
     if (inBand > 0) tax += inBand * b.rate;
   }
   return tax;
