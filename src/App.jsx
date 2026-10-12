@@ -253,7 +253,8 @@ function normalisePurchaseCost(c, i) {
 }
 
 function fmt(n) {
-  return "£" + Math.round(n).toLocaleString("en-GB");
+  const v = Math.round(n);
+  return (v < 0 ? "-" : "") + "£" + Math.abs(v).toLocaleString("en-GB");
 }
 
 function fmt2(n) {
@@ -774,7 +775,7 @@ export default function FinanceCalculator() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `finances-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `finances-${isoToday()}.json`;
     a.click();
     URL.revokeObjectURL(url);
     setSaveNotice("Saved!");
@@ -789,7 +790,7 @@ export default function FinanceCalculator() {
       try {
         const data = JSON.parse(ev.target.result);
         loadState(data);
-        setSaveNotice(`Loaded from ${data._savedAt ? new Date(data._savedAt).toLocaleDateString() : "file"}`);
+        setSaveNotice(`Loaded from ${data._savedAt ? new Date(data._savedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "file"}`);
         setTimeout(() => setSaveNotice(""), 3000);
       } catch {
         setSaveNotice("Error: invalid file");
@@ -3042,7 +3043,7 @@ export default function FinanceCalculator() {
                   </AreaChart>
                 </ResponsiveContainer>
                 <p style={{ fontSize: 11, color: "#94a3b8", textAlign: "center", marginTop: 8 }}>
-                  Each pot stacks to show the combined balance. Forecasts assume the configured rate compounds monthly. Past performance does not guarantee future results.
+                  Each pot stacks to show the combined balance. Forecasts use each pot's own rate and compounding. Past performance does not guarantee future results.
                 </p>
               </Card>
             </div>
@@ -3577,7 +3578,7 @@ export default function FinanceCalculator() {
                           <div key={i} style={{ background: "#fffbeb", borderRadius: 8, padding: 12, border: "1px solid #fde68a" }}>
                             <div style={{ fontSize: 12, fontWeight: 700, color: "#92400e", marginBottom: 4 }}>{a.name}</div>
                             {rLine("Monthly", fmt(a.monthlyPayment))}
-                            {rLine("Remaining", fmt(a.totalRemaining || 0))}
+                            {rLine("Total Interest", fmt(a.totalInterest))}
                           </div>
                         ))}
                       </div>
@@ -3737,7 +3738,7 @@ export default function FinanceCalculator() {
                 <Card title="Current Position">
                   <SubHead text="Pot Balances" color="#8b5cf6" />
                   {pots.length === 0 && rLine("No pots configured", "—", "#94a3b8")}
-                  {pots.map((p) => rLine(`${p.name} (${p.type}${mode === 1 ? ` · ${p.owner === "joint" ? "Joint" : p.owner === "p2" ? "P2" : "P1"}` : ""})`, fmt(p.startingBalance || 0), POT_TYPE_COLORS[p.type]))}
+                  {pots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type}${mode === 1 ? ` · ${p.owner === "joint" ? "Joint" : p.owner === "p2" ? "P2" : "P1"}` : ""})`, fmt(p.startingBalance || 0), POT_TYPE_COLORS[p.type])}</div>)}
                   <div style={{ borderTop: "2px solid #8b5cf6", marginTop: 8, paddingTop: 6 }}>
                     {rLine("Total Existing Savings", fmt(totalExistingSavings), "#8b5cf6")}
                   </div>
@@ -3754,7 +3755,7 @@ export default function FinanceCalculator() {
                   {snapshot.activeVehicles.length === 0 && rLine("No savings vehicles enabled", "—", "#94a3b8")}
                   <SubHead text="Monthly Saving Commitments" color="#8b5cf6" />
                   {snapshot.monthlySavingsGoal > 0 && rLine(`Savings Goal (${snapshot.selectedModel})`, fmt(snapshot.monthlySavingsGoal))}
-                  {activeContribPots.map((p) => rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution), POT_TYPE_COLORS[p.type]))}
+                  {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution), POT_TYPE_COLORS[p.type])}</div>)}
                   <div style={{ borderTop: "2px solid #6366f1", marginTop: 8, paddingTop: 6 }}>
                     {rLine("Total Monthly Commitments", fmt(snapshot.monthlySavingsGoal + rPotsMonthly), "#6366f1")}
                   </div>
@@ -3770,7 +3771,7 @@ export default function FinanceCalculator() {
                   {projIncludePots && rLine("Pots Projected Value", fmt(projEnd?.potsValue || 0), "#8b5cf6")}
                   {projIncludePots && pots.length > 0 && (
                     <div style={{ marginLeft: 12, marginTop: 4 }}>
-                      {pots.map((p) => rLine(`↳ ${p.name}`, fmt(potEndValues[p.id] || 0), POT_TYPE_COLORS[p.type]))}
+                      {pots.map((p) => <div key={p.id}>{rLine(`↳ ${p.name}`, fmt(potEndValues[p.id] || 0), POT_TYPE_COLORS[p.type])}</div>)}
                     </div>
                   )}
                   {rLine("Cash Savings (model)", fmt(projEnd?.cashSavings || 0), "#10b981")}
@@ -3808,7 +3809,7 @@ export default function FinanceCalculator() {
                   {projIncludePots && rLine("Pots Projected Value", fmt(postProjEnd?.potsValue || 0), "#8b5cf6")}
                   {projIncludePots && pots.length > 0 && (
                     <div style={{ marginLeft: 12, marginTop: 4 }}>
-                      {pots.map((p) => rLine(`↳ ${p.name}${upfrontDrawdown[p.id] ? ` (−${fmt(upfrontDrawdown[p.id])} drawn)` : ""}`, fmt(postPotEndValues[p.id] || 0), POT_TYPE_COLORS[p.type]))}
+                      {pots.map((p) => <div key={p.id}>{rLine(`↳ ${p.name}${upfrontDrawdown[p.id] ? ` (−${fmt(upfrontDrawdown[p.id])} drawn)` : ""}`, fmt(postPotEndValues[p.id] || 0), POT_TYPE_COLORS[p.type])}</div>)}
                     </div>
                   )}
                   {rLine(`Monthly Outgoings`, fmt(postProjEnd?.expenses || 0), "#ef4444")}
@@ -3982,7 +3983,7 @@ export default function FinanceCalculator() {
                         {rLine("Living Expenses (excl. rent)", fmt(totalExpenses - rent))}
                         {totalAgreementMonthly > 0 && rLine("Finance Agreements", fmt(totalAgreementMonthly))}
                         {snapshot.monthlySavingsGoal > 0 && rLine(`Savings (${snapshot.selectedModel})`, fmt(snapshot.monthlySavingsGoal))}
-                        {activeContribPots.map((p) => rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution), POT_TYPE_COLORS[p.type]))}
+                        {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution), POT_TYPE_COLORS[p.type])}</div>)}
                         <div style={{ borderTop: "2px solid #6366f1", marginTop: 8, paddingTop: 6 }}>
                           {rLine("Total Outgoings", fmt(snapshot.preCommitted), "#6366f1")}
                         </div>
@@ -4002,7 +4003,7 @@ export default function FinanceCalculator() {
                         {rLine(`Living Expenses (excl. rent${councilTaxInBillsApplied > 0 ? " & current council tax" : ""})`, fmt(postLivingExpenses))}
                         {totalAgreementMonthly > 0 && rLine("Finance Agreements", fmt(totalAgreementMonthly))}
                         {snapshot.monthlySavingsGoal > 0 && rLine(`Savings (${snapshot.selectedModel})`, fmt(snapshot.monthlySavingsGoal))}
-                        {activeContribPots.map((p) => rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution), POT_TYPE_COLORS[p.type]))}
+                        {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution), POT_TYPE_COLORS[p.type])}</div>)}
                         <div style={{ borderTop: "2px solid #ec4899", marginTop: 8, paddingTop: 6 }}>
                           {rLine("Total Outgoings", fmt(snapshot.postCommitted), "#ec4899")}
                         </div>
