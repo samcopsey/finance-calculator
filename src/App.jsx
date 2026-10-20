@@ -907,7 +907,7 @@ export default function FinanceCalculator() {
     [pots]
   );
   const monthlyNonSacrificedPotContributions = totalMonthlyPotContributions - monthlySacrificedContributions;
-  const blendedRate = useMemo(() => {
+  const meanRateWeightedByBalance = useMemo(() => {
     const denom = pots.reduce((s, p) => s + (p.startingBalance || 0), 0);
     if (denom <= 0) {
       const cDenom = pots.reduce((s, p) => s + (p.monthlyContribution || 0), 0);
@@ -1770,7 +1770,7 @@ export default function FinanceCalculator() {
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#64748b", marginTop: 2 }}>
                   <span>Money-weighted blended return</span>
-                  <strong>{blendedRate.toFixed(2)}%</strong>
+                  <strong>{meanRateWeightedByBalance.toFixed(2)}%</strong>
                 </div>
               </div>
             </Card>
@@ -2760,7 +2760,7 @@ export default function FinanceCalculator() {
           const totalContributed = pots.reduce((s, p) => s + (p.startingBalance || 0) + (p.monthlyContribution || 0) * months, 0);
           const finalValue = longTotal[months] || 0;
           const growth = finalValue - totalContributed;
-          const blendedFwd = (() => {
+          const meanRateWeightedByMoneyIn = (() => {
             const totalIn = pots.reduce((s, p) => s + (p.startingBalance || 0) + (p.monthlyContribution || 0) * months, 0);
             if (totalIn <= 0) return 0;
             return pots.reduce((s, p) => {
@@ -2784,7 +2784,7 @@ export default function FinanceCalculator() {
                 </div>
                 <div style={{ background: "#fffbeb", borderRadius: 12, padding: 14, textAlign: "center", border: "1px solid #fde68a" }}>
                   <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>BLENDED RETURN</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#f59e0b" }}>{blendedRate.toFixed(2)}%</div>
+                  <div style={{ fontSize: 22, fontWeight: 800, color: "#f59e0b" }}>{meanRateWeightedByBalance.toFixed(2)}%</div>
                   <div style={{ fontSize: 11, color: "#94a3b8" }}>weighted by balance</div>
                 </div>
                 <div style={{ background: "#eef2ff", borderRadius: 12, padding: 14, textAlign: "center", border: "1px solid #c7d2fe" }}>
@@ -2899,7 +2899,7 @@ export default function FinanceCalculator() {
                   })()}
                   <div style={{ marginTop: 12, padding: 12, background: "#f8fafc", borderRadius: 8, fontSize: 12, color: "#64748b", border: "1px solid #e2e8f0", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                     <div style={{ display: "flex", justifyContent: "space-between" }}><span>Total contributed over {investYears}y</span><strong>{fmt(totalContributed)}</strong></div>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}><span>Forward blended return</span><strong>{blendedFwd.toFixed(2)}%</strong></div>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}><span>Forward blended return</span><strong>{meanRateWeightedByMoneyIn.toFixed(2)}%</strong></div>
                   </div>
                 </Card>
               </div>
@@ -2993,7 +2993,7 @@ export default function FinanceCalculator() {
               <Card title="Savings Vehicles" color="#8b5cf6">
                 <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0" }}>Toggle which savings strategies to include in the projection. Layer multiple to see combined impact.</p>
                 {[
-                  { key: "pots", label: `Savings Pots (${pots.length})`, sub: pots.length === 0 ? "No pots configured" : `${fmt(totalMonthlyPotContributions)}/mo across ${pots.length} pot${pots.length === 1 ? "" : "s"} · ${blendedRate.toFixed(2)}% blended`, active: projIncludePots, set: setProjIncludePots, color: "#8b5cf6" },
+                  { key: "pots", label: `Savings Pots (${pots.length})`, sub: pots.length === 0 ? "No pots configured" : `${fmt(totalMonthlyPotContributions)}/mo across ${pots.length} pot${pots.length === 1 ? "" : "s"} · ${meanRateWeightedByBalance.toFixed(2)}% blended`, active: projIncludePots, set: setProjIncludePots, color: "#8b5cf6" },
                   { key: "model", label: "Savings Model", sub: `${SAVINGS_MODELS[projSavingsModel]?.name}`, active: projIncludeModel, set: setProjIncludeModel, color: "#6366f1" },
                   { key: "pyf", label: "Pay Yourself First (Extra)", sub: `${fmt(pyfSavingsTarget)}/mo fixed target`, active: projIncludePYF, set: setProjIncludePYF, color: "#ec4899", disabled: projIncludeModel && projSavingsModel === SAVINGS_MODEL_PYF },
                 ].map(v => (
