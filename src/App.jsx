@@ -282,6 +282,12 @@ function isPaidMonthly(c) {
   return c.renews === "yearly" && c.payment === "monthly";
 }
 
+const LEGACY_ISA_COMPOUNDING = "monthly";
+
+function yearOfMonthlyPayments(monthly) {
+  return Math.round(monthly * 1200) / 100;
+}
+
 function normalisePurchaseCost(c, i) {
   const renews = c.renews === "yearly" ? "yearly" : "once";
   return {
@@ -691,7 +697,7 @@ export default function FinanceCalculator() {
         legacy.push(mk("current", { id: nextId++, name: "Current Account", owner: "p1", startingBalance: data.currentAccount, monthlyContribution: 0, rate: 0 }));
       }
       if (data.isaBalance !== undefined || data.isaMonthly !== undefined) {
-        legacy.push({ id: nextId++, name: "S&S ISA", owner: "p1", type: "isa", startingBalance: data.isaBalance ?? 0, monthlyContribution: data.isaMonthly ?? 0, rate: data.isaReturnRate ?? 7, compounding: "monthly", salarySacrifice: false, forPurchase: defaultForPurchaseFor("isa") });
+        legacy.push({ id: nextId++, name: "S&S ISA", owner: "p1", type: "isa", startingBalance: data.isaBalance ?? 0, monthlyContribution: data.isaMonthly ?? 0, rate: data.isaReturnRate ?? 7, compounding: LEGACY_ISA_COMPOUNDING, salarySacrifice: false, forPurchase: defaultForPurchaseFor("isa") });
       }
       if (data.otherSavings !== undefined && data.otherSavings !== null && data.otherSavings !== 0) {
         legacy.push(mk("savings", { id: nextId++, name: "Other Savings", owner: "p1", startingBalance: data.otherSavings, monthlyContribution: 0, rate: 0 }));
@@ -757,7 +763,7 @@ export default function FinanceCalculator() {
       if (data.surveyFees !== undefined) pushLegacy({ name: "Survey", upfront: data.surveyFees });
       if (data.homeInsurance !== undefined) {
         const monthly = Number(data.homeInsurance) || 0;
-        pushLegacy({ name: "Home insurance", upfront: Math.round(monthly * 1200) / 100, monthly, payment: "monthly", renews: "yearly" });
+        pushLegacy({ name: "Home insurance", upfront: yearOfMonthlyPayments(monthly), monthly, payment: "monthly", renews: "yearly" });
       }
       if (data.movingCosts !== undefined) pushLegacy({ name: "Moving costs", upfront: data.movingCosts, category: "extra" });
       setPurchaseCosts(legacyCosts.length > 0 ? legacyCosts : DEFAULT_PURCHASE_COSTS);
