@@ -559,7 +559,7 @@ export default function FinanceCalculator() {
   const [newExpenseName, setNewExpenseName] = useState("");
   const [newExpenseAmount, setNewExpenseAmount] = useState(0);
   const [newExpenseCategory, setNewExpenseCategory] = useState("Other");
-  const [newExpenseDate, setNewExpenseDate] = useState(new Date().toISOString().slice(0, 10));
+  const [newExpenseDate, setNewExpenseDate] = useState(isoToday);
 
   const [saveNotice, setSaveNotice] = useState("");
   const fileInputRef = useRef(null);
