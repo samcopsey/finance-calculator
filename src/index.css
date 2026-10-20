@@ -50,7 +50,7 @@ button, input, select, textarea {
   .river-legend-narrow { display: inline-flex !important; }
 }
 
-@media (max-width: 720px) {
+@media screen and (max-width: 720px) {
   .content [style*="grid-template-columns: 1fr 1fr"],
   .content [style*="grid-template-columns: repeat("] {
     grid-template-columns: 1fr !important;
@@ -62,15 +62,10 @@ button, input, select, textarea {
 }
 
 @media print {
-  body { background: #fff !important; }
-  button, select, input { display: none !important; }
+  body, .app { background: #fff !important; }
+  .no-print, button, select, input { display: none !important; }
+  .content { max-width: none !important; padding: 0 !important; }
+  .scroll-x { overflow: visible !important; }
   #report-content { display: grid !important; }
-  div[style*="overflowX"] { overflow: visible !important; }
-  div[style*="borderBottom: 3px"] { display: none !important; }
-  div[style*="background: linear-gradient"] {
-    background: #6366f1 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
   @page { margin: 1cm; size: A4; }
 }

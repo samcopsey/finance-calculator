@@ -1579,7 +1579,7 @@ export default function FinanceCalculator() {
   ].filter((d) => d.value > 0);
 
   return (
-    <div style={{ fontFamily: FONT.ui, fontVariantNumeric: "tabular-nums", fontSize: FS.body, lineHeight: 1.45, background: T.paper, minHeight: "100vh", color: T.ink, "--focus": T.focus }}>
+    <div className="app" style={{ fontFamily: FONT.ui, fontVariantNumeric: "tabular-nums", fontSize: FS.body, lineHeight: 1.45, background: T.paper, minHeight: "100vh", color: T.ink, "--focus": T.focus }}>
       <header className="masthead no-print" style={{ background: T.paper }}>
         <div style={{ borderBottom: `1px solid ${T.rule}` }}>
           <div className="topbar" style={{ maxWidth: 1232, margin: "0 auto", padding: "14px 16px 0", display: "flex", alignItems: "center", flexWrap: "wrap", gap: "8px 24px" }}>
@@ -2577,7 +2577,7 @@ export default function FinanceCalculator() {
                   <p style={{ fontSize: FS.small, color: T.inkSoft, margin: "0 0 12px 0", lineHeight: 1.5 }}>
                     Everything you need to pay to buy. Deposit, stamp duty, the first mortgage payment and the product fee come from the <button style={LINK_BTN} onClick={() => setTab(2)}>Mortgage</button> tab. For yearly costs like insurance, enter both the annual and the monthly price and choose how you'll pay — only the chosen one counts. Paying annually comes out of savings (now and at each renewal); paying monthly comes out of your monthly budget. One-off costs are paid upfront; to spread one (e.g. furniture on finance), add it under <button style={LINK_BTN} onClick={() => setTab(5)}>Finance Agreements</button> instead.
                   </p>
-                  <div style={{ overflowX: "auto" }}>
+                  <div className="scroll-x" style={{ overflowX: "auto" }}>
                     <div style={{ minWidth: mode === MODE.HOUSEHOLD ? 980 : 870 }}>
                       <div style={{ display: "grid", gridTemplateColumns: costCols, gap: 8, alignItems: "center", padding: "0 4px 6px 4px", borderBottom: `2px solid ${T.rule}`, fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>
                         <span>Item</span>
@@ -2659,7 +2659,7 @@ export default function FinanceCalculator() {
                   {pots.length === 0 ? (
                     <p style={{ color: T.inkSoft, textAlign: "center", padding: 12, fontSize: FS.body }}>No pots yet — add your savings on the Savings &amp; Investments tab.</p>
                   ) : (
-                    <div style={{ overflowX: "auto" }}>
+                    <div className="scroll-x" style={{ overflowX: "auto" }}>
                       <div style={{ minWidth: pp.completionInFuture ? 520 : 410 }}>
                         <div style={{ display: "grid", gridTemplateColumns: fundCols, gap: 8, alignItems: "center", padding: "0 4px 6px 4px", borderBottom: `2px solid ${T.rule}`, fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>
                           <span style={{ textAlign: "center" }}>Use</span>
@@ -2781,7 +2781,7 @@ export default function FinanceCalculator() {
                 {pp.comparisonRows.length === 0 ? (
                   <p style={{ color: T.inkSoft, textAlign: "center", padding: 12, fontSize: FS.body }}>Mark a cost as Yearly and enter both an annual and a monthly price (for example, insurance quotes) to compare them here.</p>
                 ) : (
-                  <div style={{ overflowX: "auto" }}>
+                  <div className="scroll-x" style={{ overflowX: "auto" }}>
                     <table style={{ width: "100%", borderCollapse: "collapse", fontSize: FS.body, minWidth: 640 }}>
                       <thead>
                         <tr style={{ borderBottom: `2px solid ${T.rule}`, color: T.inkSoft, fontSize: FS.small }}>
@@ -2892,7 +2892,7 @@ export default function FinanceCalculator() {
               <div style={{ marginBottom: 24 }}>
                 <Card title="Manage pots">
                   <p style={{ fontSize: FS.small, color: T.inkSoft, margin: "0 0 12px 0" }}>Each pot compounds at its own rate and cadence. Cash ISAs and most savings accounts pay interest <strong>annually</strong>; stocks &amp; shares ISAs, investments and pensions effectively compound <strong>monthly</strong>. Tick <strong>Sacrifice</strong> for pots paid from gross pay before tax, such as Share Incentive Plan (SIP) partnership shares, so the contribution reduces income tax & NI. A pension entered as Pension Contribution % on the Overview tab is already taken before tax, so don't tick Sacrifice for it too. Pots ticked <strong>Purchase</strong> count towards buying a house on the Purchase Plan tab; current accounts, savings, ISAs and LISAs start ticked.</p>
-                  <div style={{ overflowX: "auto" }}>
+                  <div className="scroll-x" style={{ overflowX: "auto" }}>
                     <div style={{ minWidth: 1230 }}>
                       <div style={{ display: "grid", gridTemplateColumns: "minmax(160px, 2fr) 130px 120px 120px 120px 90px 120px 80px 80px 110px 32px", gap: 8, alignItems: "center", padding: "0 4px 6px 4px", borderBottom: `2px solid ${T.rule}`, fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>
                         <span>Name</span>
@@ -4061,7 +4061,7 @@ export default function FinanceCalculator() {
 
                 <div style={{ gridColumn: "1 / -1" }}>
                   <Card title="Month-by-month projection">
-                    <div style={{ overflowX: "auto" }}>
+                    <div className="scroll-x" style={{ overflowX: "auto" }}>
                       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: FS.small }}>
                         <thead>
                           <tr style={{ borderBottom: `2px solid ${T.rule}`, background: T.paper }}>
