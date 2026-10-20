@@ -35,6 +35,7 @@ const STAMP_DUTY_BANDS = [
   { limit: 1500000, rate: 0.10 },
   { limit: Infinity, rate: 0.12 },
 ];
+const FTB_RELIEF_MAX_PRICE = 500000;
 const STAMP_DUTY_FTB_BANDS = [
   { limit: 300000, rate: 0 },
   { limit: 500000, rate: 0.05 },
@@ -90,8 +91,12 @@ function calculateClass4NI(profit) {
   return ni;
 }
 
-function calculateStampDuty(price, firstTimeBuyer) {
-  const bands = firstTimeBuyer && price <= 500000 ? STAMP_DUTY_FTB_BANDS : STAMP_DUTY_BANDS;
+function ftbReliefApplies(price, isFirstTimeBuyer) {
+  return isFirstTimeBuyer && price <= FTB_RELIEF_MAX_PRICE;
+}
+
+function calculateStampDuty(price, isFirstTimeBuyer) {
+  const bands = ftbReliefApplies(price, isFirstTimeBuyer) ? STAMP_DUTY_FTB_BANDS : STAMP_DUTY_BANDS;
   let duty = 0;
   let prev = 0;
   for (const band of bands) {
@@ -511,6 +516,7 @@ export default function FinanceCalculator() {
   const [mortgageTerm, setMortgageTerm] = useState(25);
   const [mortgageRate, setMortgageRate] = useState(4.5);
   const [firstTimeBuyer, setFirstTimeBuyer] = useState(1);
+  const isFirstTimeBuyer = firstTimeBuyer === 1;
   const [overpayMonthly, setOverpayMonthly] = useState(0);
   const [overpayAnnual, setOverpayAnnual] = useState(0);
   const [councilTax, setCouncilTax] = useState(150);
@@ -1093,10 +1099,10 @@ export default function FinanceCalculator() {
       totalRepaid: base.totalPaid + base.residual,
       residual: base.residual,
       payoffMonth: base.payoffMonth,
-      stampDuty: calculateStampDuty(housePrice, firstTimeBuyer === 1),
+      stampDuty: calculateStampDuty(housePrice, isFirstTimeBuyer),
       feeLoanCost, schedule, projectionSchedule, warnings,
     };
-  }, [housePrice, deposit, mortgageTerm, mortgageRate, firstTimeBuyer, productFee, productFeeAddToLoan, paymentTiming, paymentOverride, firstPaymentOverride, firstPaymentDays, completionDate, todayISO, fixedRateEndDate, followOnRate, overpayMonthly, overpayAnnual]);
+  }, [housePrice, deposit, mortgageTerm, mortgageRate, isFirstTimeBuyer, productFee, productFeeAddToLoan, paymentTiming, paymentOverride, firstPaymentOverride, firstPaymentDays, completionDate, todayISO, fixedRateEndDate, followOnRate, overpayMonthly, overpayAnnual]);
 
   const purchasePlan = useMemo(() => {
     const autoRows = [
@@ -2103,7 +2109,7 @@ export default function FinanceCalculator() {
                   <StatBox label="After Fixed Rate" value={mortgage.followOnPayment != null ? fmt2(mortgage.followOnPayment) : "—"} color="#8b5cf6" sub={mortgage.followOnPayment != null ? `at ${mortgage.followOnRateUsed}%` : mortgage.fixExpired ? "follow-on rate from the start" : mortgage.repaidBeforeFixEnd ? "repaid before the fix ends" : fixedRateEndDate ? "no follow-on period" : "no fixed end date"} />
                   <StatBox label="Total Interest" value={fmt(mortgage.totalInterest)} color="#ef4444" sub="full term" />
                   <StatBox label="Total Repaid" value={fmt(mortgage.totalRepaid)} />
-                  <StatBox label="Stamp Duty" value={fmt(mortgage.stampDuty)} color="#f59e0b" sub={firstTimeBuyer === 1 && housePrice <= 500000 ? "first-time buyer relief" : "standard rates"} />
+                  <StatBox label="Stamp Duty" value={fmt(mortgage.stampDuty)} color="#f59e0b" sub={ftbReliefApplies(housePrice, isFirstTimeBuyer) ? "first-time buyer relief" : "standard rates"} />
                 </div>
                 {mortgage.warnings.map((w, i) => (
                   <div key={i} style={{ ...WARNING_STYLES[w.level], marginTop: 8, padding: "8px 12px", borderRadius: 8, fontSize: 12, fontWeight: 600 }}>{w.text}</div>
@@ -2354,7 +2360,7 @@ export default function FinanceCalculator() {
               pill = "Mortgage tab";
               sub = housePrice > 0 ? `${((deposit / housePrice) * 100).toFixed(1)}% of ${fmt(housePrice)}` : "";
             } else if (r.key === "stampDuty") {
-              sub = firstTimeBuyer === 1 && housePrice <= 500000 ? "First-time buyer relief" : "Standard rates";
+              sub = ftbReliefApplies(housePrice, isFirstTimeBuyer) ? "First-time buyer relief" : "Standard rates";
             } else if (r.key === "firstPayment") {
               sub = !r.counted ? "Paid from income in month 1 — not counted here" : mortgage.isFirstPaymentOverridden ? "Your figure from the Mortgage tab" : `${fmt2(mortgage.monthlyPayment)} + ${firstPaymentDays} days' interest`;
               payCell = (
