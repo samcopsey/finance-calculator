@@ -17,7 +17,16 @@ const CLASS4_NI_UPPER = 50270;
 const CLASS4_NI_RATE_MAIN = 0.06;
 const CLASS4_NI_RATE_UPPER = 0.02;
 const STUDENT_LOAN_RATE = 0.09;
-const STUDENT_LOAN_THRESHOLDS = { 1: 26900, 2: 29385 };
+const STUDENT_LOAN_PLAN = Object.freeze({ NONE: 0, PLAN_1: 1, PLAN_2: 2 });
+const STUDENT_LOAN_THRESHOLDS = { [STUDENT_LOAN_PLAN.PLAN_1]: 26900, [STUDENT_LOAN_PLAN.PLAN_2]: 29385 };
+const STUDENT_LOAN_OPTIONS = [
+  { value: STUDENT_LOAN_PLAN.NONE, label: "None" },
+  { value: STUDENT_LOAN_PLAN.PLAN_1, label: "Plan 1" },
+  { value: STUDENT_LOAN_PLAN.PLAN_2, label: "Plan 2" },
+];
+
+const MODE = Object.freeze({ SINGLE: 0, HOUSEHOLD: 1 });
+const SPLIT_MODE = Object.freeze({ EARNINGS_RATIO: 0, CUSTOM_PERCENT: 1 });
 
 const STAMP_DUTY_BANDS = [
   { limit: 125000, rate: 0 },
@@ -399,21 +408,21 @@ export default function FinanceCalculator() {
   const [tab, setTab] = useState(0);
   const tabs = ["Overview", "Savings Models", "Mortgage", "Purchase Plan", "Savings & Investments", "Finance Agreements", "Projections", "Expense Log", "Report"];
 
-  const [mode, setMode] = useState(0);
+  const [mode, setMode] = useState(MODE.SINGLE);
 
   const [salary1, setSalary1] = useState(35000);
   const [otherIncome1, setOtherIncome1] = useState(0);
   const [otherIncomeType1, setOtherIncomeType1] = useState("paye");
   const [pension1, setPension1] = useState(5);
-  const [studentLoan1, setStudentLoan1] = useState(0);
+  const [studentLoan1, setStudentLoan1] = useState(STUDENT_LOAN_PLAN.NONE);
 
   const [salary2, setSalary2] = useState(30000);
   const [otherIncome2, setOtherIncome2] = useState(0);
   const [otherIncomeType2, setOtherIncomeType2] = useState("paye");
   const [pension2, setPension2] = useState(5);
-  const [studentLoan2, setStudentLoan2] = useState(0);
+  const [studentLoan2, setStudentLoan2] = useState(STUDENT_LOAN_PLAN.NONE);
 
-  const [splitMode, setSplitMode] = useState(0);
+  const [splitMode, setSplitMode] = useState(SPLIT_MODE.EARNINGS_RATIO);
   const [customSplitP1, setCustomSplitP1] = useState(50);
 
   const [rent, setRent] = useState(900);
@@ -828,7 +837,7 @@ export default function FinanceCalculator() {
   );
 
   const calc2 = useMemo(() => {
-    if (mode === 0) return { gross: 0, pensionAmt: 0, sacrificeAmt: 0, tax: 0, ni: 0, slRepay: 0, net: 0, monthly: 0, payeNet: 0, payeMonthly: 0, seIncome: 0, seNet: 0, saTaxBill: 0, class4Ni: 0, saExtraTax: 0, saExtraSL: 0 };
+    if (mode === MODE.SINGLE) return { gross: 0, pensionAmt: 0, sacrificeAmt: 0, tax: 0, ni: 0, slRepay: 0, net: 0, monthly: 0, payeNet: 0, payeMonthly: 0, seIncome: 0, seNet: 0, saTaxBill: 0, class4Ni: 0, saExtraTax: 0, saExtraSL: 0 };
     return computeCalc(salary2, otherIncome2, otherIncomeType2, pension2, studentLoan2, annualSacrificeP2);
   }, [salary2, otherIncome2, otherIncomeType2, pension2, studentLoan2, mode, annualSacrificeP2]);
 
@@ -936,8 +945,8 @@ export default function FinanceCalculator() {
   const potsLongProjection = useMemo(() => buildPotsProjection(investYears * 12, true), [buildPotsProjection, investYears]);
 
   const splitP1Pct = useMemo(() => {
-    if (mode === 0) return 100;
-    if (splitMode === 1) return customSplitP1;
+    if (mode === MODE.SINGLE) return 100;
+    if (splitMode === SPLIT_MODE.CUSTOM_PERCENT) return customSplitP1;
     const total = calc1.monthly + calc2.monthly;
     return total > 0 ? (calc1.monthly / total) * 100 : 50;
   }, [mode, splitMode, customSplitP1, calc1.monthly, calc2.monthly]);
@@ -1532,14 +1541,12 @@ export default function FinanceCalculator() {
                   onChange={(e) => setStudentLoan1(parseInt(e.target.value))}
                   style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 15 }}
                 >
-                  <option value={0}>None</option>
-                  <option value={1}>Plan 1</option>
-                  <option value={2}>Plan 2</option>
+                  {STUDENT_LOAN_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
             </Card>
 
-            {mode === 1 ? (
+            {mode === MODE.HOUSEHOLD ? (
               <Card title="Income — Person 2" color="#8b5cf6">
                 <InputGroup label="Annual Salary" value={salary2} onChange={setSalary2} />
                 <InputGroup label="Other Annual Income" value={otherIncome2} onChange={setOtherIncome2} />
@@ -1562,9 +1569,7 @@ export default function FinanceCalculator() {
                     onChange={(e) => setStudentLoan2(parseInt(e.target.value))}
                     style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 15 }}
                   >
-                    <option value={0}>None</option>
-                    <option value={1}>Plan 1</option>
-                    <option value={2}>Plan 2</option>
+                    {STUDENT_LOAN_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>
                 </div>
               </Card>
@@ -1594,7 +1599,7 @@ export default function FinanceCalculator() {
               </Card>
             )}
 
-            {mode === 1 && (
+            {mode === MODE.HOUSEHOLD && (
               <>
                 <Card title="Take-Home — Person 1" color="#10b981">
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
@@ -1633,7 +1638,7 @@ export default function FinanceCalculator() {
               </>
             )}
 
-            {mode === 1 && (
+            {mode === MODE.HOUSEHOLD && (
               <div style={{ gridColumn: "1 / -1" }}>
                 <Card title="Household Contribution Split" color="#ec4899">
                   <div style={{ display: "flex", gap: 24, alignItems: "flex-start", flexWrap: "wrap" }}>
@@ -1642,7 +1647,7 @@ export default function FinanceCalculator() {
                         <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 4 }}>Split Method</label>
                         <Toggle value={splitMode} onChange={setSplitMode} labels={["Ratio of Earnings", "Custom %"]} />
                       </div>
-                      {splitMode === 1 && (
+                      {splitMode === SPLIT_MODE.CUSTOM_PERCENT && (
                         <InputGroup label="Person 1 Contribution %" value={customSplitP1} onChange={setCustomSplitP1} prefix="" suffix="%" min={0} max={100} />
                       )}
                       <div style={{ background: "#fdf2f8", borderRadius: 8, padding: 12, fontSize: 13 }}>
@@ -1782,7 +1787,7 @@ export default function FinanceCalculator() {
                     <div key={ce.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #f1f5f9", flexWrap: "wrap", gap: 4 }}>
                       <span style={{ fontSize: 14, flex: "1 1 auto" }}>{ce.name}</span>
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        {mode === 1 && (
+                        {mode === MODE.HOUSEHOLD && (
                           <select
                             value={ce.splitType || "shared"}
                             onChange={(e) => updateCustomExpenseSplit(ce.id, e.target.value)}
@@ -2301,7 +2306,7 @@ export default function FinanceCalculator() {
 
         {tab === 3 && (() => {
           const pp = purchasePlan;
-          const costCols = mode === 1
+          const costCols = mode === MODE.HOUSEHOLD
             ? "minmax(180px, 2fr) 120px 110px 96px 104px 104px 104px 56px 32px"
             : "minmax(180px, 2fr) 120px 110px 96px 104px 104px 56px 32px";
           const cellInput = { padding: "6px 8px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, minWidth: 0, width: "100%" };
@@ -2312,7 +2317,7 @@ export default function FinanceCalculator() {
           const monthlyFor = (category) => pp.monthlyItems.filter((r) => r.category === category).reduce((s, r) => s + r.monthly, 0);
           const existingNames = new Set(purchaseCosts.map((c) => c.name.trim().toLowerCase()));
           const quickAdd = QUICK_ADD_COSTS.filter((q) => !existingNames.has(q.name.toLowerCase()));
-          const ownerGroups = mode === 1
+          const ownerGroups = mode === MODE.HOUSEHOLD
             ? [{ key: "p1", label: "Person 1", color: "#6366f1" }, { key: "p2", label: "Person 2", color: "#8b5cf6" }, { key: "joint", label: "Joint", color: "#ec4899" }]
             : [{ key: "all", label: "", color: "#10b981" }];
           const fundCols = `32px minmax(140px, 1fr) 104px 90px${pp.completionInFuture ? " 110px" : ""}`;
@@ -2330,7 +2335,7 @@ export default function FinanceCalculator() {
           const red = { bg: "#fef2f2", border: "#fecaca", color: "#ef4444" };
           const green = { bg: "#f0fdf4", border: "#bbf7d0", color: "#10b981" };
           const availableItems = [
-            ...(mode === 1 ? ownerGroups.filter((g) => pp.availableByOwner[g.key] > 0).map((g) => ({ label: g.label, value: fmt2(pp.availableByOwner[g.key]) })) : []),
+            ...(mode === MODE.HOUSEHOLD ? ownerGroups.filter((g) => pp.availableByOwner[g.key] > 0).map((g) => ({ label: g.label, value: fmt2(pp.availableByOwner[g.key]) })) : []),
             ...(pp.completionInFuture ? [{ label: "Today", value: fmt2(pp.availableToday) }] : []),
           ];
           const tiles = [
@@ -2380,7 +2385,7 @@ export default function FinanceCalculator() {
                 <span style={{ fontSize: 12, color: "#64748b" }}>Once</span>
                 {payCell}
                 <span style={{ fontSize: 12, color: "#6366f1", fontWeight: 600 }}>Essential</span>
-                {mode === 1 && dash}
+                {mode === MODE.HOUSEHOLD && dash}
                 {r.canMarkPaid ? (
                   <label style={{ display: "flex", justifyContent: "center", cursor: "pointer" }} title="Already paid — no longer counts towards the cash you still need">
                     <input type="checkbox" checked={!!r.paid} onChange={(e) => paidSetters[r.key](e.target.checked)} style={{ width: 18, height: 18, accentColor: "#10b981", cursor: "pointer" }} />
@@ -2416,7 +2421,7 @@ export default function FinanceCalculator() {
                   <option value="essential">Essential</option>
                   <option value="extra">Extra</option>
                 </select>
-                {mode === 1 && (yearly && c.payment === "monthly" ? (
+                {mode === MODE.HOUSEHOLD && (yearly && c.payment === "monthly" ? (
                   <select value={c.splitType || "shared"} onChange={(e) => updatePurchaseCost(c.id, "splitType", e.target.value)} style={{ ...cellSelect, background: c.splitType === "p1" ? "#eef2ff" : c.splitType === "p2" ? "#f5f3ff" : "#f0fdf4" }} title="Who pays this cost each month after you move in">
                     <option value="shared">Shared</option>
                     <option value="p1">P1 only</option>
@@ -2475,7 +2480,7 @@ export default function FinanceCalculator() {
                     Everything you need to pay to buy. Deposit, stamp duty, the first mortgage payment and the product fee come from the <button style={LINK_BTN} onClick={() => setTab(2)}>Mortgage</button> tab. For yearly costs like insurance, enter both the annual and the monthly price and choose how you'll pay — only the chosen one counts. Paying annually comes out of savings (now and at each renewal); paying monthly comes out of your monthly budget. One-off costs are paid upfront; to spread one (e.g. furniture on finance), add it under <button style={LINK_BTN} onClick={() => setTab(5)}>Finance Agreements</button> instead.
                   </p>
                   <div style={{ overflowX: "auto" }}>
-                    <div style={{ minWidth: mode === 1 ? 980 : 870 }}>
+                    <div style={{ minWidth: mode === MODE.HOUSEHOLD ? 980 : 870 }}>
                       <div style={{ display: "grid", gridTemplateColumns: costCols, gap: 8, alignItems: "center", padding: "0 4px 6px 4px", borderBottom: "2px solid #e2e8f0", fontSize: 11, color: "#64748b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
                         <span>Item</span>
                         <span style={{ textAlign: "right" }}>Upfront £</span>
@@ -2483,7 +2488,7 @@ export default function FinanceCalculator() {
                         <span>Renews</span>
                         <span>Pay</span>
                         <span>Type</span>
-                        {mode === 1 && <span title="Who pays this cost each month after you move in">Split</span>}
+                        {mode === MODE.HOUSEHOLD && <span title="Who pays this cost each month after you move in">Split</span>}
                         <span style={{ textAlign: "center" }} title="Already paid — no longer counts towards the cash you still need">Paid</span>
                         <span></span>
                       </div>
@@ -2818,8 +2823,8 @@ export default function FinanceCalculator() {
                             </select>
                             <select value={p.owner} onChange={(e) => updatePot(p.id, "owner", e.target.value)} style={{ padding: "6px 6px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 12, minWidth: 0, width: "100%" }}>
                               <option value="p1">Person 1</option>
-                              {mode === 1 && <option value="p2">Person 2</option>}
-                              {mode === 1 && <option value="joint">Joint</option>}
+                              {mode === MODE.HOUSEHOLD && <option value="p2">Person 2</option>}
+                              {mode === MODE.HOUSEHOLD && <option value="joint">Joint</option>}
                             </select>
                             <input type="number" value={p.startingBalance} onChange={(e) => updatePot(p.id, "startingBalance", parseFloat(e.target.value) || 0)} style={{ padding: "6px 8px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, minWidth: 0, width: "100%", textAlign: "right" }} />
                             <input type="number" value={p.monthlyContribution} onChange={(e) => updatePot(p.id, "monthlyContribution", parseFloat(e.target.value) || 0)} style={{ padding: "6px 8px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, minWidth: 0, width: "100%", textAlign: "right" }} />
@@ -2852,7 +2857,7 @@ export default function FinanceCalculator() {
                   <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0" }}>Money-weighted view across pot ownership. Joint pots are shown separately.</p>
                   {(() => {
                     const visibleOwners = ["p1", "p2", "joint"].filter((owner) => {
-                      if (mode === 0 && owner !== "p1") return false;
+                      if (mode === MODE.SINGLE && owner !== "p1") return false;
                       return potsByOwner[owner].count > 0;
                     });
                     if (visibleOwners.length === 0) {
@@ -3288,7 +3293,7 @@ export default function FinanceCalculator() {
 
           const secIncome = sectionNum();
           const secExpenses = sectionNum();
-          const secHousehold = mode === 1 ? sectionNum() : null;
+          const secHousehold = mode === MODE.HOUSEHOLD ? sectionNum() : null;
           const secSavings = sectionNum();
           const secMortgage = sectionNum();
           const secPurchase = sectionNum();
@@ -3302,7 +3307,7 @@ export default function FinanceCalculator() {
                 <div>
                   <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em" }}>Personal Finance Report</h2>
                   <p style={{ margin: "6px 0 0 0", fontSize: 13, opacity: 0.85 }}>
-                    {mode === 1 ? "Household" : "Individual"} · {snapshot.activeVehicles.length > 0 ? snapshot.activeVehicles.join(" + ") : "No savings vehicles"} · {projectionMonths}-Month Outlook
+                    {mode === MODE.HOUSEHOLD ? "Household" : "Individual"} · {snapshot.activeVehicles.length > 0 ? snapshot.activeVehicles.join(" + ") : "No savings vehicles"} · {projectionMonths}-Month Outlook
                   </p>
                   <p style={{ margin: "2px 0 0 0", fontSize: 12, opacity: 0.7 }}>
                     Generated {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
@@ -3358,7 +3363,7 @@ export default function FinanceCalculator() {
                   </div>
                 </Card>
 
-                {mode === 1 ? (
+                {mode === MODE.HOUSEHOLD ? (
                   <Card title="Person 2 — Income">
                     {rLine("Gross Annual Salary", fmt(calc2.gross))}
                     {calc2.seIncome > 0 && rLine("↳ of which Self-Employed", fmt(calc2.seIncome), "#0ea5e9")}
@@ -3387,7 +3392,7 @@ export default function FinanceCalculator() {
                   </Card>
                 )}
 
-                {mode === 1 && (
+                {mode === MODE.HOUSEHOLD && (
                   <div style={{ gridColumn: "1 / -1" }}>
                     <div style={{ background: "#f0fdf4", borderRadius: 10, padding: "10px 20px", display: "flex", justifyContent: "space-around", alignItems: "center", border: "1px solid #bbf7d0" }}>
                       <div style={{ textAlign: "center" }}>
@@ -3449,9 +3454,9 @@ export default function FinanceCalculator() {
                   </div>
                 )}
 
-                {mode === 1 && (
+                {mode === MODE.HOUSEHOLD && (
                   <>
-                    <SectionHeader num={secHousehold} title="Household Contribution Split" subtitle={`Split method: ${splitMode === 0 ? "Ratio of Earnings" : "Custom %"} — Person 1: ${splitP1Pct.toFixed(1)}% · Person 2: ${splitP2Pct.toFixed(1)}%`} color="#ec4899" />
+                    <SectionHeader num={secHousehold} title="Household Contribution Split" subtitle={`Split method: ${splitMode === SPLIT_MODE.EARNINGS_RATIO ? "Ratio of Earnings" : "Custom %"} — Person 1: ${splitP1Pct.toFixed(1)}% · Person 2: ${splitP2Pct.toFixed(1)}%`} color="#ec4899" />
 
                     <div style={{ gridColumn: "1 / -1" }}>
                       <Card title="Expense-by-Expense Breakdown">
@@ -3596,11 +3601,11 @@ export default function FinanceCalculator() {
                 <Card title="Current Position">
                   <SubHead text="Pot Balances" color="#8b5cf6" />
                   {pots.length === 0 && rLine("No pots configured", "—", "#94a3b8")}
-                  {pots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type}${mode === 1 ? ` · ${p.owner === "joint" ? "Joint" : p.owner === "p2" ? "P2" : "P1"}` : ""})`, fmt(p.startingBalance || 0), POT_TYPE_COLORS[p.type])}</div>)}
+                  {pots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type}${mode === MODE.HOUSEHOLD ? ` · ${p.owner === "joint" ? "Joint" : p.owner === "p2" ? "P2" : "P1"}` : ""})`, fmt(p.startingBalance || 0), POT_TYPE_COLORS[p.type])}</div>)}
                   <div style={{ borderTop: "2px solid #8b5cf6", marginTop: 8, paddingTop: 6 }}>
                     {rLine("Total Existing Savings", fmt(totalExistingSavings), "#8b5cf6")}
                   </div>
-                  {mode === 1 && (
+                  {mode === MODE.HOUSEHOLD && (
                     <>
                       <SubHead text="By Owner" color="#8b5cf6" />
                       {potsByOwner.p1.count > 0 && rLine(`Person 1 (${potsByOwner.p1.count} pot${potsByOwner.p1.count === 1 ? "" : "s"})`, fmt(potsByOwner.p1.starting), "#6366f1")}
@@ -3777,7 +3782,7 @@ export default function FinanceCalculator() {
 
                 <Card title="Savings & Gap">
                   <SubHead text="Savings for the purchase" color="#10b981" />
-                  {mode === 1 ? (
+                  {mode === MODE.HOUSEHOLD ? (
                     [{ key: "p1", label: "Person 1", color: "#6366f1" }, { key: "p2", label: "Person 2", color: "#8b5cf6" }, { key: "joint", label: "Joint", color: "#ec4899" }].map((g) => {
                       const groupPots = pots.filter((p) => p.forPurchase && (p.owner === "p2" || p.owner === "joint" ? p.owner : "p1") === g.key);
                       if (groupPots.length === 0) return null;
@@ -3895,7 +3900,7 @@ export default function FinanceCalculator() {
                         </div>
                       </div>
                     </div>
-                    {mode === 1 && (
+                    {mode === MODE.HOUSEHOLD && (
                       <div style={{ marginTop: 12 }}>
                         <SubHead text="Per-Person View (Post-Mortgage)" color="#ec4899" />
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
