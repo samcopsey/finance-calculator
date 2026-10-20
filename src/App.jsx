@@ -861,7 +861,7 @@ export default function FinanceCalculator() {
     const net = payeNet + seNet;
     return {
       gross: fullGross, pensionAmt, sacrificeAmt,
-      tax, ni, slRepay, net, monthly: net / 12,
+      tax, ni, slRepay, net, smoothedMonthlyNet: net / 12,
       payeNet, payeMonthly: payeNet / 12,
       seIncome, seNet, saTaxBill, class4Ni, saExtraTax, saExtraSL,
     };
@@ -873,11 +873,11 @@ export default function FinanceCalculator() {
   );
 
   const calc2 = useMemo(() => {
-    if (mode === MODE.SINGLE) return { gross: 0, pensionAmt: 0, sacrificeAmt: 0, tax: 0, ni: 0, slRepay: 0, net: 0, monthly: 0, payeNet: 0, payeMonthly: 0, seIncome: 0, seNet: 0, saTaxBill: 0, class4Ni: 0, saExtraTax: 0, saExtraSL: 0 };
+    if (mode === MODE.SINGLE) return { gross: 0, pensionAmt: 0, sacrificeAmt: 0, tax: 0, ni: 0, slRepay: 0, net: 0, smoothedMonthlyNet: 0, payeNet: 0, payeMonthly: 0, seIncome: 0, seNet: 0, saTaxBill: 0, class4Ni: 0, saExtraTax: 0, saExtraSL: 0 };
     return computeCalc(salary2, otherIncome2, otherIncomeType2, pension2, studentLoan2, annualSacrificeP2);
   }, [salary2, otherIncome2, otherIncomeType2, pension2, studentLoan2, mode, annualSacrificeP2]);
 
-  const totalMonthlyNet = calc1.monthly + calc2.monthly;
+  const totalMonthlyNet = calc1.smoothedMonthlyNet + calc2.smoothedMonthlyNet;
   const totalExpenses = rent + bills + food + transport + subscriptions + otherExpenses + customExpensesTotal;
   const disposable = totalMonthlyNet - totalExpenses;
   const councilTaxInBillsApplied = Math.min(Math.max(0, councilTaxInBills), bills);
@@ -973,9 +973,9 @@ export default function FinanceCalculator() {
   const splitP1Pct = useMemo(() => {
     if (mode === MODE.SINGLE) return 100;
     if (splitMode === SPLIT_MODE.CUSTOM_PERCENT) return customSplitP1;
-    const total = calc1.monthly + calc2.monthly;
-    return total > 0 ? (calc1.monthly / total) * 100 : 50;
-  }, [mode, splitMode, customSplitP1, calc1.monthly, calc2.monthly]);
+    const total = calc1.smoothedMonthlyNet + calc2.smoothedMonthlyNet;
+    return total > 0 ? (calc1.smoothedMonthlyNet / total) * 100 : 50;
+  }, [mode, splitMode, customSplitP1, calc1.smoothedMonthlyNet, calc2.smoothedMonthlyNet]);
   const splitP2Pct = 100 - splitP1Pct;
 
   const splitExpenseRows = useMemo(() => {
@@ -1052,11 +1052,11 @@ export default function FinanceCalculator() {
     const feeAddedToLoan = productFeeAddToLoan ? Math.max(0, productFee) : 0;
     const totalBorrowing = requestedLoan + feeAddedToLoan;
     const n = Math.max(0, Math.round(mortgageTerm * 12));
-    const fixedFromDate = fixedRateEndDate ? calendarMonthsBetween(completionDate || todayISO, fixedRateEndDate) : null;
-    const fixExpired = fixedFromDate !== null && fixedFromDate <= 0;
+    const fixedMonthsAfterCompletion = fixedRateEndDate ? calendarMonthsBetween(completionDate || todayISO, fixedRateEndDate) : null;
+    const fixExpired = fixedMonthsAfterCompletion !== null && fixedMonthsAfterCompletion <= 0;
     const followOnRateUsed = followOnRate > 0 ? followOnRate : Math.max(0, mortgageRate);
     const initialRate = fixExpired ? followOnRateUsed : Math.max(0, mortgageRate);
-    const fixedMonths = fixedFromDate > 0 ? Math.min(fixedFromDate, n) : n;
+    const fixedMonths = fixedMonthsAfterCompletion > 0 ? Math.min(fixedMonthsAfterCompletion, n) : n;
     const hasFollowOn = fixedMonths < n;
     const paymentAdvance = mortgagePayment(totalBorrowing, initialRate, n, "advance");
     const paymentArrears = mortgagePayment(totalBorrowing, initialRate, n, "arrears");
@@ -1073,10 +1073,10 @@ export default function FinanceCalculator() {
     const schedule = buildMortgageSchedule({ ...scheduleInputs, principal: totalBorrowing, payment: monthlyPayment, firstPayment, stubInterest, overpayMonthly, overpayAnnual });
     const { base } = schedule;
     const repaidBeforeFixEnd = hasFollowOn && base.payoffMonth !== null && base.payoffMonth <= fixedMonths;
-    const fixFromToday = fixedRateEndDate && completionDate > todayISO ? calendarMonthsBetween(todayISO, fixedRateEndDate) : null;
-    const fixedMonthsToday = fixFromToday > 0 ? Math.min(fixFromToday, n) : fixedMonths;
-    const projectionSchedule = !fixExpired && fixedMonthsToday !== fixedMonths
-      ? buildMortgageSchedule({ ...scheduleInputs, fixedMonths: fixedMonthsToday, principal: totalBorrowing, payment: monthlyPayment, firstPayment, stubInterest, overpayMonthly, overpayAnnual })
+    const fixedMonthsAfterToday = fixedRateEndDate && completionDate > todayISO ? calendarMonthsBetween(todayISO, fixedRateEndDate) : null;
+    const fixedMonthsIfCompletedToday = fixedMonthsAfterToday > 0 ? Math.min(fixedMonthsAfterToday, n) : fixedMonths;
+    const scheduleIfCompletedToday = !fixExpired && fixedMonthsIfCompletedToday !== fixedMonths
+      ? buildMortgageSchedule({ ...scheduleInputs, fixedMonths: fixedMonthsIfCompletedToday, principal: totalBorrowing, payment: monthlyPayment, firstPayment, stubInterest, overpayMonthly, overpayAnnual })
       : schedule;
 
     let feeLoanCost = null;
@@ -1119,7 +1119,7 @@ export default function FinanceCalculator() {
       residual: base.residual,
       payoffMonth: base.payoffMonth,
       stampDuty: calculateStampDuty(housePrice, isFirstTimeBuyer),
-      feeLoanCost, schedule, projectionSchedule, warnings,
+      feeLoanCost, schedule, scheduleIfCompletedToday, warnings,
     };
   }, [housePrice, deposit, mortgageTerm, mortgageRate, isFirstTimeBuyer, productFee, productFeeAddToLoan, paymentTiming, paymentOverride, firstPaymentOverride, firstPaymentDays, completionDate, todayISO, fixedRateEndDate, followOnRate, overpayMonthly, overpayAnnual]);
 
@@ -1371,7 +1371,7 @@ export default function FinanceCalculator() {
     let monthlyIncome = totalMonthlyNet;
     let livingCosts = postLivingExpenses + councilTax + purchasePlan.monthlyProjectionTotal;
     const potsProj = postPurchasePots.projection;
-    const { op } = mortgage.projectionSchedule;
+    const { op } = mortgage.scheduleIfCompletedToday;
     let propertyValue = housePrice;
 
     for (let m = 0; m <= projectionMonths; m++) {
@@ -1578,7 +1578,7 @@ export default function FinanceCalculator() {
                   ) : (
                     <>
                       <StatBox label="Annual Net" value={fmt(calc1.net)} color="#10b981" />
-                      <StatBox label="Monthly Net" value={fmt(calc1.monthly)} color="#10b981" sub="per month" />
+                      <StatBox label="Monthly Net" value={fmt(calc1.smoothedMonthlyNet)} color="#10b981" sub="per month" />
                     </>
                   )}
                 </div>
@@ -1600,7 +1600,7 @@ export default function FinanceCalculator() {
                         <StatBox label="SE + SA / mo" value={fmt(calc1.seNet / 12)} color="#0ea5e9" sub="smoothed SE − SA" />
                       </>
                     ) : (
-                      <StatBox label="Monthly Net" value={fmt(calc1.monthly)} color="#10b981" />
+                      <StatBox label="Monthly Net" value={fmt(calc1.smoothedMonthlyNet)} color="#10b981" />
                     )}
                   </div>
                 </Card>
@@ -1617,7 +1617,7 @@ export default function FinanceCalculator() {
                         <StatBox label="SE + SA / mo" value={fmt(calc2.seNet / 12)} color="#0ea5e9" sub="smoothed SE − SA" />
                       </>
                     ) : (
-                      <StatBox label="Monthly Net" value={fmt(calc2.monthly)} color="#10b981" />
+                      <StatBox label="Monthly Net" value={fmt(calc2.smoothedMonthlyNet)} color="#10b981" />
                     )}
                   </div>
                 </Card>
@@ -1692,15 +1692,15 @@ export default function FinanceCalculator() {
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 12 }}>
                         <div style={{ background: "#eef2ff", borderRadius: 8, padding: 10, textAlign: "center" }}>
                           <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>P1 REMAINING</div>
-                          <div style={{ fontSize: 18, fontWeight: 800, color: calc1.monthly - splitTotalP1 - commitP1 >= 0 ? "#10b981" : "#ef4444" }}>
-                            {fmt(calc1.monthly - splitTotalP1 - commitP1)}
+                          <div style={{ fontSize: 18, fontWeight: 800, color: calc1.smoothedMonthlyNet - splitTotalP1 - commitP1 >= 0 ? "#10b981" : "#ef4444" }}>
+                            {fmt(calc1.smoothedMonthlyNet - splitTotalP1 - commitP1)}
                           </div>
                           <div style={{ fontSize: 11, color: "#64748b" }}>after all commitments</div>
                         </div>
                         <div style={{ background: "#f5f3ff", borderRadius: 8, padding: 10, textAlign: "center" }}>
                           <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>P2 REMAINING</div>
-                          <div style={{ fontSize: 18, fontWeight: 800, color: calc2.monthly - splitTotalP2 - commitP2 >= 0 ? "#10b981" : "#ef4444" }}>
-                            {fmt(calc2.monthly - splitTotalP2 - commitP2)}
+                          <div style={{ fontSize: 18, fontWeight: 800, color: calc2.smoothedMonthlyNet - splitTotalP2 - commitP2 >= 0 ? "#10b981" : "#ef4444" }}>
+                            {fmt(calc2.smoothedMonthlyNet - splitTotalP2 - commitP2)}
                           </div>
                           <div style={{ fontSize: 11, color: "#64748b" }}>after contributions</div>
                         </div>
@@ -3344,7 +3344,7 @@ export default function FinanceCalculator() {
                   {calc1.saTaxBill > 0 && rLine("Self Assessment Bill (annual)", fmt(calc1.saTaxBill), "#ef4444")}
                   <div style={{ borderTop: "2px solid #10b981", marginTop: 8, paddingTop: 6 }}>
                     {calc1.seIncome > 0 && rLine("PAYE Monthly Take-Home", fmt(calc1.payeMonthly), "#10b981")}
-                    {rLine(calc1.seIncome > 0 ? "Total Monthly (smoothed)" : "Monthly Take-Home", fmt(calc1.monthly), "#10b981")}
+                    {rLine(calc1.seIncome > 0 ? "Total Monthly (smoothed)" : "Monthly Take-Home", fmt(calc1.smoothedMonthlyNet), "#10b981")}
                     {rLine("Annual Take-Home", fmt(calc1.net), "#10b981")}
                   </div>
                 </Card>
@@ -3361,8 +3361,8 @@ export default function FinanceCalculator() {
                     {calc2.slRepay > 0 && rLine("Student Loan Repayment", fmt(calc2.slRepay), "#ec4899")}
                     {calc2.saTaxBill > 0 && rLine("Self Assessment Bill (annual)", fmt(calc2.saTaxBill), "#ef4444")}
                     <div style={{ borderTop: "2px solid #10b981", marginTop: 8, paddingTop: 6 }}>
-                      {rLine("Monthly Take-Home", fmt(calc2.monthly), "#10b981")}
-                      {rLine("Annual Take-Home", fmt(calc2.monthly * 12), "#10b981")}
+                      {rLine("Monthly Take-Home", fmt(calc2.smoothedMonthlyNet), "#10b981")}
+                      {rLine("Annual Take-Home", fmt(calc2.smoothedMonthlyNet * 12), "#10b981")}
                     </div>
                   </Card>
                 ) : (
@@ -3373,7 +3373,7 @@ export default function FinanceCalculator() {
                     </div>
                     <div style={{ marginTop: 12 }}>
                       {rLine("Total Deductions", fmt(calc1.tax + calc1.ni + calc1.pensionAmt + calc1.slRepay), "#ef4444")}
-                      {rLine("Monthly Net", fmt(calc1.monthly), "#10b981")}
+                      {rLine("Monthly Net", fmt(calc1.smoothedMonthlyNet), "#10b981")}
                     </div>
                   </Card>
                 )}
@@ -3383,12 +3383,12 @@ export default function FinanceCalculator() {
                     <div style={{ background: "#f0fdf4", borderRadius: 10, padding: "10px 20px", display: "flex", justifyContent: "space-around", alignItems: "center", border: "1px solid #bbf7d0" }}>
                       <div style={{ textAlign: "center" }}>
                         <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>PERSON 1 NET</div>
-                        <div style={{ fontSize: 18, fontWeight: 800, color: "#6366f1" }}>{fmt(calc1.monthly)}</div>
+                        <div style={{ fontSize: 18, fontWeight: 800, color: "#6366f1" }}>{fmt(calc1.smoothedMonthlyNet)}</div>
                       </div>
                       <div style={{ fontSize: 20, color: "#94a3b8" }}>+</div>
                       <div style={{ textAlign: "center" }}>
                         <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>PERSON 2 NET</div>
-                        <div style={{ fontSize: 18, fontWeight: 800, color: "#8b5cf6" }}>{fmt(calc2.monthly)}</div>
+                        <div style={{ fontSize: 18, fontWeight: 800, color: "#8b5cf6" }}>{fmt(calc2.smoothedMonthlyNet)}</div>
                       </div>
                       <div style={{ fontSize: 20, color: "#94a3b8" }}>=</div>
                       <div style={{ textAlign: "center" }}>
@@ -3492,17 +3492,17 @@ export default function FinanceCalculator() {
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 14 }}>
                           <div style={{ background: "#eef2ff", borderRadius: 10, padding: 14, textAlign: "center", border: "1px solid #c7d2fe" }}>
                             <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>PERSON 1 — REMAINING AFTER ALL COMMITMENTS</div>
-                            <div style={{ fontSize: 22, fontWeight: 800, color: calc1.monthly - splitTotalP1 - commitP1 >= 0 ? "#10b981" : "#ef4444" }}>
-                              {fmt(calc1.monthly - splitTotalP1 - commitP1)}
+                            <div style={{ fontSize: 22, fontWeight: 800, color: calc1.smoothedMonthlyNet - splitTotalP1 - commitP1 >= 0 ? "#10b981" : "#ef4444" }}>
+                              {fmt(calc1.smoothedMonthlyNet - splitTotalP1 - commitP1)}
                             </div>
-                            <div style={{ fontSize: 11, color: "#94a3b8" }}>from {fmt(calc1.monthly)} take-home</div>
+                            <div style={{ fontSize: 11, color: "#94a3b8" }}>from {fmt(calc1.smoothedMonthlyNet)} take-home</div>
                           </div>
                           <div style={{ background: "#f5f3ff", borderRadius: 10, padding: 14, textAlign: "center", border: "1px solid #ddd6fe" }}>
                             <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>PERSON 2 — REMAINING AFTER ALL COMMITMENTS</div>
-                            <div style={{ fontSize: 22, fontWeight: 800, color: calc2.monthly - splitTotalP2 - commitP2 >= 0 ? "#10b981" : "#ef4444" }}>
-                              {fmt(calc2.monthly - splitTotalP2 - commitP2)}
+                            <div style={{ fontSize: 22, fontWeight: 800, color: calc2.smoothedMonthlyNet - splitTotalP2 - commitP2 >= 0 ? "#10b981" : "#ef4444" }}>
+                              {fmt(calc2.smoothedMonthlyNet - splitTotalP2 - commitP2)}
                             </div>
-                            <div style={{ fontSize: 11, color: "#94a3b8" }}>from {fmt(calc2.monthly)} take-home</div>
+                            <div style={{ fontSize: 11, color: "#94a3b8" }}>from {fmt(calc2.smoothedMonthlyNet)} take-home</div>
                           </div>
                         </div>
                       </Card>
@@ -3557,17 +3557,17 @@ export default function FinanceCalculator() {
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 14 }}>
                           <div style={{ background: "#eef2ff", borderRadius: 10, padding: 14, textAlign: "center", border: "1px solid #c7d2fe" }}>
                             <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>PERSON 1 — REMAINING POST-MORTGAGE</div>
-                            <div style={{ fontSize: 22, fontWeight: 800, color: calc1.monthly - postSplitTotalP1 - commitP1 >= 0 ? "#10b981" : "#ef4444" }}>
-                              {fmt(calc1.monthly - postSplitTotalP1 - commitP1)}
+                            <div style={{ fontSize: 22, fontWeight: 800, color: calc1.smoothedMonthlyNet - postSplitTotalP1 - commitP1 >= 0 ? "#10b981" : "#ef4444" }}>
+                              {fmt(calc1.smoothedMonthlyNet - postSplitTotalP1 - commitP1)}
                             </div>
-                            <div style={{ fontSize: 11, color: "#94a3b8" }}>from {fmt(calc1.monthly)} take-home</div>
+                            <div style={{ fontSize: 11, color: "#94a3b8" }}>from {fmt(calc1.smoothedMonthlyNet)} take-home</div>
                           </div>
                           <div style={{ background: "#f5f3ff", borderRadius: 10, padding: 14, textAlign: "center", border: "1px solid #ddd6fe" }}>
                             <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>PERSON 2 — REMAINING POST-MORTGAGE</div>
-                            <div style={{ fontSize: 22, fontWeight: 800, color: calc2.monthly - postSplitTotalP2 - commitP2 >= 0 ? "#10b981" : "#ef4444" }}>
-                              {fmt(calc2.monthly - postSplitTotalP2 - commitP2)}
+                            <div style={{ fontSize: 22, fontWeight: 800, color: calc2.smoothedMonthlyNet - postSplitTotalP2 - commitP2 >= 0 ? "#10b981" : "#ef4444" }}>
+                              {fmt(calc2.smoothedMonthlyNet - postSplitTotalP2 - commitP2)}
                             </div>
-                            <div style={{ fontSize: 11, color: "#94a3b8" }}>from {fmt(calc2.monthly)} take-home</div>
+                            <div style={{ fontSize: 11, color: "#94a3b8" }}>from {fmt(calc2.smoothedMonthlyNet)} take-home</div>
                           </div>
                         </div>
                         <div style={{ background: "#f0fdf4", borderRadius: 8, padding: 10, marginTop: 12, textAlign: "center", border: "1px solid #bbf7d0" }}>
@@ -3893,12 +3893,12 @@ export default function FinanceCalculator() {
                           <div style={{ background: "#eef2ff", borderRadius: 8, padding: 10, textAlign: "center" }}>
                             <div style={{ fontSize: 10, color: "#64748b", fontWeight: 600 }}>P1 TOTAL COMMITMENTS</div>
                             <div style={{ fontSize: 16, fontWeight: 800, color: "#6366f1" }}>{fmt(postSplitTotalP1 + commitP1)}</div>
-                            <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 2 }}>remaining: {fmt(calc1.monthly - postSplitTotalP1 - commitP1)}</div>
+                            <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 2 }}>remaining: {fmt(calc1.smoothedMonthlyNet - postSplitTotalP1 - commitP1)}</div>
                           </div>
                           <div style={{ background: "#f5f3ff", borderRadius: 8, padding: 10, textAlign: "center" }}>
                             <div style={{ fontSize: 10, color: "#64748b", fontWeight: 600 }}>P2 TOTAL COMMITMENTS</div>
                             <div style={{ fontSize: 16, fontWeight: 800, color: "#8b5cf6" }}>{fmt(postSplitTotalP2 + commitP2)}</div>
-                            <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 2 }}>remaining: {fmt(calc2.monthly - postSplitTotalP2 - commitP2)}</div>
+                            <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 2 }}>remaining: {fmt(calc2.smoothedMonthlyNet - postSplitTotalP2 - commitP2)}</div>
                           </div>
                         </div>
                       </div>
