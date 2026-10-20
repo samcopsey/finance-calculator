@@ -22,6 +22,45 @@ button, input, select, textarea {
   outline-offset: 2px;
 }
 
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.nav {
+  scrollbar-width: none;
+}
+
+.river-band {
+  transition: flex-grow 240ms ease;
+}
+
+.river-legend-narrow {
+  display: none !important;
+}
+
+@media (max-width: 900px), (max-height: 760px) {
+  .masthead { position: static; }
+}
+
+@media (max-width: 900px) {
+  .river-headline { font-size: 30px !important; }
+  .river-band-text { display: none; }
+  .river-legend-narrow { display: inline-flex !important; }
+}
+
+@media (max-width: 720px) {
+  .content [style*="grid-template-columns: 1fr 1fr"],
+  .content [style*="grid-template-columns: repeat("] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .river-band { transition: none; }
+}
+
 @media print {
   body { background: #fff !important; }
   button, select, input { display: none !important; }

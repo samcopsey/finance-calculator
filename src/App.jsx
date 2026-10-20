@@ -360,18 +360,14 @@ const FONT = Object.freeze({
 });
 const FS = Object.freeze({ small: 12, body: 14, input: 16, heading: 20, figure: 28, hero: 44 });
 const COLORS = ["#6366f1", "#f59e0b", "#10b981", "#ef4444", "#8b5cf6", "#ec4899", "#14b8a6", "#f97316"];
-const TAB_STYLE = (active) => ({
-  padding: "10px 16px",
-  border: "none",
-  borderBottom: active ? `3px solid ${T.ruleStrong}` : "3px solid transparent",
-  background: active ? T.paper : "transparent",
-  color: active ? T.ink : T.inkSoft,
-  fontWeight: active ? 700 : 500,
-  cursor: "pointer",
-  fontSize: FS.body,
-  whiteSpace: "nowrap",
-  transition: "all 0.2s",
-});
+const NAV_GROUPS = [
+  { name: "Earn", tabs: [0, 1] },
+  { name: "Buy a home", tabs: [2, 3] },
+  { name: "Grow", tabs: [4, 5, 6] },
+  { name: "Keep", tabs: [7, 8] },
+];
+const REPORT_TAB = 8;
+const ACTION_BTN = { padding: "7px 14px", background: "transparent", border: `1.5px solid ${T.ink}`, borderRadius: 6, color: T.ink, cursor: "pointer", fontWeight: 600, fontSize: FS.body, whiteSpace: "nowrap" };
 const HINT_STYLE = { fontSize: FS.small, color: T.inkSoft, marginTop: -12, marginBottom: 12, lineHeight: 1.4 };
 const LINK_BTN = { background: "none", border: "none", padding: 0, color: T.ink, fontWeight: 700, fontSize: "inherit", cursor: "pointer", textDecoration: "underline" };
 const PILL_STYLE = { fontSize: FS.small, padding: "1px 6px", borderRadius: 3, background: T.paper, color: T.ink, fontWeight: 600, marginLeft: 6 };
@@ -475,9 +471,69 @@ function Toggle({ value, onChange, labels, label }) {
   );
 }
 
+const RIVER_BANDS = [
+  { key: "tax", name: "Tax, NI and pension", bg: T.tax, fg: T.ink },
+  { key: "home", name: "Home", bg: T.home, fg: T.sheet },
+  { key: "living", name: "Living and finance", bg: T.living, fg: T.sheet },
+  { key: "saved", name: "Saved", bg: T.saved, fg: T.sheet },
+];
+const RIVER_LABEL_MIN_SHARE = 0.06;
+
+function River({ gross, left, ...flows }) {
+  const short = left < 0;
+  const bands = [
+    ...RIVER_BANDS.map((b) => ({ ...b, value: flows[b.key] })),
+    short
+      ? { key: "left", name: "Short", value: -left, bg: "transparent", fg: T.neg, outline: T.neg }
+      : { key: "left", name: "Left", value: left, bg: T.left, fg: T.ink },
+  ].filter((b) => b.value >= 0.5);
+  const total = bands.reduce((sum, b) => sum + b.value, 0);
+  const headline = !(gross > 0)
+    ? "Add your income to see where each month goes."
+    : short
+      ? <>You're <span style={{ color: T.neg }}>{fmt(-left)}</span> short each month.</>
+      : <>You keep <span style={{ boxShadow: `inset 0 -0.14em ${T.left}` }}>{fmt(left)}</span> of {fmt(gross)} each month.</>;
+  const sentence = bands.map((b) => `${b.name} ${fmt(b.value)}`).join(", ");
+  return (
+    <section className="river" aria-label="Where the month goes" style={{ borderBottom: `1px solid ${T.rule}`, background: T.paper }}>
+      <div style={{ maxWidth: 1232, margin: "0 auto", padding: "18px 16px 14px" }}>
+        <p className="river-headline" style={{ fontFamily: FONT.display, fontSize: FS.hero, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.02em", maxWidth: "24ch" }}>{headline}</p>
+        {total > 0 && (
+          <>
+            <div role="img" aria-label={`Each month: ${sentence}.`} style={{ display: "flex", gap: 3, height: 56, margin: "16px 0 8px" }}>
+              {bands.map((b) => {
+                const roomy = b.value / total >= RIVER_LABEL_MIN_SHARE;
+                return (
+                  <div key={b.key} className="river-band" style={{ flexGrow: b.value, flexBasis: 0, minWidth: 3, background: b.bg, color: b.fg, border: b.outline ? `2px solid ${b.outline}` : "none", borderRadius: 3, padding: "7px 10px", overflow: "hidden", whiteSpace: "nowrap" }}>
+                    {roomy && (
+                      <span className="river-band-text" aria-hidden="true">
+                        <span style={{ display: "block", fontSize: FS.input, fontWeight: 700 }}>{fmt(b.value)}</span>
+                        <span style={{ display: "block", fontSize: FS.small }}>{b.name}</span>
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <div aria-hidden="true" style={{ display: "flex", flexWrap: "wrap", gap: "4px 16px", fontSize: FS.small, color: T.inkSoft }}>
+              <span>Gross {fmt(gross)} a month</span>
+              {bands.map((b) => (
+                <span key={b.key} className={b.value / total >= RIVER_LABEL_MIN_SHARE ? "river-legend-narrow" : undefined} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ width: 10, height: 10, borderRadius: 3, background: b.bg, border: b.outline ? `1.5px solid ${b.outline}` : "none" }} />
+                  {b.name} {fmt(b.value)}
+                </span>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
+
 export default function FinanceCalculator() {
   const [tab, setTab] = useState(0);
-  const tabs = ["Overview", "Savings Models", "Mortgage", "Purchase Plan", "Savings & Investments", "Finance Agreements", "Projections", "Expense Log", "Report"];
+  const tabs = ["Overview", "Savings plans", "Mortgage", "Purchase plan", "Savings & investments", "Loans & finance", "Projections", "Spending log", "Report"];
 
   const [mode, setMode] = useState(MODE.SINGLE);
 
@@ -1496,6 +1552,16 @@ export default function FinanceCalculator() {
     return { monthlySavingsGoal, monthlyMortgage, preCommitted, preDisposable, postHousingMonthly, postCommitted, postDisposable, projEnd, selectedModel, activeVehicles, activePotsMonthly };
   }, [totalMonthlyNet, totalExpenses, totalAgreementMonthly, projSavingsModel, pyfSavingsTarget, mortgage.monthlyPayment, postLivingExpenses, overpayMonthly, councilTax, purchasePlan.monthlyTotal, projectionData, projIncludeModel, projIncludePYF, projIncludePots, monthlyNonSacrificedPotContributions, pots]);
 
+  const monthlyGross = (calc1.gross + calc2.gross) / 12;
+  const riverFlows = {
+    gross: monthlyGross,
+    tax: monthlyGross - totalMonthlyNet,
+    home: rent,
+    living: totalExpenses - rent + totalAgreementMonthly,
+    saved: snapshot.monthlySavingsGoal + snapshot.activePotsMonthly,
+    left: snapshot.preDisposable,
+  };
+
   const expensePieData = [
     { name: "Rent/Mortgage", value: rent },
     { name: "Bills", value: bills },
@@ -1508,37 +1574,41 @@ export default function FinanceCalculator() {
 
   return (
     <div style={{ fontFamily: FONT.ui, fontVariantNumeric: "tabular-nums", fontSize: FS.body, lineHeight: 1.45, background: T.paper, minHeight: "100vh", color: T.ink, "--focus": T.focus }}>
-      <div style={{ background: `linear-gradient(135deg, ${T.home}, ${T.home})`, padding: "24px 32px", color: T.sheet }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <h1 style={{ margin: 0, fontSize: FS.figure, fontWeight: 700 }}>Personal Finance Calculator</h1>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-            <p style={{ margin: "4px 0 0 0", opacity: 0.85, fontSize: FS.body }}>UK Tax Year 2026/27 · Model your finances, plan your future</p>
-            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              {saveNotice && <span style={{ fontSize: FS.body, background: T.sheet, padding: "4px 12px", borderRadius: 6 }}>{saveNotice}</span>}
-              <button onClick={handleSave} style={{ padding: "8px 16px", background: T.sheet, border: `1px solid ${T.sheet}`, borderRadius: 6, color: T.sheet, cursor: "pointer", fontWeight: 600, fontSize: FS.body }}>
-                Save Data
-              </button>
-              <button onClick={() => fileInputRef.current?.click()} style={{ padding: "8px 16px", background: T.sheet, border: `1px solid ${T.sheet}`, borderRadius: 6, color: T.sheet, cursor: "pointer", fontWeight: 600, fontSize: FS.body }}>
-                Load Data
-              </button>
+      <header className="masthead no-print" style={{ background: T.paper }}>
+        <div style={{ borderBottom: `1px solid ${T.rule}` }}>
+          <div className="topbar" style={{ maxWidth: 1232, margin: "0 auto", padding: "14px 16px 0", display: "flex", alignItems: "center", flexWrap: "wrap", gap: "8px 24px" }}>
+            <h1 style={{ margin: 0, fontFamily: FONT.display, fontSize: FS.heading, fontWeight: 800, lineHeight: 1.2, whiteSpace: "nowrap" }}>Personal Finance Calculator</h1>
+            <span style={{ fontSize: FS.small, color: T.inkSoft, whiteSpace: "nowrap" }}>UK tax year 2026/27</span>
+            <div className="actions" style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+              {saveNotice && <span role="status" style={{ fontSize: FS.small, color: T.inkSoft }}>{saveNotice}</span>}
+              <Toggle label="Who this is for" value={mode} onChange={setMode} labels={["Just me", "Household"]} />
+              <button type="button" onClick={handleSave} style={ACTION_BTN}>Save data</button>
+              <button type="button" onClick={() => fileInputRef.current?.click()} style={ACTION_BTN}>Load data</button>
               <input ref={fileInputRef} type="file" accept=".json" onChange={handleLoad} style={{ display: "none" }} />
             </div>
-          </div>
-          <div style={{ marginTop: 12 }}>
-            <Toggle value={mode} onChange={setMode} labels={["Single Person", "Household"]} />
+            <nav className="nav" aria-label="Sections" style={{ flexBasis: "100%", display: "flex", overflowX: "auto", margin: "0 -4px" }}>
+              {NAV_GROUPS.map((g, gi) => (
+                <div key={g.name} role="group" aria-label={g.name} style={{ display: "flex", flexShrink: 0, borderLeft: gi > 0 ? `1px solid ${T.rule}` : "none", margin: "8px 0", padding: "0 6px" }}>
+                  {g.tabs.map((i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      aria-current={tab === i ? "page" : undefined}
+                      onClick={() => setTab(i)}
+                      style={{ padding: "4px 8px 8px", margin: "0 2px", border: "none", background: "transparent", cursor: "pointer", whiteSpace: "nowrap", fontSize: FS.body, fontWeight: tab === i ? 600 : 500, color: tab === i ? T.ink : T.inkSoft, boxShadow: tab === i ? `inset 0 -2px ${T.ink}` : "none" }}
+                    >
+                      {tabs[i]}
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </nav>
           </div>
         </div>
-      </div>
+        {tab !== REPORT_TAB && <River {...riverFlows} />}
+      </header>
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", borderBottom: `1px solid ${T.rule}`, display: "flex", overflowX: "auto", background: T.sheet }}>
-        {tabs.map((t, i) => (
-          <button key={t} style={TAB_STYLE(tab === i)} onClick={() => setTab(i)}>
-            {t}
-          </button>
-        ))}
-      </div>
-
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 16px" }}>
+      <main className="content" style={{ maxWidth: 1232, margin: "0 auto", padding: "8px 16px 24px" }}>
         {tab === 0 && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
             <Card title="Income — Person 1">
@@ -4026,10 +4096,10 @@ export default function FinanceCalculator() {
             </div>
           );
         })()}
-      </div>
+      </main>
 
-      <div style={{ textAlign: "center", padding: "24px 16px", color: T.inkSoft, fontSize: FS.small, borderTop: `1px solid ${T.rule}`, marginTop: 32 }}>
-        Personal Finance Calculator · UK Tax Year 2026/27 · For illustrative purposes only — not financial advice
+      <div className="no-print" style={{ textAlign: "center", padding: "24px 16px", color: T.inkSoft, fontSize: FS.small, borderTop: `1px solid ${T.rule}`, marginTop: 32 }}>
+        Personal Finance Calculator · UK tax year 2026/27 · For illustrative purposes only, not financial advice
       </div>
     </div>
   );
