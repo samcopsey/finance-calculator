@@ -53,7 +53,7 @@ button, input, select, textarea {
 @media screen and (max-width: 720px) {
   .content [style*="grid-template-columns: 1fr 1fr"],
   .content [style*="grid-template-columns: repeat("] {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: minmax(0, 1fr) !important;
   }
 }
 

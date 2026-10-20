@@ -347,7 +347,7 @@ const T = Object.freeze({
   tax: "#8C8F96",
   home: "#2F5D8A",
   living: "#56708A",
-  saved: "#2E7D5B",
+  saved: "#2C7858",
   left: "#E5A100",
   neg: "#B3261E",
   warnBg: "#FBF1D6",
@@ -503,7 +503,7 @@ function River({ gross, left, ...flows }) {
   return (
     <section className="river" aria-label="Where the month goes" style={{ borderBottom: `1px solid ${T.rule}`, background: T.paper }}>
       <div style={{ maxWidth: 1232, margin: "0 auto", padding: "18px 16px 14px" }}>
-        <p className="river-headline" style={{ fontFamily: FONT.display, fontSize: FS.hero, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.02em", maxWidth: "24ch" }}>{headline}</p>
+        <p className="river-headline" style={{ fontFamily: FONT.display, fontSize: FS.hero, fontWeight: 700, lineHeight: 1.05, letterSpacing: "-0.02em" }}>{headline}</p>
         {total > 0 && (
           <>
             <div role="img" aria-label={`Each month: ${sentence}.`} style={{ display: "flex", gap: 3, height: 56, margin: "16px 0 8px" }}>
@@ -1079,9 +1079,9 @@ export default function FinanceCalculator() {
 
   const splitExpenseRows = useMemo(() => {
     const standard = [
-      { name: "Rent / Mortgage", amount: rent },
+      { name: "Rent / mortgage", amount: rent },
       { name: "Bills", amount: bills },
-      { name: "Food & Groceries", amount: food },
+      { name: "Food & groceries", amount: food },
       { name: "Transport", amount: transport },
       { name: "Subscriptions", amount: subscriptions },
       { name: "Other", amount: otherExpenses },
@@ -1337,15 +1337,15 @@ export default function FinanceCalculator() {
 
   const postMortgageSplitRows = useMemo(() => {
     const standard = [
-      { name: "Mortgage Payment", amount: mortgage.monthlyPayment },
-      { name: "Council Tax", amount: councilTax },
+      { name: "Mortgage payment", amount: mortgage.monthlyPayment },
+      { name: "Council tax", amount: councilTax },
       { name: councilTaxInBillsApplied > 0 ? "Bills (excl. current council tax)" : "Bills", amount: bills - councilTaxInBillsApplied },
-      { name: "Food & Groceries", amount: food },
+      { name: "Food & groceries", amount: food },
       { name: "Transport", amount: transport },
       { name: "Subscriptions", amount: subscriptions },
       { name: "Other", amount: otherExpenses },
     ].map(e => ({ ...e, splitType: "shared" }));
-    if (overpayMonthly > 0) standard.push({ name: "Mortgage Overpayment", amount: overpayMonthly, splitType: "shared" });
+    if (overpayMonthly > 0) standard.push({ name: "Mortgage overpayment", amount: overpayMonthly, splitType: "shared" });
     const purchaseMonthly = purchasePlan.monthlyItems.map((c) => ({ name: c.label, amount: c.monthly, splitType: c.splitType }));
     const custom = customExpenses.map(ce => ({ name: ce.name, amount: ce.amount, splitType: ce.splitType || "shared" }));
     return [...standard, ...purchaseMonthly, ...custom].filter(e => e.amount > 0).map(e => {
@@ -1367,7 +1367,7 @@ export default function FinanceCalculator() {
 
   const personalCommitmentRows = useMemo(() => {
     const rows = [];
-    if (activeSavingsGoal.amount > 0) rows.push({ name: `Savings Goal (${activeSavingsGoal.label})`, amount: activeSavingsGoal.amount, person: "p1" });
+    if (activeSavingsGoal.amount > 0) rows.push({ name: `Savings goal (${activeSavingsGoal.label})`, amount: activeSavingsGoal.amount, person: "p1" });
     if (projIncludePots) {
       pots.forEach((p) => {
         if ((p.monthlyContribution || 0) > 0) {
@@ -1375,7 +1375,7 @@ export default function FinanceCalculator() {
         }
       });
     }
-    if (totalAgreementMonthly > 0) rows.push({ name: "Finance Agreements", amount: totalAgreementMonthly, person: "p1" });
+    if (totalAgreementMonthly > 0) rows.push({ name: "Finance agreements", amount: totalAgreementMonthly, person: "p1" });
     return rows;
   }, [activeSavingsGoal, projIncludePots, pots, totalAgreementMonthly]);
   const commitP1 = personalCommitmentRows.reduce((s, r) => s + (r.person === "p1" ? r.amount : r.person === "joint" ? r.amount * splitP1Pct / 100 : 0), 0);
@@ -1569,7 +1569,7 @@ export default function FinanceCalculator() {
   };
 
   const expensePieData = [
-    { name: "Rent/Mortgage", value: rent },
+    { name: "Rent/mortgage", value: rent },
     { name: "Bills", value: bills },
     { name: "Food", value: food },
     { name: "Transport", value: transport },
@@ -1621,8 +1621,8 @@ export default function FinanceCalculator() {
               <InputGroup label="Annual salary" value={salary1} onChange={setSalary1} />
               <InputGroup label="Other annual income" value={otherIncome1} onChange={setOtherIncome1} />
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>Other income type</label>
-                <select
+                <label style={{ display: "block", fontSize: FS.body, fontWeight: 500, color: T.ink, marginBottom: 6 }}>Other income type</label>
+                <select aria-label="Other income type"
                   value={otherIncomeType1}
                   onChange={(e) => setOtherIncomeType1(e.target.value)}
                   style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.input }}
@@ -1634,8 +1634,8 @@ export default function FinanceCalculator() {
               </div>
               <InputGroup label="Pension contribution" value={pension1} onChange={setPension1} prefix="" suffix="%" step={0.5} />
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>Student loan</label>
-                <select
+                <label style={{ display: "block", fontSize: FS.body, fontWeight: 500, color: T.ink, marginBottom: 6 }}>Student loan</label>
+                <select aria-label="Student loan"
                   value={studentLoan1}
                   onChange={(e) => setStudentLoan1(parseInt(e.target.value))}
                   style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.input }}
@@ -1650,8 +1650,8 @@ export default function FinanceCalculator() {
                 <InputGroup label="Annual salary" value={salary2} onChange={setSalary2} />
                 <InputGroup label="Other annual income" value={otherIncome2} onChange={setOtherIncome2} />
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>Other income type</label>
-                  <select
+                  <label style={{ display: "block", fontSize: FS.body, fontWeight: 500, color: T.ink, marginBottom: 6 }}>Other income type</label>
+                  <select aria-label="Other income type"
                     value={otherIncomeType2}
                     onChange={(e) => setOtherIncomeType2(e.target.value)}
                     style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.input }}
@@ -1662,8 +1662,8 @@ export default function FinanceCalculator() {
                 </div>
                 <InputGroup label="Pension contribution" value={pension2} onChange={setPension2} prefix="" suffix="%" step={0.5} />
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>Student loan</label>
-                  <select
+                  <label style={{ display: "block", fontSize: FS.body, fontWeight: 500, color: T.ink, marginBottom: 6 }}>Student loan</label>
+                  <select aria-label="Student loan"
                     value={studentLoan2}
                     onChange={(e) => setStudentLoan2(parseInt(e.target.value))}
                     style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.input }}
@@ -1677,7 +1677,7 @@ export default function FinanceCalculator() {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                   <StatBox label="Gross" value={fmt(calc1.gross)} />
                   <StatBox label="Income tax" value={fmt(calc1.tax)} color={T.neg} />
-                  <StatBox label="National insurance" value={fmt(calc1.ni)} color={T.warnInk} />
+                  <StatBox label="National insurance" value={fmt(calc1.ni)} />
                   <StatBox label="Pension" value={fmt(calc1.pensionAmt)} color={T.ink} />
                   {calc1.sacrificeAmt > 0 && <StatBox label="Salary sacrifice" value={fmt(calc1.sacrificeAmt)} color={T.ink} />}
                   {calc1.slRepay > 0 && <StatBox label="Student loan" value={fmt(calc1.slRepay)} color={T.ink} />}
@@ -1743,7 +1743,7 @@ export default function FinanceCalculator() {
                   <div style={{ display: "flex", gap: 24, alignItems: "flex-start", flexWrap: "wrap" }}>
                     <div style={{ flex: "0 0 280px" }}>
                       <div style={{ marginBottom: 12 }}>
-                        <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>Split method</label>
+                        <label style={{ display: "block", fontSize: FS.body, fontWeight: 500, color: T.ink, marginBottom: 6 }}>Split method</label>
                         <Toggle value={splitMode} onChange={setSplitMode} labels={["Ratio of earnings", "Custom %"]} />
                       </div>
                       {splitMode === SPLIT_MODE.CUSTOM_PERCENT && (
@@ -1794,7 +1794,7 @@ export default function FinanceCalculator() {
                               <td style={{ padding: "6px 8px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(r.person === "p2" ? r.amount : 0)}</td>
                             </tr>
                           ))}
-                          <tr style={{ borderTop: `2px solid ${T.ruleStrong}`, fontWeight: 700 }}>
+                          <tr style={{ borderTop: `1.5px solid ${T.ruleStrong}`, fontWeight: 700 }}>
                             <td style={{ padding: "8px 8px" }}>Total all commitments</td>
                             <td style={{ padding: "8px 8px", textAlign: "right" }}>{fmt(totalExpenses + commitTotal)}</td>
                             <td style={{ padding: "8px 8px", textAlign: "right", color: T.ink }}>{fmt(splitTotalP1 + commitP1)}</td>
@@ -1842,7 +1842,6 @@ export default function FinanceCalculator() {
                       {pots.map((p) => (
                         <tr key={p.id} style={{ borderBottom: `1px solid ${T.paper}` }}>
                           <td style={{ padding: "6px 8px" }}>
-                            <span style={{ display: "inline-block", width: 8, height: 8, background: POT_TYPE_COLORS[p.type] || T.inkSoft, borderRadius: "50%", marginRight: 8 }} />
                             <strong>{p.name}</strong>
                             <span style={{ marginLeft: 6, fontSize: FS.small, color: T.inkSoft }}>{p.type} · {p.owner}</span>
                           </td>
@@ -1902,7 +1901,7 @@ export default function FinanceCalculator() {
                       </div>
                     </div>
                   ))}
-                  <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 8, fontSize: FS.body, fontWeight: 700, color: T.warnInk }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 8, fontSize: FS.body, fontWeight: 700, color: T.ink }}>
                     <span>Custom total</span>
                     <span>{fmt(customExpensesTotal)}/mo</span>
                   </div>
@@ -1931,7 +1930,7 @@ export default function FinanceCalculator() {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
                   <StatBox label="Total net income" value={fmt(totalMonthlyNet)} color={T.saved} sub="/month" />
                   <StatBox label="Total expenses" value={fmt(totalExpenses)} color={T.neg} sub="/month" />
-                  <StatBox label="Finance payments" value={fmt(totalAgreementMonthly)} color={T.warnInk} sub="/month" />
+                  <StatBox label="Finance payments" value={fmt(totalAgreementMonthly)} sub="/month" />
                   <StatBox label="Disposable" value={fmt(disposable - totalAgreementMonthly)} color={disposable - totalAgreementMonthly >= 0 ? T.saved : T.neg} sub="/month" />
                 </div>
                 {totalExistingSavings > 0 && (
@@ -1966,10 +1965,10 @@ export default function FinanceCalculator() {
               <div style={{ background: T.paper, borderRadius: 6, padding: 16, marginBottom: 12 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
                   <StatBox label="Needs budget" value={fmt(savingsModels["50/30/20"].needs)} color={T.ink} sub="50% target" />
-                  <InfoTip items={[{ label: "Rent/Mortgage", value: fmt(rent) }, { label: "Bills", value: fmt(bills) }, { label: "Food", value: fmt(food) }, { label: "Transport", value: fmt(transport) }]}>
+                  <InfoTip items={[{ label: "Rent/mortgage", value: fmt(rent) }, { label: "Bills", value: fmt(bills) }, { label: "Food", value: fmt(food) }, { label: "Transport", value: fmt(transport) }]}>
                     <StatBox label="Your needs ⓘ" value={fmt(savingsModels["50/30/20"].actualNeeds)} color={savingsModels["50/30/20"].needsGap >= 0 ? T.saved : T.neg} sub="hover for breakdown" />
                   </InfoTip>
-                  <StatBox label="Wants budget" value={fmt(savingsModels["50/30/20"].wants)} color={T.warnInk} sub="30% target" />
+                  <StatBox label="Wants budget" value={fmt(savingsModels["50/30/20"].wants)} sub="30% target" />
                   <InfoTip items={[{ label: "Subscriptions", value: fmt(subscriptions) }, { label: "Other", value: fmt(otherExpenses) }, ...customExpenses.map(ce => ({ label: ce.name, value: fmt(ce.amount) }))]}>
                     <StatBox label="Your wants ⓘ" value={fmt(savingsModels["50/30/20"].actualWants)} color={savingsModels["50/30/20"].wantsGap >= 0 ? T.saved : T.neg} sub="hover for breakdown" />
                   </InfoTip>
@@ -2004,8 +2003,8 @@ export default function FinanceCalculator() {
               <p style={{ fontSize: FS.body, color: T.inkSoft, marginTop: 0 }}>70% Living · 20% Savings · 10% Debt/Giving</p>
               <div style={{ background: T.paper, borderRadius: 6, padding: 16, marginBottom: 12 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
-                  <StatBox label="Living budget" value={fmt(savingsModels["70/20/10"].living)} color={T.warnInk} sub="70% target" />
-                  <InfoTip items={[{ label: "Rent/Mortgage", value: fmt(rent) }, { label: "Bills", value: fmt(bills) }, { label: "Food", value: fmt(food) }, { label: "Transport", value: fmt(transport) }, { label: "Subscriptions", value: fmt(subscriptions) }, { label: "Other", value: fmt(otherExpenses) }, ...customExpenses.map(ce => ({ label: ce.name, value: fmt(ce.amount) }))]}>
+                  <StatBox label="Living budget" value={fmt(savingsModels["70/20/10"].living)} sub="70% target" />
+                  <InfoTip items={[{ label: "Rent/mortgage", value: fmt(rent) }, { label: "Bills", value: fmt(bills) }, { label: "Food", value: fmt(food) }, { label: "Transport", value: fmt(transport) }, { label: "Subscriptions", value: fmt(subscriptions) }, { label: "Other", value: fmt(otherExpenses) }, ...customExpenses.map(ce => ({ label: ce.name, value: fmt(ce.amount) }))]}>
                     <StatBox label="Your living ⓘ" value={fmt(savingsModels["70/20/10"].actualLiving)} color={savingsModels["70/20/10"].livingGap >= 0 ? T.saved : T.neg} sub="hover for breakdown" />
                   </InfoTip>
                   <StatBox label="Savings target" value={fmt(savingsModels["70/20/10"].savings)} color={T.saved} sub="20% target" />
@@ -2090,11 +2089,11 @@ export default function FinanceCalculator() {
               <InputGroup label="Mortgage term" value={mortgageTerm} onChange={setMortgageTerm} prefix="" suffix="years" />
               <InputGroup label="Initial interest rate" value={mortgageRate} onChange={setMortgageRate} prefix="" suffix="%" step={0.01} />
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>First time buyer?</label>
+                <label style={{ display: "block", fontSize: FS.body, fontWeight: 500, color: T.ink, marginBottom: 6 }}>First time buyer?</label>
                 <Toggle value={firstTimeBuyer} onChange={setFirstTimeBuyer} labels={["No", "Yes"]} />
               </div>
 
-              <div style={{ borderTop: `2px solid ${T.ruleStrong}`, paddingTop: 16, marginTop: 16 }}>
+              <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, paddingTop: 16, marginTop: 16 }}>
                 <h4 style={{ margin: "0 0 12px 0", fontSize: FS.body, fontWeight: 700, color: T.ink }}>Lender deal</h4>
                 <p style={{ fontSize: FS.small, color: T.inkSoft, margin: "0 0 12px 0" }}>Match these to your mortgage offer or illustration so the payments here agree with your lender's.</p>
                 <div style={{ fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>
@@ -2119,7 +2118,7 @@ export default function FinanceCalculator() {
                 <InputGroup label="First payment interest" value={firstPaymentDays} onChange={setFirstPaymentDays} prefix="" suffix="days" min={0} max={62} />
                 <div style={HINT_STYLE}>Interest from completion to the start of your first full month: {firstPaymentDays} days' interest is {fmt2(mortgage.dailyInterest * Math.max(0, firstPaymentDays))}{mortgage.isFirstPaymentOverridden ? " (calculated — your manual first payment is used instead)." : ", added to your first payment."}</div>
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>First payment in your upfront costs?</label>
+                  <label style={{ display: "block", fontSize: FS.body, fontWeight: 500, color: T.ink, marginBottom: 6 }}>First payment in your upfront costs?</label>
                   <Toggle value={reserveFirstPayment ? 0 : 1} onChange={(i) => setReserveFirstPayment(i === 0)} labels={["Set aside upfront", "Pay from income"]} />
                 </div>
                 <InputGroup label="Product fee" value={productFee} onChange={setProductFee} step={0.01} />
@@ -2168,8 +2167,8 @@ export default function FinanceCalculator() {
                 <div style={{ fontSize: FS.small, color: T.inkSoft }}>To use the exact figures from your illustration, enter them here. Leave at 0 to use the calculated figures.</div>
               </div>
 
-              <div style={{ borderTop: `2px solid ${T.left}`, paddingTop: 16, marginTop: 16 }}>
-                <h4 style={{ margin: "0 0 12px 0", fontSize: FS.body, fontWeight: 700, color: T.warnInk }}>Ongoing homeowner costs</h4>
+              <div style={{ borderTop: `1px solid ${T.rule}`, paddingTop: 16, marginTop: 16 }}>
+                <h4 style={{ margin: "0 0 12px 0", fontSize: FS.body, fontWeight: 700, color: T.ink }}>Ongoing homeowner costs</h4>
                 <InputGroup label="Council tax at the new home (monthly)" value={councilTax} onChange={setCouncilTax} step={0.01} />
                 <InputGroup label="Council tax you pay now (included in bills)" value={councilTaxInBills} onChange={setCouncilTaxInBills} step={0.01} />
                 <div style={HINT_STYLE}>Taken out of Bills after you move, so the new council tax replaces it rather than adding to it.</div>
@@ -2179,8 +2178,8 @@ export default function FinanceCalculator() {
                 </div>
               </div>
 
-              <div style={{ borderTop: `2px solid ${T.saved}`, paddingTop: 16, marginTop: 16 }}>
-                <h4 style={{ margin: "0 0 12px 0", fontSize: FS.body, fontWeight: 700, color: T.saved }}>Overpayment modelling</h4>
+              <div style={{ borderTop: `1px solid ${T.rule}`, paddingTop: 16, marginTop: 16 }}>
+                <h4 style={{ margin: "0 0 12px 0", fontSize: FS.body, fontWeight: 700, color: T.ink }}>Overpayment modelling</h4>
                 <InputGroup label="Monthly overpayment" value={overpayMonthly} onChange={setOverpayMonthly} />
                 <InputGroup label="Annual lump sum overpayment" value={overpayAnnual} onChange={setOverpayAnnual} />
                 {(overpayMonthly > 0 || overpayAnnual > 0) && mortgage.totalBorrowing > 0 && (
@@ -2202,7 +2201,7 @@ export default function FinanceCalculator() {
                   <StatBox label="After fixed rate" value={mortgage.followOnPayment != null ? fmt2(mortgage.followOnPayment) : "—"} color={T.ink} sub={mortgage.followOnPayment != null ? `at ${mortgage.followOnRateUsed}%` : mortgage.fixExpired ? "follow-on rate from the start" : mortgage.repaidBeforeFixEnd ? "repaid before the fix ends" : fixedRateEndDate ? "no follow-on period" : "no fixed end date"} />
                   <StatBox label="Total interest" value={fmt(mortgage.totalInterest)} color={T.neg} sub="full term" />
                   <StatBox label="Total repaid" value={fmt(mortgage.totalRepaid)} />
-                  <StatBox label="Stamp duty" value={fmt(mortgage.stampDuty)} color={T.warnInk} sub={ftbReliefApplies(housePrice, isFirstTimeBuyer) ? "first-time buyer relief" : "standard rates"} />
+                  <StatBox label="Stamp duty" value={fmt(mortgage.stampDuty)} sub={ftbReliefApplies(housePrice, isFirstTimeBuyer) ? "first-time buyer relief" : "standard rates"} />
                 </div>
                 {mortgage.warnings.map((w, i) => (
                   <div key={i} style={{ ...WARNING_STYLES[w.level], marginTop: 8, padding: "8px 12px", borderRadius: 6, fontSize: FS.small, fontWeight: 600 }}>{w.text}</div>
@@ -2222,7 +2221,7 @@ export default function FinanceCalculator() {
                       <span>Other essentials ({purchasePlan.otherEssentialsCount})</span>
                       <strong>{fmt2(purchasePlan.otherEssentialsTotal)}</strong>
                     </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", borderTop: `2px solid ${T.ruleStrong}`, paddingTop: 8, marginTop: 8 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", borderTop: `1.5px solid ${T.ruleStrong}`, paddingTop: 8, marginTop: 8 }}>
                       <strong style={{ color: T.ink }}>Essentials total</strong>
                       <strong style={{ color: T.ink, fontSize: FS.heading }}>{fmt2(purchasePlan.essentialsTotal)}</strong>
                     </div>
@@ -2268,7 +2267,7 @@ export default function FinanceCalculator() {
                     );
                   })()}
                   <button onClick={() => setTab(3)} style={{ marginTop: 12, width: "100%", padding: 10, background: T.warnBg, color: T.warnInk, border: `1px solid ${T.warnBg}`, borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body }}>
-                    Open Purchase Plan →
+                    Open purchase plan →
                   </button>
                 </Card>
               </div>
@@ -2303,7 +2302,7 @@ export default function FinanceCalculator() {
                       </div>
                     ))}
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span>Other Expenses (excl. rent{councilTaxInBillsApplied > 0 ? " & current council tax" : ""})</span>
+                      <span>Other expenses (excl. rent{councilTaxInBillsApplied > 0 ? " & current council tax" : ""})</span>
                       <strong style={{ color: T.neg }}>-{fmt(postLivingExpenses)}</strong>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -2311,12 +2310,12 @@ export default function FinanceCalculator() {
                       <strong style={{ color: T.neg }}>-{fmt(totalAgreementMonthly)}</strong>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span>Savings Goal ({snapshot.selectedModel})</span>
+                      <span>Savings goal ({snapshot.selectedModel})</span>
                       <strong style={{ color: T.neg }}>-{fmt(snapshot.monthlySavingsGoal)}</strong>
                     </div>
                     {snapshot.activePotsMonthly > 0 && (
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span>Pot Contributions ({pots.filter((p) => (p.monthlyContribution || 0) > 0).length} active)</span>
+                        <span>Pot contributions ({pots.filter((p) => (p.monthlyContribution || 0) > 0).length} active)</span>
                         <strong style={{ color: T.neg }}>-{fmt(snapshot.activePotsMonthly)}</strong>
                       </div>
                     )}
@@ -2324,7 +2323,7 @@ export default function FinanceCalculator() {
                       const remaining = snapshot.postDisposable;
                       return (
                         <>
-                          <div style={{ display: "flex", justifyContent: "space-between", borderTop: `2px solid ${T.ruleStrong}`, paddingTop: 8, marginTop: 8 }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", borderTop: `1.5px solid ${T.ruleStrong}`, paddingTop: 8, marginTop: 8 }}>
                             <strong style={{ color: T.ink }}>True remaining</strong>
                             <strong style={{ color: remaining >= 0 ? T.saved : T.neg, fontSize: FS.heading }}>{fmt(remaining)}</strong>
                           </div>
@@ -2380,7 +2379,7 @@ export default function FinanceCalculator() {
             )}
 
             <div style={{ gridColumn: "1 / -1" }}>
-              <Card title={overpayMonthly > 0 || overpayAnnual > 0 ? "Mortgage Balance — Standard vs Overpayment" : "Mortgage Balance Over Time"} color={T.ink}>
+              <Card title={overpayMonthly > 0 || overpayAnnual > 0 ? "Mortgage balance — standard vs overpayment" : "Mortgage balance over time"}>
                 <ResponsiveContainer width="100%" height={350}>
                   <AreaChart data={mortgageAmortisation.data}>
                     <CartesianGrid stroke={T.rule} vertical={false} />
@@ -2440,7 +2439,7 @@ export default function FinanceCalculator() {
           const tiles = [
             { key: "need", label: "Cash needed", value: fmt2(pp.essentialsToPay), sub: `essentials still to pay${pp.essentialsPaid > 0.005 ? ` · ${fmt2(pp.essentialsPaid)} paid` : ""}`, bg: T.warnBg, border: T.warnBg, color: T.warnInk },
             { key: "ideal", label: "Incl. extras", value: fmt2(pp.idealToPay), sub: `+ ${fmt2(pp.extrasToPay)} extras`, bg: T.paper, border: T.rule, color: T.ink },
-            { key: "available", label: availableItems.length > 0 ? "AVAILABLE ⓘ" : "AVAILABLE", value: fmt2(pp.available), sub: pp.completionInFuture ? `forecast for ${fmtDate(completionDate)}` : `${pp.tickedCount} ticked pot${pp.tickedCount === 1 ? "" : "s"}, today`, bg: T.paper, border: T.rule, color: T.ink, items: availableItems.length > 0 ? availableItems : null },
+            { key: "available", label: availableItems.length > 0 ? "Available ⓘ" : "Available", value: fmt2(pp.available), sub: pp.completionInFuture ? `forecast for ${fmtDate(completionDate)}` : `${pp.tickedCount} ticked pot${pp.tickedCount === 1 ? "" : "s"}, today`, bg: T.paper, border: T.rule, color: T.ink, items: availableItems.length > 0 ? availableItems : null },
             { key: "gap", label: "Gap ⓘ", value: fmt2(Math.abs(pp.gap)), sub: isShort(pp.gap) ? "short for essentials" : "spare after essentials", ...(isShort(pp.gap) ? red : green), items: [{ label: "Essentials still to pay", value: fmt2(pp.essentialsToPay) }, { label: "− Available", value: fmt2(pp.available) }, { label: isShort(pp.gap) ? "= Short" : "= Spare", value: fmt2(Math.abs(pp.gap)) }] },
             { key: "gapIdeal", label: "Gap to ideal ⓘ", value: fmt2(Math.abs(pp.gapIdeal)), sub: isShort(pp.gapIdeal) ? "short incl. extras" : "spare incl. extras", ...(isShort(pp.gapIdeal) ? red : green), items: [{ label: "Incl. extras still to pay", value: fmt2(pp.idealToPay) }, { label: "− Available", value: fmt2(pp.available) }, { label: isShort(pp.gapIdeal) ? "= Short" : "= Spare", value: fmt2(Math.abs(pp.gapIdeal)) }] },
           ];
@@ -2556,7 +2555,6 @@ export default function FinanceCalculator() {
                 <input type="checkbox" checked={!!p.forPurchase} onChange={(e) => updatePot(p.id, "forPurchase", e.target.checked)} style={{ width: 18, height: 18, accentColor: T.saved, cursor: "pointer" }} />
               </label>
               <span style={{ minWidth: 0 }}>
-                <span style={{ display: "inline-block", width: 8, height: 8, background: POT_TYPE_COLORS[p.type] || T.inkSoft, borderRadius: "50%", marginRight: 6 }} />
                 <strong>{p.name}</strong>
                 <span style={{ marginLeft: 6, fontSize: FS.small, color: T.inkSoft }}>{POT_TYPE_LABELS[p.type] || p.type}</span>
               </span>
@@ -2605,7 +2603,7 @@ export default function FinanceCalculator() {
                         <div style={{ fontSize: FS.body, color: T.inkSoft, padding: "8px 4px" }}>No extras yet — add furnishings, removals or decorating with + Extra.</div>
                       )}
                       {subtotalRow("Extras total", pp.extrasTotal, monthlyFor("extra"), T.paper, T.ink)}
-                      <div style={{ display: "grid", gridTemplateColumns: costCols, gap: 8, alignItems: "center", padding: "10px 4px", borderTop: `2px solid ${T.ruleStrong}` }}>
+                      <div style={{ display: "grid", gridTemplateColumns: costCols, gap: 8, alignItems: "center", padding: "10px 4px", borderTop: `1.5px solid ${T.ruleStrong}` }}>
                         <span style={{ fontSize: FS.input, fontWeight: 700, color: T.ink }}>Total ideal</span>
                         <span style={{ textAlign: "right", fontSize: FS.input, fontWeight: 700, color: T.ink }}>{fmt2(pp.idealTotal)}</span>
                         <span style={{ textAlign: "right", fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>{pp.monthlyTotal > 0.005 ? `${fmt2(pp.monthlyTotal)}/mo` : ""}</span>
@@ -2687,7 +2685,7 @@ export default function FinanceCalculator() {
                             </div>
                           );
                         })}
-                        <div style={{ display: "grid", gridTemplateColumns: fundCols, gap: 8, alignItems: "center", padding: "8px 4px", borderTop: `2px solid ${T.saved}`, fontWeight: 700, fontSize: FS.body, color: T.saved }}>
+                        <div style={{ display: "grid", gridTemplateColumns: fundCols, gap: 8, alignItems: "center", padding: "8px 4px", borderTop: `1.5px solid ${T.ruleStrong}`, fontWeight: 700, fontSize: FS.body, color: T.saved }}>
                           <span />
                           <span>Available for the purchase</span>
                           <span style={{ textAlign: "right" }}>{fmt2(pp.availableToday)}</span>
@@ -2877,13 +2875,13 @@ export default function FinanceCalculator() {
                   <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.saved }}>{fmt(totalMonthlyPotContributions)}</div>
                   <div style={{ fontSize: FS.small, color: T.inkSoft }}>across all pots</div>
                 </div>
-                <div style={{ background: T.warnBg, borderRadius: 6, padding: 14, textAlign: "center", border: `1px solid ${T.warnBg}` }}>
+                <div style={{ background: T.paper, borderRadius: 6, padding: 14, textAlign: "center", border: `1px solid ${T.rule}` }}>
                   <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Blended return</div>
-                  <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.warnInk }}>{meanRateWeightedByBalance.toFixed(2)}%</div>
+                  <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.ink }}>{meanRateWeightedByBalance.toFixed(2)}%</div>
                   <div style={{ fontSize: FS.small, color: T.inkSoft }}>weighted by balance</div>
                 </div>
                 <div style={{ background: T.paper, borderRadius: 6, padding: 14, textAlign: "center", border: `1px solid ${T.rule}` }}>
-                  <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>VALUE AT {investYears}Y</div>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Value at {investYears}y</div>
                   <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.ink }}>{fmt(finalValue)}</div>
                   <div style={{ fontSize: FS.small, color: T.inkSoft }}>+{fmt(growth)} growth</div>
                 </div>
@@ -2916,7 +2914,7 @@ export default function FinanceCalculator() {
                         return (
                           <div key={p.id} style={{ display: "grid", gridTemplateColumns: "minmax(160px, 2fr) 130px 120px 120px 120px 90px 120px 80px 80px 110px 32px", gap: 8, alignItems: "center", padding: "8px 4px", borderBottom: `1px solid ${T.paper}` }}>
                             <input type="text" value={p.name} onChange={(e) => updatePot(p.id, "name", e.target.value)} style={{ padding: "6px 8px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body, minWidth: 0, width: "100%" }} />
-                            <select value={p.type} onChange={(e) => updatePot(p.id, "type", e.target.value)} style={{ padding: "6px 6px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.small, background: T.paper, color: POT_TYPE_COLORS[p.type], fontWeight: 600, minWidth: 0, width: "100%" }}>
+                            <select value={p.type} onChange={(e) => updatePot(p.id, "type", e.target.value)} style={{ padding: "6px 6px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.small, background: T.sheet, color: T.ink, fontWeight: 500, minWidth: 0, width: "100%" }}>
                               {POT_TYPES.map((t) => <option key={t} value={t}>{POT_TYPE_LABELS[t]}</option>)}
                             </select>
                             <select value={p.owner} onChange={(e) => updatePot(p.id, "owner", e.target.value)} style={{ padding: "6px 6px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.small, minWidth: 0, width: "100%" }}>
@@ -2998,10 +2996,10 @@ export default function FinanceCalculator() {
                 </Card>
               </div>
 
-              <Card title={`Pot Growth Over ${investYears} Years`}>
+              <Card title={`Pot growth over ${investYears} years`}>
                 <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
                   <label style={{ fontSize: FS.body, fontWeight: 600, color: T.inkSoft }}>Horizon</label>
-                  <input type="range" min={1} max={40} value={investYears} onChange={(e) => setInvestYears(parseInt(e.target.value))} style={{ flex: 1 }} />
+                  <input type="range" min={1} max={40} value={investYears} onChange={(e) => setInvestYears(parseInt(e.target.value))} style={{ flex: 1, accentColor: T.home }} />
                   <strong style={{ minWidth: 60, textAlign: "right" }}>{investYears} years</strong>
                 </div>
                 <ResponsiveContainer width="100%" height={400}>
@@ -3050,7 +3048,7 @@ export default function FinanceCalculator() {
             </div>
 
             <button onClick={addAgreement} style={{ padding: "12px 24px", background: T.home, color: T.sheet, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body }}>
-              + Add Finance Agreement
+              + Add finance agreement
             </button>
 
             {agreementPayments.length > 0 && (
@@ -3058,7 +3056,7 @@ export default function FinanceCalculator() {
                 <Card title="Impact on monthly budget">
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8 }}>
                     <StatBox label="Net income" value={fmt(totalMonthlyNet)} color={T.saved} />
-                    <StatBox label="Expenses" value={fmt(totalExpenses)} color={T.warnInk} />
+                    <StatBox label="Expenses" value={fmt(totalExpenses)} />
                     <StatBox label="Agreement payments" value={fmt(totalAgreementMonthly)} color={T.neg} />
                     <StatBox label="Remaining" value={fmt(totalMonthlyNet - totalExpenses - totalAgreementMonthly)} color={totalMonthlyNet - totalExpenses - totalAgreementMonthly >= 0 ? T.saved : T.neg} />
                   </div>
@@ -3077,7 +3075,7 @@ export default function FinanceCalculator() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
               <Card title="Projection settings">
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>Projection period</label>
+                  <label style={{ display: "block", fontSize: FS.body, fontWeight: 500, color: T.ink, marginBottom: 6 }}>Projection period</label>
                   <Toggle value={projectionMonths === 12 ? 0 : 1} onChange={(v) => setProjectionMonths(v === 0 ? 12 : 24)} labels={["12 months", "24 months"]} />
                 </div>
                 <InputGroup label="Annual salary growth" value={salaryGrowth} onChange={setSalaryGrowth} prefix="" suffix="%" step={0.5} />
@@ -3135,7 +3133,7 @@ export default function FinanceCalculator() {
                   <StatBox label={`Total at ${projectionMonths}m`} value={fmt(projectionData[projectionData.length - 1]?.totalSavings || 0)} color={T.saved} />
                   <StatBox label="Avg monthly saving" value={fmt(((projectionData[projectionData.length - 1]?.totalSavings || 0) - totalExistingSavings) / projectionMonths)} color={T.ink} />
                   <StatBox label={`Income at M${projectionMonths}`} value={fmt(projectionData[projectionData.length - 1]?.income || 0)} color={T.ink} sub="/month" />
-                  <StatBox label={`Expenses at M${projectionMonths}`} value={fmt(projectionData[projectionData.length - 1]?.expenses || 0)} color={T.warnInk} sub="with inflation" />
+                  <StatBox label={`Expenses at M${projectionMonths}`} value={fmt(projectionData[projectionData.length - 1]?.expenses || 0)} sub="with inflation" />
                 </div>
                 {snapshot.activeVehicles.length > 0 && (
                   <div style={{ marginTop: 12, padding: "8px 12px", background: T.paper, borderRadius: 6, fontSize: FS.small, color: T.saved }}>
@@ -3191,7 +3189,7 @@ export default function FinanceCalculator() {
                   );
                 })()}
                 <div style={{ marginTop: 8, fontSize: FS.body }}>
-                  <button style={LINK_BTN} onClick={() => setTab(3)}>Open Purchase Plan</button>
+                  <button style={LINK_BTN} onClick={() => setTab(3)}>Open purchase plan</button>
                 </div>
               </Card>
             </div>
@@ -3238,7 +3236,7 @@ export default function FinanceCalculator() {
                   <StatBox label="Day 1 savings" value={fmt(postPurchaseData[0]?.totalSavings || 0)} color={postPurchasePots.shortfall > 0.005 ? T.neg : T.saved} sub={postPurchasePots.shortfall > 0.005 ? `${fmt(postPurchasePots.shortfall)} not covered by ticked pots` : "after upfront costs"} />
                   <StatBox label={`Savings at ${projectionMonths}m`} value={fmt(postPurchaseData[postPurchaseData.length - 1]?.totalSavings || 0)} color={T.ink} sub="pots + cash" />
                   <StatBox label={`Equity at ${projectionMonths}m`} value={fmt(postPurchaseData[postPurchaseData.length - 1]?.equity || 0)} color={T.saved} sub="property equity" />
-                  <StatBox label={`Net Wealth at ${projectionMonths}m`} value={fmt(postPurchaseData[postPurchaseData.length - 1]?.netWealth || 0)} color={T.ink} sub="savings + equity" />
+                  <StatBox label={`Net wealth at ${projectionMonths}m`} value={fmt(postPurchaseData[postPurchaseData.length - 1]?.netWealth || 0)} color={T.ink} sub="savings + equity" />
                 </div>
                 <ResponsiveContainer width="100%" height={350}>
                   <AreaChart data={projectionData.map((d, i) => ({ label: d.label, rentSavings: d.totalSavings, buySavings: postPurchaseData[i]?.totalSavings || 0, buyNetWealth: postPurchaseData[i]?.netWealth || 0 }))}>
@@ -3263,8 +3261,8 @@ export default function FinanceCalculator() {
               <InputGroup label="Description" value={newExpenseName} onChange={setNewExpenseName} prefix="" type="text" />
               <InputGroup label="Amount" value={newExpenseAmount} onChange={setNewExpenseAmount} />
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>Category</label>
-                <select
+                <label style={{ display: "block", fontSize: FS.body, fontWeight: 500, color: T.ink, marginBottom: 6 }}>Category</label>
+                <select aria-label="Category"
                   value={newExpenseCategory}
                   onChange={(e) => setNewExpenseCategory(e.target.value)}
                   style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.input }}
@@ -3279,7 +3277,7 @@ export default function FinanceCalculator() {
                 onClick={addExpenseEntry}
                 style={{ width: "100%", padding: "12px", background: T.home, color: T.sheet, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body, marginTop: 8 }}
               >
-                + Add Expense
+                + Add expense
               </button>
               <div style={{ marginTop: 16, padding: 12, background: T.paper, borderRadius: 6, fontSize: FS.body, color: T.inkSoft }}>
                 Use this log to track actual spending. All entries are included when you <strong>Save data</strong> and restored when you <strong>Load data</strong>.
@@ -3313,7 +3311,7 @@ export default function FinanceCalculator() {
                   <p style={{ color: T.inkSoft, textAlign: "center", padding: 24 }}>No expenses logged yet. Add one above to get started.</p>
                 ) : (
                   <div style={{ maxHeight: 500, overflowY: "auto" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: FS.body }}>
+                    <div className="scroll-x" style={{ overflowX: "auto" }}><table style={{ width: "100%", borderCollapse: "collapse", fontSize: FS.body }}>
                       <thead>
                         <tr style={{ borderBottom: `2px solid ${T.rule}`, textAlign: "left" }}>
                           <th style={{ padding: "8px 12px", color: T.inkSoft, fontWeight: 600 }}>Date</th>
@@ -3345,7 +3343,7 @@ export default function FinanceCalculator() {
                           </tr>
                         ))}
                       </tbody>
-                    </table>
+                    </table></div>
                   </div>
                 )}
               </Card>
@@ -3404,7 +3402,7 @@ export default function FinanceCalculator() {
                 <div>
                   <h2 style={{ margin: 0, fontFamily: FONT.display, fontSize: FS.figure, fontWeight: 700, lineHeight: 1.1 }}>Personal finance report</h2>
                   <p style={{ margin: "6px 0 0 0", fontSize: FS.body, color: T.inkSoft }}>
-                    {mode === MODE.HOUSEHOLD ? "Household" : "Individual"} · {snapshot.activeVehicles.length > 0 ? snapshot.activeVehicles.join(" + ") : "No savings vehicles"} · {projectionMonths}-Month Outlook
+                    {mode === MODE.HOUSEHOLD ? "Household" : "Individual"} · {snapshot.activeVehicles.length > 0 ? snapshot.activeVehicles.join(" + ") : "No savings vehicles"} · {projectionMonths}-month outlook
                   </p>
                   <p style={{ margin: "2px 0 0 0", fontSize: FS.small, color: T.inkSoft }}>
                     Generated {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
@@ -3453,7 +3451,7 @@ export default function FinanceCalculator() {
                   {calc1.sacrificeAmt > 0 && rLine("Salary sacrifice", fmt(calc1.sacrificeAmt), T.ink)}
                   {calc1.slRepay > 0 && rLine("Student loan repayment", fmt(calc1.slRepay), T.ink)}
                   {calc1.saTaxBill > 0 && rLine("Self Assessment bill (annual)", fmt(calc1.saTaxBill), T.neg)}
-                  <div style={{ borderTop: `2px solid ${T.saved}`, marginTop: 8, paddingTop: 6 }}>
+                  <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                     {calc1.seIncome > 0 && rLine("PAYE monthly take-home", fmt(calc1.payeMonthly), T.saved)}
                     {rLine(calc1.seIncome > 0 ? "Total Monthly (smoothed)" : "Monthly Take-Home", fmt(calc1.smoothedMonthlyNet), T.saved)}
                     {rLine("Annual take-home", fmt(calc1.net), T.saved)}
@@ -3471,7 +3469,7 @@ export default function FinanceCalculator() {
                     {calc2.sacrificeAmt > 0 && rLine("Salary sacrifice", fmt(calc2.sacrificeAmt), T.ink)}
                     {calc2.slRepay > 0 && rLine("Student loan repayment", fmt(calc2.slRepay), T.ink)}
                     {calc2.saTaxBill > 0 && rLine("Self Assessment bill (annual)", fmt(calc2.saTaxBill), T.neg)}
-                    <div style={{ borderTop: `2px solid ${T.saved}`, marginTop: 8, paddingTop: 6 }}>
+                    <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                       {rLine("Monthly take-home", fmt(calc2.smoothedMonthlyNet), T.saved)}
                       {rLine("Annual take-home", fmt(calc2.smoothedMonthlyNet * 12), T.saved)}
                     </div>
@@ -3514,7 +3512,7 @@ export default function FinanceCalculator() {
 
                 <Card title="Expense breakdown">
                   {expenseRows.map((e, i) => <div key={i}>{rLine(e.name, fmt(e.amount))}</div>)}
-                  <div style={{ borderTop: `2px solid ${T.left}`, marginTop: 8, paddingTop: 6 }}>
+                  <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                     {rLine("Total monthly expenses", fmt(totalExpenses), T.neg)}
                   </div>
                 </Card>
@@ -3538,13 +3536,13 @@ export default function FinanceCalculator() {
                       <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(agreementPayments.length, 4)}, 1fr)`, gap: 12 }}>
                         {agreementPayments.map((a, i) => (
                           <div key={i} style={{ background: T.warnBg, borderRadius: 6, padding: 12, border: `1px solid ${T.warnBg}` }}>
-                            <div style={{ fontSize: FS.small, fontWeight: 700, color: T.warnInk, marginBottom: 4 }}>{a.name}</div>
+                            <div style={{ fontSize: FS.small, fontWeight: 700, color: T.ink, marginBottom: 4 }}>{a.name}</div>
                             {rLine("Monthly", fmt(a.monthlyPayment))}
                             {rLine("Total interest", fmt(a.totalInterest))}
                           </div>
                         ))}
                       </div>
-                      <div style={{ borderTop: `2px solid ${T.left}`, marginTop: 12, paddingTop: 6 }}>
+                      <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, marginTop: 12, paddingTop: 6 }}>
                         {rLine("Total agreement payments", fmt(totalAgreementMonthly), T.neg)}
                       </div>
                     </Card>
@@ -3553,7 +3551,7 @@ export default function FinanceCalculator() {
 
                 {mode === MODE.HOUSEHOLD && (
                   <>
-                    <SectionHeader num={secHousehold} title="Household contribution split" subtitle={`Split method: ${splitMode === SPLIT_MODE.EARNINGS_RATIO ? "Ratio of Earnings" : "Custom %"} — Person 1: ${splitP1Pct.toFixed(1)}% · Person 2: ${splitP2Pct.toFixed(1)}%`} />
+                    <SectionHeader num={secHousehold} title="Household contribution split" subtitle={`Split method: ${splitMode === SPLIT_MODE.EARNINGS_RATIO ? "Ratio of earnings" : "Custom %"} — Person 1: ${splitP1Pct.toFixed(1)}% · Person 2: ${splitP2Pct.toFixed(1)}%`} />
 
                     <div style={{ gridColumn: "1 / -1" }}>
                       <Card title="Expense-by-expense breakdown">
@@ -3592,7 +3590,7 @@ export default function FinanceCalculator() {
                                 <td style={{ padding: "6px 10px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(r.person === "p2" ? r.amount : 0)}</td>
                               </tr>
                             ))}
-                            <tr style={{ borderTop: `2px solid ${T.ruleStrong}`, fontWeight: 700, background: T.paper }}>
+                            <tr style={{ borderTop: `1.5px solid ${T.ruleStrong}`, fontWeight: 700, background: T.paper }}>
                               <td style={{ padding: "8px 10px" }}>Total all commitments</td>
                               <td style={{ padding: "8px 10px", textAlign: "right" }}>{fmt(totalExpenses + commitTotal)}</td>
                               <td style={{ padding: "8px 10px", textAlign: "right", color: T.ink }}>{fmt(splitTotalP1 + commitP1)}</td>
@@ -3657,7 +3655,7 @@ export default function FinanceCalculator() {
                                 <td style={{ padding: "6px 10px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(r.person === "p2" ? r.amount : 0)}</td>
                               </tr>
                             ))}
-                            <tr style={{ borderTop: `2px solid ${T.saved}`, fontWeight: 700, background: T.paper }}>
+                            <tr style={{ borderTop: `1.5px solid ${T.ruleStrong}`, fontWeight: 700, background: T.paper }}>
                               <td style={{ padding: "8px 10px" }}>Total all commitments</td>
                               <td style={{ padding: "8px 10px", textAlign: "right" }}>{fmt(postSplitTotal + commitTotal)}</td>
                               <td style={{ padding: "8px 10px", textAlign: "right", color: T.ink }}>{fmt(postSplitTotalP1 + commitP1)}</td>
@@ -3699,7 +3697,7 @@ export default function FinanceCalculator() {
                   <SubHead text="Pot balances" color={T.ink} />
                   {pots.length === 0 && rLine("No pots configured", "—", T.inkSoft)}
                   {pots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type}${mode === MODE.HOUSEHOLD ? ` · ${p.owner === "joint" ? "Joint" : p.owner === "p2" ? "P2" : "P1"}` : ""})`, fmt(p.startingBalance || 0))}</div>)}
-                  <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
+                  <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                     {rLine("Total existing savings", fmt(totalExistingSavings), T.ink)}
                   </div>
                   {mode === MODE.HOUSEHOLD && (
@@ -3716,12 +3714,12 @@ export default function FinanceCalculator() {
                   <SubHead text="Monthly saving commitments" color={T.ink} />
                   {snapshot.monthlySavingsGoal > 0 && rLine(`Savings goal (${snapshot.selectedModel})`, fmt(snapshot.monthlySavingsGoal))}
                   {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution))}</div>)}
-                  <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
+                  <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                     {rLine("Total monthly commitments", fmt(snapshot.monthlySavingsGoal + rPotsMonthly), T.ink)}
                   </div>
                 </Card>
 
-                <Card title={`Projected at ${projectionMonths} Months`}>
+                <Card title={`Projected at ${projectionMonths} months`}>
                   <SubHead text="Without buying — keep renting" color={T.ink} />
                   <div style={{ background: T.paper, borderRadius: 6, padding: 14, textAlign: "center", marginBottom: 12, border: `1px solid ${T.rule}` }}>
                     <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Projected total savings</div>
@@ -3763,7 +3761,7 @@ export default function FinanceCalculator() {
                   {rLine(`Property value at ${projectionMonths}m`, fmt(postProjEnd?.propertyValue || 0), T.saved)}
                   {rLine(`Appreciation (${housePriceGrowth}% p.a.)`, fmt((postProjEnd?.propertyValue || 0) - housePrice), T.saved)}
                   {rLine(`Remaining mortgage`, fmt(postProjEnd?.mortgageBalance || 0), T.neg)}
-                  <div style={{ borderTop: `2px solid ${T.saved}`, marginTop: 6, paddingTop: 6 }}>
+                  <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, marginTop: 6, paddingTop: 6 }}>
                     {rLine("Property equity", fmt(postProjEnd?.equity || 0), T.saved)}
                   </div>
                   {projIncludePots && rLine("Pots projected value", fmt(postProjEnd?.potsValue || 0), T.ink)}
@@ -3815,7 +3813,7 @@ export default function FinanceCalculator() {
                   {mortgage.hasFollowOn && rLine("Follow-on rate", `${mortgage.followOnRateUsed}%`)}
                   {rLine("Mortgage term", `${mortgageTerm} years`)}
                   {rLine("Payment method", paymentTiming === "arrears" ? "Standard (in arrears)" : "In advance")}
-                  <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
+                  <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                     {rLine(`Monthly payment${mortgage.isPaymentOverridden ? " (manual)" : ""}`, fmt2(mortgage.monthlyPayment), T.ink)}
                     {rLine(`First payment${mortgage.isFirstPaymentOverridden ? " (manual)" : ` (incl. ${firstPaymentDays} days' interest)`}`, fmt2(mortgage.firstPayment), T.ink)}
                     {mortgage.followOnPayment != null && rLine("Payment after fixed rate", fmt2(mortgage.followOnPayment), T.ink)}
@@ -3859,7 +3857,7 @@ export default function FinanceCalculator() {
                   {purchasePlan.upfrontRows.filter((r) => r.category === "essential").map((r) => (
                     <div key={r.key}>{rLine(`${r.name}${r.paid ? " (paid)" : ""}`, fmt2(r.amount), r.paid ? T.inkSoft : undefined)}</div>
                   ))}
-                  <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
+                  <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                     {rLine("Total (essentials)", fmt2(purchasePlan.essentialsTotal), T.ink)}
                   </div>
                   <SubHead text="Extras" color={T.ink} />
@@ -3867,10 +3865,10 @@ export default function FinanceCalculator() {
                     <div key={r.key}>{rLine(`${r.name}${r.paid ? " (paid)" : ""}`, fmt2(r.amount), r.paid ? T.inkSoft : undefined)}</div>
                   ))}
                   {purchasePlan.extrasCount === 0 && rLine("No extras", "—", T.inkSoft)}
-                  <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
+                  <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                     {rLine("Extras total", fmt2(purchasePlan.extrasTotal), T.ink)}
                   </div>
-                  <div style={{ borderTop: `2px solid ${T.ink}`, marginTop: 8, paddingTop: 6 }}>
+                  <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                     {rLine("Total ideal", fmt2(purchasePlan.idealTotal))}
                   </div>
                   {productFee > 0 && productFeeAddToLoan && <div style={{ fontSize: FS.small, color: T.inkSoft, marginTop: 6 }}>Product fee of {fmt2(productFee)} added to the loan, not paid upfront.</div>}
@@ -3896,7 +3894,7 @@ export default function FinanceCalculator() {
                     pots.filter((p) => p.forPurchase).map((p) => <div key={p.id}>{rLine(p.name, fmt2(Math.max(0, p.startingBalance || 0)))}</div>)
                   )}
                   {purchasePlan.tickedCount === 0 && rLine("No pots ticked for the purchase", "—", T.inkSoft)}
-                  <div style={{ borderTop: `2px solid ${T.saved}`, marginTop: 8, paddingTop: 6 }}>
+                  <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                     {rLine("Total", fmt2(purchasePlan.availableToday), T.saved)}
                     {purchasePlan.completionInFuture && rLine(`Forecast at completion (${fmtDate(completionDate)})`, fmt2(purchasePlan.availableAtCompletion), T.saved)}
                   </div>
@@ -3941,7 +3939,7 @@ export default function FinanceCalculator() {
                         {totalAgreementMonthly > 0 && rLine("Finance agreements", fmt(totalAgreementMonthly))}
                         {snapshot.monthlySavingsGoal > 0 && rLine(`Savings (${snapshot.selectedModel})`, fmt(snapshot.monthlySavingsGoal))}
                         {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution))}</div>)}
-                        <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
+                        <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                           {rLine("Total outgoings", fmt(snapshot.preCommitted), T.ink)}
                         </div>
                         <div style={{ background: T.paper, borderRadius: 6, padding: 12, textAlign: "center", marginTop: 8, border: `1px solid ${snapshot.preDisposable >= 0 ? T.saved : T.neg}` }}>
@@ -3961,7 +3959,7 @@ export default function FinanceCalculator() {
                         {totalAgreementMonthly > 0 && rLine("Finance agreements", fmt(totalAgreementMonthly))}
                         {snapshot.monthlySavingsGoal > 0 && rLine(`Savings (${snapshot.selectedModel})`, fmt(snapshot.monthlySavingsGoal))}
                         {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution))}</div>)}
-                        <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
+                        <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                           {rLine("Total outgoings", fmt(snapshot.postCommitted), T.ink)}
                         </div>
                         <div style={{ background: T.paper, borderRadius: 6, padding: 12, textAlign: "center", marginTop: 8, border: `1px solid ${snapshot.postDisposable >= 0 ? T.saved : T.neg}` }}>
@@ -4057,7 +4055,7 @@ export default function FinanceCalculator() {
                   </div>
                 )}
 
-                <SectionHeader num={secProjection} title={`${projectionMonths}-Month Projection`} subtitle={`Vehicles: ${snapshot.activeVehicles.length > 0 ? snapshot.activeVehicles.join(" + ") : "None"} · ${salaryGrowth}% salary growth · ${inflationRate}% inflation`} color={T.ink} />
+                <SectionHeader num={secProjection} title={`${projectionMonths}-month projection`} subtitle={`Vehicles: ${snapshot.activeVehicles.length > 0 ? snapshot.activeVehicles.join(" + ") : "None"} · ${salaryGrowth}% salary growth · ${inflationRate}% inflation`} />
 
                 <div style={{ gridColumn: "1 / -1" }}>
                   <Card title="Month-by-month projection">
