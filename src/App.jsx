@@ -359,7 +359,13 @@ const FONT = Object.freeze({
   ui: "'Geologica Variable', system-ui, sans-serif",
 });
 const FS = Object.freeze({ small: 12, body: 14, input: 16, heading: 20, figure: 28, hero: 44 });
-const COLORS = ["#6366f1", "#f59e0b", "#10b981", "#ef4444", "#8b5cf6", "#ec4899", "#14b8a6", "#f97316"];
+const CHART = [T.home, T.saved, T.left, T.tax, T.living, "#7A5C99", "#3E8C8C", "#A0522D"];
+const AXIS = { stroke: T.rule, tick: { fontSize: FS.small, fill: T.inkSoft }, tickLine: false };
+const TOOLTIP = {
+  contentStyle: { background: T.sheet, border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.small, color: T.ink },
+  labelStyle: { color: T.inkSoft },
+};
+const LEGEND = { wrapperStyle: { fontSize: FS.small, color: T.inkSoft } };
 const NAV_GROUPS = [
   { name: "Earn", tabs: [0, 1] },
   { name: "Buy a home", tabs: [2, 3] },
@@ -587,14 +593,14 @@ export default function FinanceCalculator() {
     other: "other",
   };
   const POT_TYPE_COLORS = {
-    current: T.inkSoft,
-    savings: T.saved,
-    isa: T.ink,
-    lisa: T.ink,
-    investment: T.warnInk,
-    pension: T.ink,
-    shareScheme: T.ink,
-    other: T.inkSoft,
+    current: CHART[3],
+    savings: CHART[1],
+    isa: CHART[0],
+    lisa: CHART[5],
+    investment: CHART[2],
+    pension: CHART[6],
+    shareScheme: CHART[7],
+    other: CHART[4],
   };
   const defaultCompoundingFor = (type) => {
     switch (type) {
@@ -1941,10 +1947,10 @@ export default function FinanceCalculator() {
                     <PieChart>
                       <Pie data={expensePieData} cx="50%" cy="50%" innerRadius={50} outerRadius={90} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
                         {expensePieData.map((_, i) => (
-                          <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                          <Cell key={i} fill={CHART[i % CHART.length]} />
                         ))}
                       </Pie>
-                      <Tooltip formatter={(v) => fmt(v)} />
+                      <Tooltip {...TOOLTIP} formatter={(v) => fmt(v)} />
                     </PieChart>
                   </ResponsiveContainer>
                 </Card>
@@ -1983,13 +1989,13 @@ export default function FinanceCalculator() {
               </div>
               <ResponsiveContainer width="100%" height={180}>
                 <BarChart data={[{ name: "Needs", budget: Math.round(savingsModels["50/30/20"].needs), actual: Math.round(savingsModels["50/30/20"].actualNeeds) }, { name: "Wants", budget: Math.round(savingsModels["50/30/20"].wants), actual: Math.round(savingsModels["50/30/20"].actualWants) }, { name: "Savings", budget: Math.round(savingsModels["50/30/20"].savings), actual: Math.round(savingsModels["50/30/20"].actualSavings) }]}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" tick={{ fontSize: FS.small }} />
-                  <YAxis tickFormatter={(v) => `£${v}`} tick={{ fontSize: FS.small }} />
-                  <Tooltip formatter={(v) => fmt(v)} />
-                  <Legend />
-                  <Bar dataKey="budget" name="Budget" fill={T.home} radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="actual" name="Actual" fill={T.left} radius={[4, 4, 0, 0]} />
+                  <CartesianGrid stroke={T.rule} vertical={false} />
+                  <XAxis {...AXIS} dataKey="name" />
+                  <YAxis {...AXIS} tickFormatter={(v) => `£${v}`} tick={{ fontSize: FS.small }} />
+                  <Tooltip {...TOOLTIP} formatter={(v) => fmt(v)} />
+                  <Legend {...LEGEND} />
+                  <Bar dataKey="budget" name="Budget" fill={T.home} radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="actual" name="Actual" fill={CHART[2]} radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </Card>
@@ -2020,13 +2026,13 @@ export default function FinanceCalculator() {
               </div>
               <ResponsiveContainer width="100%" height={180}>
                 <BarChart data={[{ name: "Living", budget: Math.round(savingsModels["70/20/10"].living), actual: Math.round(savingsModels["70/20/10"].actualLiving) }, { name: "Savings", budget: Math.round(savingsModels["70/20/10"].savings), actual: Math.round(savingsModels["70/20/10"].actualSavings) }, { name: "Debt", budget: Math.round(savingsModels["70/20/10"].debt), actual: Math.round(savingsModels["70/20/10"].actualDebt) }]}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" tick={{ fontSize: FS.small }} />
-                  <YAxis tickFormatter={(v) => `£${v}`} tick={{ fontSize: FS.small }} />
-                  <Tooltip formatter={(v) => fmt(v)} />
-                  <Legend />
-                  <Bar dataKey="budget" name="Budget" fill={T.left} radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="actual" name="Actual" fill={T.home} radius={[4, 4, 0, 0]} />
+                  <CartesianGrid stroke={T.rule} vertical={false} />
+                  <XAxis {...AXIS} dataKey="name" />
+                  <YAxis {...AXIS} tickFormatter={(v) => `£${v}`} tick={{ fontSize: FS.small }} />
+                  <Tooltip {...TOOLTIP} formatter={(v) => fmt(v)} />
+                  <Legend {...LEGEND} />
+                  <Bar dataKey="budget" name="Budget" fill={CHART[0]} radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="actual" name="Actual" fill={CHART[2]} radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </Card>
@@ -2060,15 +2066,15 @@ export default function FinanceCalculator() {
                       { model: "Pay Yourself First", target: Math.round(pyfSavingsTarget), actual: Math.round(Math.min(pyfSavingsTarget, Math.max(0, totalMonthlyNet - totalExpenses - totalAgreementMonthly))), annualTarget: Math.round(pyfSavingsTarget * 12), annualActual: Math.round(Math.min(pyfSavingsTarget, Math.max(0, totalMonthlyNet - totalExpenses - totalAgreementMonthly)) * 12) },
                     ]}
                   >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="model" />
-                    <YAxis tickFormatter={(v) => `£${v}`} />
-                    <Tooltip formatter={(v) => fmt(v)} />
-                    <Legend />
-                    <Bar dataKey="target" name="Monthly target" fill={T.home} radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="actual" name="Monthly actual" fill={T.saved} radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="annualTarget" name="Annual target" fill={T.home} fillOpacity={0.4} radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="annualActual" name="Annual actual" fill={T.saved} fillOpacity={0.4} radius={[6, 6, 0, 0]} />
+                    <CartesianGrid stroke={T.rule} vertical={false} />
+                    <XAxis {...AXIS} dataKey="model" />
+                    <YAxis {...AXIS} tickFormatter={(v) => `£${v}`} />
+                    <Tooltip {...TOOLTIP} formatter={(v) => fmt(v)} />
+                    <Legend {...LEGEND} />
+                    <Bar dataKey="target" name="Monthly target" fill={T.home} radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="actual" name="Monthly actual" fill={T.saved} radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="annualTarget" name="Annual target" fill={T.home} fillOpacity={0.4} radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="annualActual" name="Annual actual" fill={T.saved} fillOpacity={0.4} radius={[3, 3, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </Card>
@@ -2377,16 +2383,16 @@ export default function FinanceCalculator() {
               <Card title={overpayMonthly > 0 || overpayAnnual > 0 ? "Mortgage Balance — Standard vs Overpayment" : "Mortgage Balance Over Time"} color={T.ink}>
                 <ResponsiveContainer width="100%" height={350}>
                   <AreaChart data={mortgageAmortisation.data}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="year" label={{ value: "Year", position: "insideBottom", offset: -5 }} />
-                    <YAxis tickFormatter={(v) => `£${(v / 1000).toFixed(0)}k`} />
-                    <Tooltip formatter={(v) => fmt(v)} />
-                    <Legend />
+                    <CartesianGrid stroke={T.rule} vertical={false} />
+                    <XAxis {...AXIS} dataKey="year" label={{ value: "Year", position: "insideBottom", offset: -5 }} />
+                    <YAxis {...AXIS} tickFormatter={(v) => `£${(v / 1000).toFixed(0)}k`} />
+                    <Tooltip {...TOOLTIP} formatter={(v) => fmt(v)} />
+                    <Legend {...LEGEND} />
                     <Area type="monotone" dataKey="balance" name="Standard balance" fill={T.home} fillOpacity={0.13} stroke={T.home} strokeWidth={2} />
                     {(overpayMonthly > 0 || overpayAnnual > 0) && (
                       <Area type="monotone" dataKey="balanceOp" name="With overpayments" fill={T.saved} fillOpacity={0.13} stroke={T.saved} strokeWidth={2} strokeDasharray="6 3" />
                     )}
-                    <Area type="monotone" dataKey="interest" name="Yearly interest" fill={T.neg} fillOpacity={0.13} stroke={T.neg} strokeWidth={1} />
+                    <Area type="monotone" dataKey="interest" name="Yearly interest" fill={CHART[2]} fillOpacity={0.13} stroke={CHART[2]} strokeWidth={1} />
                     {mortgageAmortisation.fixEndYear && (
                       <ReferenceLine x={mortgageAmortisation.fixEndYear} stroke={T.left} strokeDasharray="4 4" label={{ value: "Fixed rate ends", position: "insideTopRight", fill: T.warnInk, fontSize: FS.small }} />
                     )}
@@ -3000,13 +3006,13 @@ export default function FinanceCalculator() {
                 </div>
                 <ResponsiveContainer width="100%" height={400}>
                   <AreaChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" tickFormatter={(m) => (m < 12 ? `${m}m` : `${(m / 12).toFixed(0)}y`)} />
-                    <YAxis tickFormatter={(v) => `£${(v / 1000).toFixed(0)}k`} />
-                    <Tooltip formatter={(v) => fmt(v)} labelFormatter={(m) => (m < 12 ? `Month ${m}` : `Year ${(m / 12).toFixed(1)}`)} />
-                    <Legend />
+                    <CartesianGrid stroke={T.rule} vertical={false} />
+                    <XAxis {...AXIS} dataKey="month" tickFormatter={(m) => (m < 12 ? `${m}m` : `${(m / 12).toFixed(0)}y`)} />
+                    <YAxis {...AXIS} tickFormatter={(v) => `£${(v / 1000).toFixed(0)}k`} />
+                    <Tooltip {...TOOLTIP} formatter={(v) => fmt(v)} labelFormatter={(m) => (m < 12 ? `Month ${m}` : `Year ${(m / 12).toFixed(1)}`)} />
+                    <Legend {...LEGEND} />
                     {pots.map((p, i) => (
-                      <Area key={p.id} type="monotone" dataKey={`pot_${p.id}`} name={p.name} stackId="1" fill={POT_TYPE_COLORS[p.type] || COLORS[i % COLORS.length]} fillOpacity={0.6} stroke={POT_TYPE_COLORS[p.type] || COLORS[i % COLORS.length]} strokeWidth={1.5} />
+                      <Area key={p.id} type="monotone" dataKey={`pot_${p.id}`} name={p.name} stackId="1" fill={POT_TYPE_COLORS[p.type] || CHART[i % CHART.length]} fillOpacity={0.6} stroke={POT_TYPE_COLORS[p.type] || CHART[i % CHART.length]} strokeWidth={1.5} />
                     ))}
                   </AreaChart>
                 </ResponsiveContainer>
@@ -3194,11 +3200,11 @@ export default function FinanceCalculator() {
               <Card title="Savings accumulation">
                 <ResponsiveContainer width="100%" height={350}>
                   <AreaChart data={projectionData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="label" />
-                    <YAxis tickFormatter={(v) => `£${(v / 1000).toFixed(1)}k`} />
-                    <Tooltip formatter={(v) => fmt(v)} />
-                    <Legend />
+                    <CartesianGrid stroke={T.rule} vertical={false} />
+                    <XAxis {...AXIS} dataKey="label" />
+                    <YAxis {...AXIS} tickFormatter={(v) => `£${(v / 1000).toFixed(1)}k`} />
+                    <Tooltip {...TOOLTIP} formatter={(v) => fmt(v)} />
+                    <Legend {...LEGEND} />
                     <Area type="monotone" dataKey="totalSavings" name="Total savings" fill={T.saved} fillOpacity={0.2} stroke={T.saved} strokeWidth={3} />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -3207,14 +3213,14 @@ export default function FinanceCalculator() {
               <Card title="Monthly income vs expenses vs savings">
                 <ResponsiveContainer width="100%" height={350}>
                   <BarChart data={projectionData.filter((_, i) => i > 0)}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="label" />
-                    <YAxis tickFormatter={(v) => `£${v}`} />
-                    <Tooltip formatter={(v) => fmt(v)} />
-                    <Legend />
-                    <Bar dataKey="income" name="Income" fill={T.saved} radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="expenses" name="Expenses" fill={T.neg} radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="saving" name="Savings" fill={T.home} radius={[4, 4, 0, 0]} />
+                    <CartesianGrid stroke={T.rule} vertical={false} />
+                    <XAxis {...AXIS} dataKey="label" />
+                    <YAxis {...AXIS} tickFormatter={(v) => `£${v}`} />
+                    <Tooltip {...TOOLTIP} formatter={(v) => fmt(v)} />
+                    <Legend {...LEGEND} />
+                    <Bar dataKey="income" name="Income" fill={CHART[0]} radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="expenses" name="Expenses" fill={CHART[4]} radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="saving" name="Savings" fill={CHART[1]} radius={[3, 3, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </Card>
@@ -3236,13 +3242,13 @@ export default function FinanceCalculator() {
                 </div>
                 <ResponsiveContainer width="100%" height={350}>
                   <AreaChart data={projectionData.map((d, i) => ({ label: d.label, rentSavings: d.totalSavings, buySavings: postPurchaseData[i]?.totalSavings || 0, buyNetWealth: postPurchaseData[i]?.netWealth || 0 }))}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="label" />
-                    <YAxis tickFormatter={(v) => `£${(v / 1000).toFixed(0)}k`} />
-                    <Tooltip formatter={(v) => fmt(v)} />
-                    <Legend />
+                    <CartesianGrid stroke={T.rule} vertical={false} />
+                    <XAxis {...AXIS} dataKey="label" />
+                    <YAxis {...AXIS} tickFormatter={(v) => `£${(v / 1000).toFixed(0)}k`} />
+                    <Tooltip {...TOOLTIP} formatter={(v) => fmt(v)} />
+                    <Legend {...LEGEND} />
                     <Area type="monotone" dataKey="rentSavings" name="Renting — savings" fill={T.home} fillOpacity={0.13} stroke={T.home} strokeWidth={2} />
-                    <Area type="monotone" dataKey="buySavings" name="Buying today — savings" fill={T.home} fillOpacity={0.13} stroke={T.home} strokeWidth={2} strokeDasharray="6 3" />
+                    <Area type="monotone" dataKey="buySavings" name="Buying today — savings" fill={CHART[2]} fillOpacity={0.13} stroke={CHART[2]} strokeWidth={2} strokeDasharray="6 3" />
                     <Area type="monotone" dataKey="buyNetWealth" name="Buying today — net wealth" fill={T.saved} fillOpacity={0.13} stroke={T.saved} strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -3291,10 +3297,10 @@ export default function FinanceCalculator() {
                     <PieChart>
                       <Pie data={expenseLogByCategory} cx="50%" cy="50%" innerRadius={40} outerRadius={80} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
                         {expenseLogByCategory.map((_, i) => (
-                          <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                          <Cell key={i} fill={CHART[i % CHART.length]} />
                         ))}
                       </Pie>
-                      <Tooltip formatter={(v) => fmt(v)} />
+                      <Tooltip {...TOOLTIP} formatter={(v) => fmt(v)} />
                     </PieChart>
                   </ResponsiveContainer>
                 )}
@@ -3518,10 +3524,10 @@ export default function FinanceCalculator() {
                     <PieChart>
                       <Pie data={expensePieData} cx="50%" cy="50%" innerRadius={40} outerRadius={75} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false} style={{ fontSize: FS.small }}>
                         {expensePieData.map((_, i) => (
-                          <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                          <Cell key={i} fill={CHART[i % CHART.length]} />
                         ))}
                       </Pie>
-                      <Tooltip formatter={(v) => fmt(v)} />
+                      <Tooltip {...TOOLTIP} formatter={(v) => fmt(v)} />
                     </PieChart>
                   </ResponsiveContainer>
                 </Card>
@@ -3692,7 +3698,7 @@ export default function FinanceCalculator() {
                 <Card title="Current position">
                   <SubHead text="Pot balances" color={T.ink} />
                   {pots.length === 0 && rLine("No pots configured", "—", T.inkSoft)}
-                  {pots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type}${mode === MODE.HOUSEHOLD ? ` · ${p.owner === "joint" ? "Joint" : p.owner === "p2" ? "P2" : "P1"}` : ""})`, fmt(p.startingBalance || 0), POT_TYPE_COLORS[p.type])}</div>)}
+                  {pots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type}${mode === MODE.HOUSEHOLD ? ` · ${p.owner === "joint" ? "Joint" : p.owner === "p2" ? "P2" : "P1"}` : ""})`, fmt(p.startingBalance || 0))}</div>)}
                   <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                     {rLine("Total existing savings", fmt(totalExistingSavings), T.ink)}
                   </div>
@@ -3709,7 +3715,7 @@ export default function FinanceCalculator() {
                   {snapshot.activeVehicles.length === 0 && rLine("No savings vehicles enabled", "—", T.inkSoft)}
                   <SubHead text="Monthly saving commitments" color={T.ink} />
                   {snapshot.monthlySavingsGoal > 0 && rLine(`Savings goal (${snapshot.selectedModel})`, fmt(snapshot.monthlySavingsGoal))}
-                  {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution), POT_TYPE_COLORS[p.type])}</div>)}
+                  {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution))}</div>)}
                   <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                     {rLine("Total monthly commitments", fmt(snapshot.monthlySavingsGoal + rPotsMonthly), T.ink)}
                   </div>
@@ -3725,7 +3731,7 @@ export default function FinanceCalculator() {
                   {projIncludePots && rLine("Pots projected value", fmt(projEnd?.potsValue || 0), T.ink)}
                   {projIncludePots && pots.length > 0 && (
                     <div style={{ marginLeft: 12, marginTop: 4 }}>
-                      {pots.map((p) => <div key={p.id}>{rLine(`↳ ${p.name}`, fmt(potEndValues[p.id] || 0), POT_TYPE_COLORS[p.type])}</div>)}
+                      {pots.map((p) => <div key={p.id}>{rLine(`↳ ${p.name}`, fmt(potEndValues[p.id] || 0))}</div>)}
                     </div>
                   )}
                   {rLine("Cash savings (model)", fmt(projEnd?.cashSavings || 0), T.saved)}
@@ -3763,7 +3769,7 @@ export default function FinanceCalculator() {
                   {projIncludePots && rLine("Pots projected value", fmt(postProjEnd?.potsValue || 0), T.ink)}
                   {projIncludePots && pots.length > 0 && (
                     <div style={{ marginLeft: 12, marginTop: 4 }}>
-                      {pots.map((p) => <div key={p.id}>{rLine(`↳ ${p.name}${upfrontDrawdown[p.id] ? ` (−${fmt(upfrontDrawdown[p.id])} drawn)` : ""}`, fmt(postPotEndValues[p.id] || 0), POT_TYPE_COLORS[p.type])}</div>)}
+                      {pots.map((p) => <div key={p.id}>{rLine(`↳ ${p.name}${upfrontDrawdown[p.id] ? ` (−${fmt(upfrontDrawdown[p.id])} drawn)` : ""}`, fmt(postPotEndValues[p.id] || 0))}</div>)}
                     </div>
                   )}
                   {rLine(`Monthly outgoings`, fmt(postProjEnd?.expenses || 0), T.neg)}
@@ -3881,13 +3887,13 @@ export default function FinanceCalculator() {
                         <div key={g.key}>
                           {rLine(g.label, fmt2(purchasePlan.availableTodayByOwner[g.key]), g.color)}
                           <div style={{ marginLeft: 12 }}>
-                            {groupPots.map((p) => <div key={p.id}>{rLine(`↳ ${p.name}`, fmt2(Math.max(0, p.startingBalance || 0)), POT_TYPE_COLORS[p.type])}</div>)}
+                            {groupPots.map((p) => <div key={p.id}>{rLine(`↳ ${p.name}`, fmt2(Math.max(0, p.startingBalance || 0)))}</div>)}
                           </div>
                         </div>
                       );
                     })
                   ) : (
-                    pots.filter((p) => p.forPurchase).map((p) => <div key={p.id}>{rLine(p.name, fmt2(Math.max(0, p.startingBalance || 0)), POT_TYPE_COLORS[p.type])}</div>)
+                    pots.filter((p) => p.forPurchase).map((p) => <div key={p.id}>{rLine(p.name, fmt2(Math.max(0, p.startingBalance || 0)))}</div>)
                   )}
                   {purchasePlan.tickedCount === 0 && rLine("No pots ticked for the purchase", "—", T.inkSoft)}
                   <div style={{ borderTop: `2px solid ${T.saved}`, marginTop: 8, paddingTop: 6 }}>
@@ -3934,7 +3940,7 @@ export default function FinanceCalculator() {
                         {rLine("Living expenses (excl. rent)", fmt(totalExpenses - rent))}
                         {totalAgreementMonthly > 0 && rLine("Finance agreements", fmt(totalAgreementMonthly))}
                         {snapshot.monthlySavingsGoal > 0 && rLine(`Savings (${snapshot.selectedModel})`, fmt(snapshot.monthlySavingsGoal))}
-                        {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution), POT_TYPE_COLORS[p.type])}</div>)}
+                        {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution))}</div>)}
                         <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                           {rLine("Total outgoings", fmt(snapshot.preCommitted), T.ink)}
                         </div>
@@ -3954,7 +3960,7 @@ export default function FinanceCalculator() {
                         {rLine(`Living expenses (excl. rent${councilTaxInBillsApplied > 0 ? " & current council tax" : ""})`, fmt(postLivingExpenses))}
                         {totalAgreementMonthly > 0 && rLine("Finance agreements", fmt(totalAgreementMonthly))}
                         {snapshot.monthlySavingsGoal > 0 && rLine(`Savings (${snapshot.selectedModel})`, fmt(snapshot.monthlySavingsGoal))}
-                        {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution), POT_TYPE_COLORS[p.type])}</div>)}
+                        {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution))}</div>)}
                         <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
                           {rLine("Total outgoings", fmt(snapshot.postCommitted), T.ink)}
                         </div>
@@ -4017,13 +4023,13 @@ export default function FinanceCalculator() {
                   <Card title="Wealth projection — renting vs buying">
                     <ResponsiveContainer width="100%" height={300}>
                       <AreaChart data={projectionData.map((d, i) => ({ label: d.label, rentSavings: d.totalSavings, buySavings: postPurchaseData[i]?.totalSavings || 0, buyNetWealth: postPurchaseData[i]?.netWealth || 0 }))}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="label" />
-                        <YAxis tickFormatter={(v) => `£${(v / 1000).toFixed(0)}k`} />
-                        <Tooltip formatter={(v) => fmt(v)} />
-                        <Legend />
+                        <CartesianGrid stroke={T.rule} vertical={false} />
+                        <XAxis {...AXIS} dataKey="label" />
+                        <YAxis {...AXIS} tickFormatter={(v) => `£${(v / 1000).toFixed(0)}k`} />
+                        <Tooltip {...TOOLTIP} formatter={(v) => fmt(v)} />
+                        <Legend {...LEGEND} />
                         <Area type="monotone" dataKey="rentSavings" name="Renting — savings" fill={T.home} fillOpacity={0.13} stroke={T.home} strokeWidth={2} />
-                        <Area type="monotone" dataKey="buySavings" name="Buying today — savings" fill={T.home} fillOpacity={0.13} stroke={T.home} strokeWidth={2} strokeDasharray="6 3" />
+                        <Area type="monotone" dataKey="buySavings" name="Buying today — savings" fill={CHART[2]} fillOpacity={0.13} stroke={CHART[2]} strokeWidth={2} strokeDasharray="6 3" />
                         <Area type="monotone" dataKey="buyNetWealth" name="Buying today — net wealth (incl. equity)" fill={T.saved} fillOpacity={0.13} stroke={T.saved} strokeWidth={2} />
                       </AreaChart>
                     </ResponsiveContainer>
@@ -4038,11 +4044,11 @@ export default function FinanceCalculator() {
                     <Card title="Mortgage balance — standard vs overpayment">
                       <ResponsiveContainer width="100%" height={260}>
                         <AreaChart data={mortgageAmortisation.data.filter((_, i) => i % 2 === 0 || i === mortgageAmortisation.data.length - 1)}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="year" />
-                          <YAxis tickFormatter={(v) => `£${(v / 1000).toFixed(0)}k`} />
-                          <Tooltip formatter={(v) => fmt(v)} />
-                          <Legend />
+                          <CartesianGrid stroke={T.rule} vertical={false} />
+                          <XAxis {...AXIS} dataKey="year" />
+                          <YAxis {...AXIS} tickFormatter={(v) => `£${(v / 1000).toFixed(0)}k`} />
+                          <Tooltip {...TOOLTIP} formatter={(v) => fmt(v)} />
+                          <Legend {...LEGEND} />
                           <Area type="monotone" dataKey="balance" name="Standard" fill={T.home} fillOpacity={0.13} stroke={T.home} strokeWidth={2} />
                           <Area type="monotone" dataKey="balanceOp" name="With overpayments" fill={T.saved} fillOpacity={0.13} stroke={T.saved} strokeWidth={2} />
                         </AreaChart>
