@@ -134,13 +134,17 @@ function mortgagePayment(principal, annualRatePct, months, timing) {
   return timing === "arrears" ? arrears : arrears / (1 + r);
 }
 
-function runMortgage(p, overpayMonthly, overpayAnnual, followOnPayment) {
+function isFinalPaymentResidue(balance, due) {
+  return balance < Math.max(1, due * 0.01);
+}
+
+function runMortgage(p, overpayMonthly, overpayAnnual, contractualFollowOnPayment) {
   const { principal, months, timing, rate, payment, firstPayment, stubInterest } = p;
   const followOnRate = p.followOnRate > 0 ? p.followOnRate : rate;
   const fixedMonths = p.fixedMonths >= 1 && p.fixedMonths <= months ? p.fixedMonths : months;
   const advance = timing !== "arrears";
   const rows = [{ month: 0, payment: 0, overpayment: 0, lump: 0, interest: 0, balance: principal }];
-  let bal = principal, due = payment, followOn = followOnPayment;
+  let bal = principal, due = payment, followOn = contractualFollowOnPayment;
   let totalInterest = 0, totalPaid = 0, payoffMonth = null, negAmMonth = null;
   for (let m = 1; m <= months; m++) {
     if (m === fixedMonths + 1) {
@@ -167,7 +171,7 @@ function runMortgage(p, overpayMonthly, overpayAnnual, followOnPayment) {
     } else {
       bal = avail - pay - over - lump;
     }
-    if (m === months && bal < Math.max(1, due * 0.01)) {
+    if (m === months && isFinalPaymentResidue(bal, due)) {
       pay += bal;
       bal = 0;
     }
@@ -181,9 +185,16 @@ function runMortgage(p, overpayMonthly, overpayAnnual, followOnPayment) {
   return { rows, totalInterest, totalPaid, residual: bal, payoffMonth, negAmMonth, followOnPayment: followOn };
 }
 
+function negAmMonthIgnoringShortFirstPayment(run, shortFirstPayment) {
+  if (!(shortFirstPayment && run.negAmMonth === 1)) return run.negAmMonth;
+  const later = run.rows.findIndex((r, i) => i >= 2 && r.balance > run.rows[i - 1].balance + MORTGAGE_EPS);
+  return later > 0 ? later : null;
+}
+
 function buildMortgageSchedule(p) {
   const base = runMortgage(p, 0, 0, null);
-  const op = runMortgage(p, p.overpayMonthly, p.overpayAnnual, base.followOnPayment);
+  const contractualFollowOnPayment = base.followOnPayment;
+  const op = runMortgage(p, p.overpayMonthly, p.overpayAnnual, contractualFollowOnPayment);
   return { base, op };
 }
 
@@ -1081,8 +1092,7 @@ export default function FinanceCalculator() {
     }
 
     const lowFirstPayment = isFirstPaymentOverridden && firstPaymentOverride < monthlyPayment - MORTGAGE_EPS;
-    const laterNegAm = base.rows.findIndex((r, i) => i >= 2 && r.balance > base.rows[i - 1].balance + MORTGAGE_EPS);
-    const negAmFrom = lowFirstPayment && base.negAmMonth === 1 ? (laterNegAm > 0 ? laterNegAm : null) : base.negAmMonth;
+    const negAmFrom = negAmMonthIgnoringShortFirstPayment(base, lowFirstPayment);
 
     const warnings = [];
     if (fixExpired) warnings.push({ level: "warn", text: `Your fixed rate ends before your first monthly payment, so the follow-on rate (${followOnRateUsed}%) is used from the start — check the dates.` });
