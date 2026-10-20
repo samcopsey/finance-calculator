@@ -363,24 +363,24 @@ const COLORS = ["#6366f1", "#f59e0b", "#10b981", "#ef4444", "#8b5cf6", "#ec4899"
 const TAB_STYLE = (active) => ({
   padding: "10px 16px",
   border: "none",
-  borderBottom: active ? "3px solid #6366f1" : "3px solid transparent",
-  background: active ? "#f0f0ff" : "transparent",
-  color: active ? "#6366f1" : "#64748b",
+  borderBottom: active ? `3px solid ${T.ruleStrong}` : "3px solid transparent",
+  background: active ? T.paper : "transparent",
+  color: active ? T.ink : T.inkSoft,
   fontWeight: active ? 700 : 500,
   cursor: "pointer",
-  fontSize: 14,
+  fontSize: FS.body,
   whiteSpace: "nowrap",
   transition: "all 0.2s",
 });
-const HINT_STYLE = { fontSize: 11, color: "#94a3b8", marginTop: -12, marginBottom: 12, lineHeight: 1.4 };
-const LINK_BTN = { background: "none", border: "none", padding: 0, color: "#6366f1", fontWeight: 700, fontSize: "inherit", cursor: "pointer", textDecoration: "underline" };
-const PILL_STYLE = { fontSize: 10, padding: "1px 6px", borderRadius: 4, background: "#eef2ff", color: "#6366f1", fontWeight: 600, marginLeft: 6, textTransform: "uppercase" };
-const INACTIVE_INPUT = { background: "#f8fafc", color: "#94a3b8" };
-const CHIP_STYLE = { padding: "4px 10px", borderRadius: 99, border: "1px dashed #cbd5e1", background: "#fff", color: "#475569", fontSize: 12, cursor: "pointer" };
+const HINT_STYLE = { fontSize: FS.small, color: T.inkSoft, marginTop: -12, marginBottom: 12, lineHeight: 1.4 };
+const LINK_BTN = { background: "none", border: "none", padding: 0, color: T.ink, fontWeight: 700, fontSize: "inherit", cursor: "pointer", textDecoration: "underline" };
+const PILL_STYLE = { fontSize: FS.small, padding: "1px 6px", borderRadius: 3, background: T.paper, color: T.ink, fontWeight: 600, marginLeft: 6 };
+const INACTIVE_INPUT = { background: T.paper, color: T.inkSoft };
+const CHIP_STYLE = { padding: "4px 10px", borderRadius: 3, border: `1px dashed ${T.rule}`, background: T.sheet, color: T.inkSoft, fontSize: FS.small, cursor: "pointer" };
 const WARNING_STYLES = {
-  error: { background: "#fef2f2", border: "1px solid #fecaca", color: "#ef4444" },
-  warn: { background: "#fffbeb", border: "1px solid #fde68a", color: "#92400e" },
-  info: { background: "#f0fdf4", border: "1px solid #bbf7d0", color: "#166534" },
+  error: { background: T.paper, border: `1px solid ${T.neg}`, color: T.neg },
+  warn: { background: T.warnBg, border: `1px solid ${T.warnBg}`, color: T.warnInk },
+  info: { background: T.paper, border: `1px solid ${T.saved}`, color: T.saved },
 };
 
 function InputGroup({ label, value, onChange, prefix = "£", suffix, type = "number", min, max, step }) {
@@ -432,14 +432,14 @@ function InfoTip({ items, children }) {
     <span style={{ position: "relative", display: "inline-block" }} onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}>
       {children}
       {show && items && items.length > 0 && (
-        <div style={{ position: "absolute", bottom: "100%", left: "50%", transform: "translateX(-50%)", background: "#1e293b", color: "#fff", borderRadius: 8, padding: "10px 14px", fontSize: 12, whiteSpace: "nowrap", zIndex: 999, boxShadow: "0 4px 12px rgba(0,0,0,0.2)", marginBottom: 6, minWidth: 180 }}>
+        <div style={{ position: "absolute", bottom: "100%", left: "50%", transform: "translateX(-50%)", background: T.ink, color: T.sheet, borderRadius: 6, padding: "10px 14px", fontSize: FS.small, whiteSpace: "nowrap", zIndex: 999, marginBottom: 6, minWidth: 180 }}>
           {items.map((item, i) => (
-            <div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 16, padding: "2px 0", borderBottom: i < items.length - 1 ? "1px solid #334155" : "none" }}>
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 16, padding: "2px 0", borderBottom: i < items.length - 1 ? `1px solid ${T.inkSoft}` : "none" }}>
               <span style={{ opacity: 0.8 }}>{item.label}</span>
               <strong>{item.value}</strong>
             </div>
           ))}
-          <div style={{ position: "absolute", top: "100%", left: "50%", transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: "6px solid #1e293b" }} />
+          <div style={{ position: "absolute", top: "100%", left: "50%", transform: "translateX(-50%)", width: 0, height: 0, borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderTop: `6px solid ${T.ink}` }} />
         </div>
       )}
     </span>
@@ -459,7 +459,7 @@ function Toggle({ value, onChange, labels, label }) {
             flex: 1,
             padding: "7px 14px",
             border: "none",
-            borderRadius: 4,
+            borderRadius: 3,
             background: value === i ? T.ink : "transparent",
             color: value === i ? T.paper : T.inkSoft,
             fontWeight: value === i ? 600 : 500,
@@ -531,14 +531,14 @@ export default function FinanceCalculator() {
     other: "other",
   };
   const POT_TYPE_COLORS = {
-    current: "#64748b",
-    savings: "#10b981",
-    isa: "#8b5cf6",
-    lisa: "#ec4899",
-    investment: "#f59e0b",
-    pension: "#6366f1",
-    shareScheme: "#0ea5e9",
-    other: "#94a3b8",
+    current: T.inkSoft,
+    savings: T.saved,
+    isa: T.ink,
+    lisa: T.ink,
+    investment: T.warnInk,
+    pension: T.ink,
+    shareScheme: T.ink,
+    other: T.inkSoft,
   };
   const defaultCompoundingFor = (type) => {
     switch (type) {
@@ -1508,17 +1508,17 @@ export default function FinanceCalculator() {
 
   return (
     <div style={{ fontFamily: FONT.ui, fontVariantNumeric: "tabular-nums", fontSize: FS.body, lineHeight: 1.45, background: T.paper, minHeight: "100vh", color: T.ink, "--focus": T.focus }}>
-      <div style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)", padding: "24px 32px", color: "#fff" }}>
+      <div style={{ background: `linear-gradient(135deg, ${T.home}, ${T.home})`, padding: "24px 32px", color: T.sheet }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800 }}>Personal Finance Calculator</h1>
+          <h1 style={{ margin: 0, fontSize: FS.figure, fontWeight: 700 }}>Personal Finance Calculator</h1>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-            <p style={{ margin: "4px 0 0 0", opacity: 0.85, fontSize: 14 }}>UK Tax Year 2026/27 · Model your finances, plan your future</p>
+            <p style={{ margin: "4px 0 0 0", opacity: 0.85, fontSize: FS.body }}>UK Tax Year 2026/27 · Model your finances, plan your future</p>
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              {saveNotice && <span style={{ fontSize: 13, background: "#ffffff33", padding: "4px 12px", borderRadius: 6 }}>{saveNotice}</span>}
-              <button onClick={handleSave} style={{ padding: "8px 16px", background: "#ffffff22", border: "1px solid #ffffff44", borderRadius: 8, color: "#fff", cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
+              {saveNotice && <span style={{ fontSize: FS.body, background: T.sheet, padding: "4px 12px", borderRadius: 6 }}>{saveNotice}</span>}
+              <button onClick={handleSave} style={{ padding: "8px 16px", background: T.sheet, border: `1px solid ${T.sheet}`, borderRadius: 6, color: T.sheet, cursor: "pointer", fontWeight: 600, fontSize: FS.body }}>
                 Save Data
               </button>
-              <button onClick={() => fileInputRef.current?.click()} style={{ padding: "8px 16px", background: "#ffffff22", border: "1px solid #ffffff44", borderRadius: 8, color: "#fff", cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
+              <button onClick={() => fileInputRef.current?.click()} style={{ padding: "8px 16px", background: T.sheet, border: `1px solid ${T.sheet}`, borderRadius: 6, color: T.sheet, cursor: "pointer", fontWeight: 600, fontSize: FS.body }}>
                 Load Data
               </button>
               <input ref={fileInputRef} type="file" accept=".json" onChange={handleLoad} style={{ display: "none" }} />
@@ -1530,7 +1530,7 @@ export default function FinanceCalculator() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", borderBottom: "1px solid #e2e8f0", display: "flex", overflowX: "auto", background: "#fff" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", borderBottom: `1px solid ${T.rule}`, display: "flex", overflowX: "auto", background: T.sheet }}>
         {tabs.map((t, i) => (
           <button key={t} style={TAB_STYLE(tab === i)} onClick={() => setTab(i)}>
             {t}
@@ -1541,28 +1541,28 @@ export default function FinanceCalculator() {
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 16px" }}>
         {tab === 0 && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
-            <Card title="Income — Person 1" color="#6366f1">
-              <InputGroup label="Annual Salary" value={salary1} onChange={setSalary1} />
-              <InputGroup label="Other Annual Income" value={otherIncome1} onChange={setOtherIncome1} />
+            <Card title="Income — Person 1">
+              <InputGroup label="Annual salary" value={salary1} onChange={setSalary1} />
+              <InputGroup label="Other annual income" value={otherIncome1} onChange={setOtherIncome1} />
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 4 }}>Other Income Type</label>
+                <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>Other income type</label>
                 <select
                   value={otherIncomeType1}
                   onChange={(e) => setOtherIncomeType1(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 15 }}
+                  style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.input }}
                   title="PAYE: bonus / second job taxed through payroll. Self-Employed: sole-trader / freelance profit — taxed via Self Assessment, no PAYE NI but Class 4 NI applies"
                 >
                   <option value="paye">PAYE (bonus / second job)</option>
                   <option value="selfEmployed">Self-Employed (Self Assessment)</option>
                 </select>
               </div>
-              <InputGroup label="Pension Contribution" value={pension1} onChange={setPension1} prefix="" suffix="%" step={0.5} />
+              <InputGroup label="Pension contribution" value={pension1} onChange={setPension1} prefix="" suffix="%" step={0.5} />
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 4 }}>Student Loan</label>
+                <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>Student loan</label>
                 <select
                   value={studentLoan1}
                   onChange={(e) => setStudentLoan1(parseInt(e.target.value))}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 15 }}
+                  style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.input }}
                 >
                   {STUDENT_LOAN_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
@@ -1570,52 +1570,52 @@ export default function FinanceCalculator() {
             </Card>
 
             {mode === MODE.HOUSEHOLD ? (
-              <Card title="Income — Person 2" color="#8b5cf6">
-                <InputGroup label="Annual Salary" value={salary2} onChange={setSalary2} />
-                <InputGroup label="Other Annual Income" value={otherIncome2} onChange={setOtherIncome2} />
+              <Card title="Income — Person 2">
+                <InputGroup label="Annual salary" value={salary2} onChange={setSalary2} />
+                <InputGroup label="Other annual income" value={otherIncome2} onChange={setOtherIncome2} />
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 4 }}>Other Income Type</label>
+                  <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>Other income type</label>
                   <select
                     value={otherIncomeType2}
                     onChange={(e) => setOtherIncomeType2(e.target.value)}
-                    style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 15 }}
+                    style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.input }}
                   >
                     <option value="paye">PAYE (bonus / second job)</option>
                     <option value="selfEmployed">Self-Employed (Self Assessment)</option>
                   </select>
                 </div>
-                <InputGroup label="Pension Contribution" value={pension2} onChange={setPension2} prefix="" suffix="%" step={0.5} />
+                <InputGroup label="Pension contribution" value={pension2} onChange={setPension2} prefix="" suffix="%" step={0.5} />
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 4 }}>Student Loan</label>
+                  <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>Student loan</label>
                   <select
                     value={studentLoan2}
                     onChange={(e) => setStudentLoan2(parseInt(e.target.value))}
-                    style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 15 }}
+                    style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.input }}
                   >
                     {STUDENT_LOAN_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>
                 </div>
               </Card>
             ) : (
-              <Card title="Take-Home Breakdown" color="#10b981">
+              <Card title="Take-home breakdown">
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                   <StatBox label="Gross" value={fmt(calc1.gross)} />
-                  <StatBox label="Income Tax" value={fmt(calc1.tax)} color="#ef4444" />
-                  <StatBox label="National Insurance" value={fmt(calc1.ni)} color="#f59e0b" />
-                  <StatBox label="Pension" value={fmt(calc1.pensionAmt)} color="#8b5cf6" />
-                  {calc1.sacrificeAmt > 0 && <StatBox label="Salary Sacrifice" value={fmt(calc1.sacrificeAmt)} color="#0ea5e9" />}
-                  {calc1.slRepay > 0 && <StatBox label="Student Loan" value={fmt(calc1.slRepay)} color="#ec4899" />}
+                  <StatBox label="Income tax" value={fmt(calc1.tax)} color={T.neg} />
+                  <StatBox label="National insurance" value={fmt(calc1.ni)} color={T.warnInk} />
+                  <StatBox label="Pension" value={fmt(calc1.pensionAmt)} color={T.ink} />
+                  {calc1.sacrificeAmt > 0 && <StatBox label="Salary sacrifice" value={fmt(calc1.sacrificeAmt)} color={T.ink} />}
+                  {calc1.slRepay > 0 && <StatBox label="Student loan" value={fmt(calc1.slRepay)} color={T.ink} />}
                   {calc1.seIncome > 0 ? (
                     <>
-                      <StatBox label="PAYE Monthly" value={fmt(calc1.payeMonthly)} color="#10b981" sub="bank deposit" />
-                      <StatBox label="SE Income" value={fmt(calc1.seIncome)} color="#0ea5e9" sub="annual, paid separately" />
-                      <StatBox label="SA Tax Bill" value={fmt(calc1.saTaxBill)} color="#ef4444" sub="due via Self Assessment" />
-                      <StatBox label="Total Annual Net" value={fmt(calc1.net)} color="#10b981" />
+                      <StatBox label="PAYE monthly" value={fmt(calc1.payeMonthly)} color={T.saved} sub="bank deposit" />
+                      <StatBox label="SE income" value={fmt(calc1.seIncome)} color={T.ink} sub="annual, paid separately" />
+                      <StatBox label="SA tax bill" value={fmt(calc1.saTaxBill)} color={T.neg} sub="due via Self Assessment" />
+                      <StatBox label="Total annual net" value={fmt(calc1.net)} color={T.saved} />
                     </>
                   ) : (
                     <>
-                      <StatBox label="Annual Net" value={fmt(calc1.net)} color="#10b981" />
-                      <StatBox label="Monthly Net" value={fmt(calc1.smoothedMonthlyNet)} color="#10b981" sub="per month" />
+                      <StatBox label="Annual net" value={fmt(calc1.net)} color={T.saved} />
+                      <StatBox label="Monthly net" value={fmt(calc1.smoothedMonthlyNet)} color={T.saved} sub="per month" />
                     </>
                   )}
                 </div>
@@ -1624,37 +1624,37 @@ export default function FinanceCalculator() {
 
             {mode === MODE.HOUSEHOLD && (
               <>
-                <Card title="Take-Home — Person 1" color="#10b981">
+                <Card title="Take-home — Person 1">
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                     <StatBox label="Gross" value={fmt(calc1.gross)} />
-                    <StatBox label="Tax + NI" value={fmt(calc1.tax + calc1.ni)} color="#ef4444" />
-                    <StatBox label="Pension" value={fmt(calc1.pensionAmt)} color="#8b5cf6" />
-                    {calc1.sacrificeAmt > 0 && <StatBox label="Salary Sacrifice" value={fmt(calc1.sacrificeAmt)} color="#0ea5e9" />}
-                    {calc1.slRepay > 0 && <StatBox label="Student Loan" value={fmt(calc1.slRepay)} color="#ec4899" />}
+                    <StatBox label="Tax + NI" value={fmt(calc1.tax + calc1.ni)} color={T.neg} />
+                    <StatBox label="Pension" value={fmt(calc1.pensionAmt)} color={T.ink} />
+                    {calc1.sacrificeAmt > 0 && <StatBox label="Salary sacrifice" value={fmt(calc1.sacrificeAmt)} color={T.ink} />}
+                    {calc1.slRepay > 0 && <StatBox label="Student loan" value={fmt(calc1.slRepay)} color={T.ink} />}
                     {calc1.seIncome > 0 ? (
                       <>
-                        <StatBox label="PAYE Monthly" value={fmt(calc1.payeMonthly)} color="#10b981" sub="bank deposit" />
-                        <StatBox label="SE + SA / mo" value={fmt(calc1.seNet / 12)} color="#0ea5e9" sub="smoothed SE − SA" />
+                        <StatBox label="PAYE monthly" value={fmt(calc1.payeMonthly)} color={T.saved} sub="bank deposit" />
+                        <StatBox label="SE + SA / mo" value={fmt(calc1.seNet / 12)} color={T.ink} sub="smoothed SE − SA" />
                       </>
                     ) : (
-                      <StatBox label="Monthly Net" value={fmt(calc1.smoothedMonthlyNet)} color="#10b981" />
+                      <StatBox label="Monthly net" value={fmt(calc1.smoothedMonthlyNet)} color={T.saved} />
                     )}
                   </div>
                 </Card>
-                <Card title="Take-Home — Person 2" color="#10b981">
+                <Card title="Take-home — Person 2">
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                     <StatBox label="Gross" value={fmt(calc2.gross)} />
-                    <StatBox label="Tax + NI" value={fmt(calc2.tax + calc2.ni)} color="#ef4444" />
-                    <StatBox label="Pension" value={fmt(calc2.pensionAmt)} color="#8b5cf6" />
-                    {calc2.sacrificeAmt > 0 && <StatBox label="Salary Sacrifice" value={fmt(calc2.sacrificeAmt)} color="#0ea5e9" />}
-                    {calc2.slRepay > 0 && <StatBox label="Student Loan" value={fmt(calc2.slRepay)} color="#ec4899" />}
+                    <StatBox label="Tax + NI" value={fmt(calc2.tax + calc2.ni)} color={T.neg} />
+                    <StatBox label="Pension" value={fmt(calc2.pensionAmt)} color={T.ink} />
+                    {calc2.sacrificeAmt > 0 && <StatBox label="Salary sacrifice" value={fmt(calc2.sacrificeAmt)} color={T.ink} />}
+                    {calc2.slRepay > 0 && <StatBox label="Student loan" value={fmt(calc2.slRepay)} color={T.ink} />}
                     {calc2.seIncome > 0 ? (
                       <>
-                        <StatBox label="PAYE Monthly" value={fmt(calc2.payeMonthly)} color="#10b981" sub="bank deposit" />
-                        <StatBox label="SE + SA / mo" value={fmt(calc2.seNet / 12)} color="#0ea5e9" sub="smoothed SE − SA" />
+                        <StatBox label="PAYE monthly" value={fmt(calc2.payeMonthly)} color={T.saved} sub="bank deposit" />
+                        <StatBox label="SE + SA / mo" value={fmt(calc2.seNet / 12)} color={T.ink} sub="smoothed SE − SA" />
                       </>
                     ) : (
-                      <StatBox label="Monthly Net" value={fmt(calc2.smoothedMonthlyNet)} color="#10b981" />
+                      <StatBox label="Monthly net" value={fmt(calc2.smoothedMonthlyNet)} color={T.saved} />
                     )}
                   </div>
                 </Card>
@@ -1663,83 +1663,83 @@ export default function FinanceCalculator() {
 
             {mode === MODE.HOUSEHOLD && (
               <div style={{ gridColumn: "1 / -1" }}>
-                <Card title="Household Contribution Split" color="#ec4899">
+                <Card title="Household contribution split">
                   <div style={{ display: "flex", gap: 24, alignItems: "flex-start", flexWrap: "wrap" }}>
                     <div style={{ flex: "0 0 280px" }}>
                       <div style={{ marginBottom: 12 }}>
-                        <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 4 }}>Split Method</label>
-                        <Toggle value={splitMode} onChange={setSplitMode} labels={["Ratio of Earnings", "Custom %"]} />
+                        <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>Split method</label>
+                        <Toggle value={splitMode} onChange={setSplitMode} labels={["Ratio of earnings", "Custom %"]} />
                       </div>
                       {splitMode === SPLIT_MODE.CUSTOM_PERCENT && (
-                        <InputGroup label="Person 1 Contribution %" value={customSplitP1} onChange={setCustomSplitP1} prefix="" suffix="%" min={0} max={100} />
+                        <InputGroup label="Person 1 contribution %" value={customSplitP1} onChange={setCustomSplitP1} prefix="" suffix="%" min={0} max={100} />
                       )}
-                      <div style={{ background: "#fdf2f8", borderRadius: 8, padding: 12, fontSize: 13 }}>
+                      <div style={{ background: T.paper, borderRadius: 6, padding: 12, fontSize: FS.body }}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                          <span>Person 1 pays</span><strong style={{ color: "#6366f1" }}>{splitP1Pct.toFixed(1)}%</strong>
+                          <span>Person 1 pays</span><strong style={{ color: T.ink }}>{splitP1Pct.toFixed(1)}%</strong>
                         </div>
                         <div style={{ display: "flex", justifyContent: "space-between" }}>
-                          <span>Person 2 pays</span><strong style={{ color: "#8b5cf6" }}>{splitP2Pct.toFixed(1)}%</strong>
+                          <span>Person 2 pays</span><strong style={{ color: T.ink }}>{splitP2Pct.toFixed(1)}%</strong>
                         </div>
                       </div>
                     </div>
                     <div style={{ flex: 1, minWidth: 300 }}>
-                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: FS.body }}>
                         <thead>
-                          <tr style={{ borderBottom: "2px solid #e2e8f0" }}>
-                            <th style={{ padding: "6px 8px", textAlign: "left", color: "#64748b" }}>Expense</th>
-                            <th style={{ padding: "6px 8px", textAlign: "right", color: "#64748b" }}>Total</th>
-                            <th style={{ padding: "6px 8px", textAlign: "right", color: "#6366f1" }}>Person 1</th>
-                            <th style={{ padding: "6px 8px", textAlign: "right", color: "#8b5cf6" }}>Person 2</th>
+                          <tr style={{ borderBottom: `2px solid ${T.rule}` }}>
+                            <th style={{ padding: "6px 8px", textAlign: "left", color: T.inkSoft }}>Expense</th>
+                            <th style={{ padding: "6px 8px", textAlign: "right", color: T.inkSoft }}>Total</th>
+                            <th style={{ padding: "6px 8px", textAlign: "right", color: T.ink }}>Person 1</th>
+                            <th style={{ padding: "6px 8px", textAlign: "right", color: T.ink }}>Person 2</th>
                           </tr>
                         </thead>
                         <tbody>
                           {splitExpenseRows.map((e, i) => (
-                            <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                            <tr key={i} style={{ borderBottom: `1px solid ${T.paper}` }}>
                               <td style={{ padding: "6px 8px" }}>
                                 {e.name}
-                                {e.splitType !== "shared" && <span style={{ fontSize: 10, marginLeft: 6, padding: "1px 5px", borderRadius: 4, background: e.splitType === "p1" ? "#eef2ff" : "#f5f3ff", color: e.splitType === "p1" ? "#6366f1" : "#8b5cf6", fontWeight: 600 }}>{e.splitType === "p1" ? "P1" : "P2"} only</span>}
+                                {e.splitType !== "shared" && <span style={{ fontSize: FS.small, marginLeft: 6, padding: "1px 5px", borderRadius: 3, background: T.paper, color: T.ink, fontWeight: 600 }}>{e.splitType === "p1" ? "P1" : "P2"} only</span>}
                               </td>
                               <td style={{ padding: "6px 8px", textAlign: "right", fontWeight: 600 }}>{fmt(e.amount)}</td>
-                              <td style={{ padding: "6px 8px", textAlign: "right", color: "#6366f1", fontWeight: 600 }}>{fmt(e.p1)}</td>
-                              <td style={{ padding: "6px 8px", textAlign: "right", color: "#8b5cf6", fontWeight: 600 }}>{fmt(e.p2)}</td>
+                              <td style={{ padding: "6px 8px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(e.p1)}</td>
+                              <td style={{ padding: "6px 8px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(e.p2)}</td>
                             </tr>
                           ))}
-                          <tr style={{ borderTop: "1px solid #e2e8f0", fontWeight: 600, background: "#fdf2f8" }}>
-                            <td style={{ padding: "6px 8px", color: "#64748b" }}>Household Expenses</td>
+                          <tr style={{ borderTop: `1px solid ${T.rule}`, fontWeight: 600, background: T.paper }}>
+                            <td style={{ padding: "6px 8px", color: T.inkSoft }}>Household expenses</td>
                             <td style={{ padding: "6px 8px", textAlign: "right" }}>{fmt(totalExpenses)}</td>
-                            <td style={{ padding: "6px 8px", textAlign: "right", color: "#6366f1" }}>{fmt(splitTotalP1)}</td>
-                            <td style={{ padding: "6px 8px", textAlign: "right", color: "#8b5cf6" }}>{fmt(splitTotalP2)}</td>
+                            <td style={{ padding: "6px 8px", textAlign: "right", color: T.ink }}>{fmt(splitTotalP1)}</td>
+                            <td style={{ padding: "6px 8px", textAlign: "right", color: T.ink }}>{fmt(splitTotalP2)}</td>
                           </tr>
                           {personalCommitmentRows.map((r, i) => (
-                            <tr key={`c${i}`} style={{ borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>
+                            <tr key={`c${i}`} style={{ borderBottom: `1px solid ${T.paper}`, background: T.paper }}>
                               <td style={{ padding: "6px 8px", fontStyle: "italic" }}>{r.name}</td>
                               <td style={{ padding: "6px 8px", textAlign: "right", fontWeight: 600 }}>{fmt(r.amount)}</td>
-                              <td style={{ padding: "6px 8px", textAlign: "right", color: "#6366f1", fontWeight: 600 }}>{fmt(r.person === "p1" ? r.amount : 0)}</td>
-                              <td style={{ padding: "6px 8px", textAlign: "right", color: "#8b5cf6", fontWeight: 600 }}>{fmt(r.person === "p2" ? r.amount : 0)}</td>
+                              <td style={{ padding: "6px 8px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(r.person === "p1" ? r.amount : 0)}</td>
+                              <td style={{ padding: "6px 8px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(r.person === "p2" ? r.amount : 0)}</td>
                             </tr>
                           ))}
-                          <tr style={{ borderTop: "2px solid #ec4899", fontWeight: 700 }}>
-                            <td style={{ padding: "8px 8px" }}>Total All Commitments</td>
+                          <tr style={{ borderTop: `2px solid ${T.ruleStrong}`, fontWeight: 700 }}>
+                            <td style={{ padding: "8px 8px" }}>Total all commitments</td>
                             <td style={{ padding: "8px 8px", textAlign: "right" }}>{fmt(totalExpenses + commitTotal)}</td>
-                            <td style={{ padding: "8px 8px", textAlign: "right", color: "#6366f1" }}>{fmt(splitTotalP1 + commitP1)}</td>
-                            <td style={{ padding: "8px 8px", textAlign: "right", color: "#8b5cf6" }}>{fmt(splitTotalP2 + commitP2)}</td>
+                            <td style={{ padding: "8px 8px", textAlign: "right", color: T.ink }}>{fmt(splitTotalP1 + commitP1)}</td>
+                            <td style={{ padding: "8px 8px", textAlign: "right", color: T.ink }}>{fmt(splitTotalP2 + commitP2)}</td>
                           </tr>
                         </tbody>
                       </table>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 12 }}>
-                        <div style={{ background: "#eef2ff", borderRadius: 8, padding: 10, textAlign: "center" }}>
-                          <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>P1 REMAINING</div>
-                          <div style={{ fontSize: 18, fontWeight: 800, color: calc1.smoothedMonthlyNet - splitTotalP1 - commitP1 >= 0 ? "#10b981" : "#ef4444" }}>
+                        <div style={{ background: T.paper, borderRadius: 6, padding: 10, textAlign: "center" }}>
+                          <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>P1 remaining</div>
+                          <div style={{ fontSize: FS.heading, fontWeight: 700, color: calc1.smoothedMonthlyNet - splitTotalP1 - commitP1 >= 0 ? T.saved : T.neg }}>
                             {fmt(calc1.smoothedMonthlyNet - splitTotalP1 - commitP1)}
                           </div>
-                          <div style={{ fontSize: 11, color: "#64748b" }}>after all commitments</div>
+                          <div style={{ fontSize: FS.small, color: T.inkSoft }}>after all commitments</div>
                         </div>
-                        <div style={{ background: "#f5f3ff", borderRadius: 8, padding: 10, textAlign: "center" }}>
-                          <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>P2 REMAINING</div>
-                          <div style={{ fontSize: 18, fontWeight: 800, color: calc2.smoothedMonthlyNet - splitTotalP2 - commitP2 >= 0 ? "#10b981" : "#ef4444" }}>
+                        <div style={{ background: T.paper, borderRadius: 6, padding: 10, textAlign: "center" }}>
+                          <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>P2 remaining</div>
+                          <div style={{ fontSize: FS.heading, fontWeight: 700, color: calc2.smoothedMonthlyNet - splitTotalP2 - commitP2 >= 0 ? T.saved : T.neg }}>
                             {fmt(calc2.smoothedMonthlyNet - splitTotalP2 - commitP2)}
                           </div>
-                          <div style={{ fontSize: 11, color: "#64748b" }}>after contributions</div>
+                          <div style={{ fontSize: FS.small, color: T.inkSoft }}>after contributions</div>
                         </div>
                       </div>
                     </div>
@@ -1748,14 +1748,14 @@ export default function FinanceCalculator() {
               </div>
             )}
 
-            <Card title="Savings & Investment Pots" color="#8b5cf6">
+            <Card title="Savings & investment pots">
               {pots.length === 0 ? (
-                <p style={{ color: "#94a3b8", fontSize: 13, margin: "0 0 12px 0" }}>No pots yet — add accounts, ISAs and investments on the <strong>Savings &amp; Investments</strong> tab.</p>
+                <p style={{ color: T.inkSoft, fontSize: FS.body, margin: "0 0 12px 0" }}>No pots yet — add accounts, ISAs and investments on the <strong>Savings &amp; Investments</strong> tab.</p>
               ) : (
                 <div style={{ marginBottom: 12, maxHeight: 240, overflowY: "auto" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: FS.body }}>
                     <thead>
-                      <tr style={{ borderBottom: "1px solid #e2e8f0", color: "#64748b", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                      <tr style={{ borderBottom: `1px solid ${T.rule}`, color: T.inkSoft, fontSize: FS.small }}>
                         <th style={{ padding: "6px 8px", textAlign: "left" }}>Pot</th>
                         <th style={{ padding: "6px 8px", textAlign: "right" }}>Balance</th>
                         <th style={{ padding: "6px 8px", textAlign: "right" }}>Monthly</th>
@@ -1764,109 +1764,109 @@ export default function FinanceCalculator() {
                     </thead>
                     <tbody>
                       {pots.map((p) => (
-                        <tr key={p.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <tr key={p.id} style={{ borderBottom: `1px solid ${T.paper}` }}>
                           <td style={{ padding: "6px 8px" }}>
-                            <span style={{ display: "inline-block", width: 8, height: 8, background: POT_TYPE_COLORS[p.type] || "#94a3b8", borderRadius: "50%", marginRight: 8 }} />
+                            <span style={{ display: "inline-block", width: 8, height: 8, background: POT_TYPE_COLORS[p.type] || T.inkSoft, borderRadius: "50%", marginRight: 8 }} />
                             <strong>{p.name}</strong>
-                            <span style={{ marginLeft: 6, fontSize: 10, color: "#94a3b8", textTransform: "uppercase" }}>{p.type} · {p.owner}</span>
+                            <span style={{ marginLeft: 6, fontSize: FS.small, color: T.inkSoft }}>{p.type} · {p.owner}</span>
                           </td>
                           <td style={{ padding: "6px 8px", textAlign: "right" }}>{fmt(p.startingBalance)}</td>
-                          <td style={{ padding: "6px 8px", textAlign: "right", color: "#10b981" }}>{p.monthlyContribution > 0 ? fmt(p.monthlyContribution) : "—"}</td>
-                          <td style={{ padding: "6px 8px", textAlign: "right", color: "#8b5cf6" }}>{p.rate.toFixed(1)}%</td>
+                          <td style={{ padding: "6px 8px", textAlign: "right", color: T.saved }}>{p.monthlyContribution > 0 ? fmt(p.monthlyContribution) : "—"}</td>
+                          <td style={{ padding: "6px 8px", textAlign: "right", color: T.ink }}>{p.rate.toFixed(1)}%</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
               )}
-              <div style={{ background: "#f5f3ff", borderRadius: 8, padding: 12, marginTop: 8 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, fontWeight: 700 }}>
-                  <span style={{ color: "#8b5cf6" }}>Total Existing Savings</span>
-                  <span style={{ color: "#8b5cf6" }}>{fmt(totalExistingSavings)}</span>
+              <div style={{ background: T.paper, borderRadius: 6, padding: 12, marginTop: 8 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: FS.body, fontWeight: 700 }}>
+                  <span style={{ color: T.ink }}>Total existing savings</span>
+                  <span style={{ color: T.ink }}>{fmt(totalExistingSavings)}</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#64748b", marginTop: 4 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: FS.small, color: T.inkSoft, marginTop: 4 }}>
                   <span>Monthly contributions</span>
                   <strong>{fmt(totalMonthlyPotContributions)}/mo</strong>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#64748b", marginTop: 2 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: FS.small, color: T.inkSoft, marginTop: 2 }}>
                   <span>Money-weighted blended return</span>
                   <strong>{meanRateWeightedByBalance.toFixed(2)}%</strong>
                 </div>
               </div>
             </Card>
 
-            <Card title="Monthly Expenses" color="#f59e0b">
-              <InputGroup label="Rent / Mortgage" value={rent} onChange={setRent} />
+            <Card title="Monthly expenses">
+              <InputGroup label="Rent / mortgage" value={rent} onChange={setRent} />
               <InputGroup label="Bills (council tax, utilities, etc.)" value={bills} onChange={setBills} />
-              <InputGroup label="Food & Groceries" value={food} onChange={setFood} />
+              <InputGroup label="Food & groceries" value={food} onChange={setFood} />
               <InputGroup label="Transport" value={transport} onChange={setTransport} />
               <InputGroup label="Subscriptions" value={subscriptions} onChange={setSubscriptions} />
               <InputGroup label="Other" value={otherExpenses} onChange={setOtherExpenses} />
 
               {customExpenses.length > 0 && (
-                <div style={{ borderTop: "1px solid #e2e8f0", paddingTop: 12, marginTop: 8 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 8 }}>Custom Expenses</div>
+                <div style={{ borderTop: `1px solid ${T.rule}`, paddingTop: 12, marginTop: 8 }}>
+                  <div style={{ fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 8 }}>Custom expenses</div>
                   {customExpenses.map((ce) => (
-                    <div key={ce.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #f1f5f9", flexWrap: "wrap", gap: 4 }}>
-                      <span style={{ fontSize: 14, flex: "1 1 auto" }}>{ce.name}</span>
+                    <div key={ce.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 0", borderBottom: `1px solid ${T.paper}`, flexWrap: "wrap", gap: 4 }}>
+                      <span style={{ fontSize: FS.body, flex: "1 1 auto" }}>{ce.name}</span>
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                         {mode === MODE.HOUSEHOLD && (
                           <select
                             value={ce.splitType || "shared"}
                             onChange={(e) => updateCustomExpenseSplit(ce.id, e.target.value)}
-                            style={{ fontSize: 11, padding: "2px 4px", borderRadius: 4, border: "1px solid #cbd5e1", background: ce.splitType === "p1" ? "#eef2ff" : ce.splitType === "p2" ? "#f5f3ff" : "#f0fdf4", color: "#475569", cursor: "pointer" }}
+                            style={{ fontSize: FS.small, padding: "2px 4px", borderRadius: 3, border: `1px solid ${T.rule}`, background: T.paper, color: T.inkSoft, cursor: "pointer" }}
                           >
                             <option value="shared">Shared</option>
                             <option value="p1">P1 Only</option>
                             <option value="p2">P2 Only</option>
                           </select>
                         )}
-                        <strong style={{ fontSize: 14 }}>{fmt(ce.amount)}</strong>
-                        <button onClick={() => removeCustomExpense(ce.id)} style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontWeight: 700, fontSize: 16, padding: "0 4px" }}>×</button>
+                        <strong style={{ fontSize: FS.body }}>{fmt(ce.amount)}</strong>
+                        <button onClick={() => removeCustomExpense(ce.id)} style={{ background: "none", border: "none", color: T.neg, cursor: "pointer", fontWeight: 700, fontSize: FS.input, padding: "0 4px" }}>×</button>
                       </div>
                     </div>
                   ))}
-                  <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 8, fontSize: 13, fontWeight: 700, color: "#f59e0b" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 8, fontSize: FS.body, fontWeight: 700, color: T.warnInk }}>
                     <span>Custom total</span>
                     <span>{fmt(customExpensesTotal)}/mo</span>
                   </div>
                 </div>
               )}
 
-              <div style={{ borderTop: "1px solid #e2e8f0", paddingTop: 12, marginTop: 12 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 8 }}>Add Custom Expense</div>
+              <div style={{ borderTop: `1px solid ${T.rule}`, paddingTop: 12, marginTop: 12 }}>
+                <div style={{ fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 8 }}>Add custom expense</div>
                 <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
                   <div style={{ flex: 2 }}>
-                    <input type="text" placeholder="e.g. Gym membership" value={newCustomExpName} onChange={(e) => setNewCustomExpName(e.target.value)} style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 14 }} />
+                    <input type="text" placeholder="e.g. Gym membership" value={newCustomExpName} onChange={(e) => setNewCustomExpName(e.target.value)} style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body }} />
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                      <span style={{ color: "#94a3b8", fontWeight: 600 }}>£</span>
-                      <input type="number" placeholder="0" value={newCustomExpAmount || ""} onChange={(e) => setNewCustomExpAmount(parseFloat(e.target.value) || 0)} style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 14 }} />
+                      <span style={{ color: T.inkSoft, fontWeight: 600 }}>£</span>
+                      <input type="number" placeholder="0" value={newCustomExpAmount || ""} onChange={(e) => setNewCustomExpAmount(parseFloat(e.target.value) || 0)} style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body }} />
                     </div>
                   </div>
-                  <button onClick={addCustomExpense} style={{ padding: "8px 14px", background: "#f59e0b", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 700, fontSize: 14, whiteSpace: "nowrap" }}>+</button>
+                  <button onClick={addCustomExpense} style={{ padding: "8px 14px", background: T.left, color: T.sheet, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body, whiteSpace: "nowrap" }}>+</button>
                 </div>
               </div>
             </Card>
 
             <div>
-              <Card title="Monthly Summary" color="#10b981">
+              <Card title="Monthly summary">
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
-                  <StatBox label="Total Net Income" value={fmt(totalMonthlyNet)} color="#10b981" sub="/month" />
-                  <StatBox label="Total Expenses" value={fmt(totalExpenses)} color="#ef4444" sub="/month" />
-                  <StatBox label="Finance Payments" value={fmt(totalAgreementMonthly)} color="#f59e0b" sub="/month" />
-                  <StatBox label="Disposable" value={fmt(disposable - totalAgreementMonthly)} color={disposable - totalAgreementMonthly >= 0 ? "#10b981" : "#ef4444"} sub="/month" />
+                  <StatBox label="Total net income" value={fmt(totalMonthlyNet)} color={T.saved} sub="/month" />
+                  <StatBox label="Total expenses" value={fmt(totalExpenses)} color={T.neg} sub="/month" />
+                  <StatBox label="Finance payments" value={fmt(totalAgreementMonthly)} color={T.warnInk} sub="/month" />
+                  <StatBox label="Disposable" value={fmt(disposable - totalAgreementMonthly)} color={disposable - totalAgreementMonthly >= 0 ? T.saved : T.neg} sub="/month" />
                 </div>
                 {totalExistingSavings > 0 && (
-                  <div style={{ background: "#f5f3ff", borderRadius: 8, padding: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontSize: 13, color: "#64748b" }}>Existing Savings Pot</span>
-                    <strong style={{ color: "#8b5cf6", fontSize: 18 }}>{fmt(totalExistingSavings)}</strong>
+                  <div style={{ background: T.paper, borderRadius: 6, padding: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: FS.body, color: T.inkSoft }}>Existing savings pot</span>
+                    <strong style={{ color: T.ink, fontSize: FS.heading }}>{fmt(totalExistingSavings)}</strong>
                   </div>
                 )}
               </Card>
               <div style={{ marginTop: 24 }}>
-                <Card title="Expense Breakdown">
+                <Card title="Expense breakdown">
                   <ResponsiveContainer width="100%" height={250}>
                     <PieChart>
                       <Pie data={expensePieData} cx="50%" cy="50%" innerRadius={50} outerRadius={90} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
@@ -1885,94 +1885,94 @@ export default function FinanceCalculator() {
 
         {tab === 1 && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
-            <Card title="50 / 30 / 20 Rule" color="#6366f1">
-              <p style={{ fontSize: 13, color: "#64748b", marginTop: 0 }}>50% Needs · 30% Wants · 20% Savings</p>
-              <div style={{ background: "#f8fafc", borderRadius: 8, padding: 16, marginBottom: 12 }}>
+            <Card title="50 / 30 / 20 rule">
+              <p style={{ fontSize: FS.body, color: T.inkSoft, marginTop: 0 }}>50% Needs · 30% Wants · 20% Savings</p>
+              <div style={{ background: T.paper, borderRadius: 6, padding: 16, marginBottom: 12 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
-                  <StatBox label="Needs Budget" value={fmt(savingsModels["50/30/20"].needs)} color="#6366f1" sub="50% target" />
+                  <StatBox label="Needs budget" value={fmt(savingsModels["50/30/20"].needs)} color={T.ink} sub="50% target" />
                   <InfoTip items={[{ label: "Rent/Mortgage", value: fmt(rent) }, { label: "Bills", value: fmt(bills) }, { label: "Food", value: fmt(food) }, { label: "Transport", value: fmt(transport) }]}>
-                    <StatBox label="Your Needs ⓘ" value={fmt(savingsModels["50/30/20"].actualNeeds)} color={savingsModels["50/30/20"].needsGap >= 0 ? "#10b981" : "#ef4444"} sub="hover for breakdown" />
+                    <StatBox label="Your needs ⓘ" value={fmt(savingsModels["50/30/20"].actualNeeds)} color={savingsModels["50/30/20"].needsGap >= 0 ? T.saved : T.neg} sub="hover for breakdown" />
                   </InfoTip>
-                  <StatBox label="Wants Budget" value={fmt(savingsModels["50/30/20"].wants)} color="#f59e0b" sub="30% target" />
+                  <StatBox label="Wants budget" value={fmt(savingsModels["50/30/20"].wants)} color={T.warnInk} sub="30% target" />
                   <InfoTip items={[{ label: "Subscriptions", value: fmt(subscriptions) }, { label: "Other", value: fmt(otherExpenses) }, ...customExpenses.map(ce => ({ label: ce.name, value: fmt(ce.amount) }))]}>
-                    <StatBox label="Your Wants ⓘ" value={fmt(savingsModels["50/30/20"].actualWants)} color={savingsModels["50/30/20"].wantsGap >= 0 ? "#10b981" : "#ef4444"} sub="hover for breakdown" />
+                    <StatBox label="Your wants ⓘ" value={fmt(savingsModels["50/30/20"].actualWants)} color={savingsModels["50/30/20"].wantsGap >= 0 ? T.saved : T.neg} sub="hover for breakdown" />
                   </InfoTip>
-                  <StatBox label="Savings Target" value={fmt(savingsModels["50/30/20"].savings)} color="#10b981" sub="20% target" />
-                  <InfoTip items={[{ label: "Net Income", value: fmt(totalMonthlyNet) }, { label: "− Expenses", value: fmt(totalExpenses) }, { label: "− Agreements", value: fmt(totalAgreementMonthly) }, { label: "= Available", value: fmt(totalMonthlyNet - totalExpenses - totalAgreementMonthly) }]}>
-                    <StatBox label="Actual Savings ⓘ" value={fmt(savingsModels["50/30/20"].actualSavings)} color={savingsModels["50/30/20"].actualSavings >= savingsModels["50/30/20"].savings ? "#10b981" : "#ef4444"} sub="hover for breakdown" />
+                  <StatBox label="Savings target" value={fmt(savingsModels["50/30/20"].savings)} color={T.saved} sub="20% target" />
+                  <InfoTip items={[{ label: "Net income", value: fmt(totalMonthlyNet) }, { label: "− Expenses", value: fmt(totalExpenses) }, { label: "− Agreements", value: fmt(totalAgreementMonthly) }, { label: "= Available", value: fmt(totalMonthlyNet - totalExpenses - totalAgreementMonthly) }]}>
+                    <StatBox label="Actual savings ⓘ" value={fmt(savingsModels["50/30/20"].actualSavings)} color={savingsModels["50/30/20"].actualSavings >= savingsModels["50/30/20"].savings ? T.saved : T.neg} sub="hover for breakdown" />
                   </InfoTip>
                 </div>
               </div>
-              <div style={{ fontSize: 13, color: "#64748b", lineHeight: 1.8 }}>
-                <span style={{ color: savingsModels["50/30/20"].needsGap >= 0 ? "#10b981" : "#ef4444", fontWeight: 700 }}>
+              <div style={{ fontSize: FS.body, color: T.inkSoft, lineHeight: 1.8 }}>
+                <span style={{ color: savingsModels["50/30/20"].needsGap >= 0 ? T.saved : T.neg, fontWeight: 700 }}>
                   {savingsModels["50/30/20"].needsGap >= 0 ? `✓ Needs: ${fmt(savingsModels["50/30/20"].needsGap)} under budget` : `✗ Needs: ${fmt(-savingsModels["50/30/20"].needsGap)} over budget`}
                 </span><br />
-                <span style={{ color: savingsModels["50/30/20"].wantsGap >= 0 ? "#10b981" : "#ef4444", fontWeight: 700 }}>
+                <span style={{ color: savingsModels["50/30/20"].wantsGap >= 0 ? T.saved : T.neg, fontWeight: 700 }}>
                   {savingsModels["50/30/20"].wantsGap >= 0 ? `✓ Wants: ${fmt(savingsModels["50/30/20"].wantsGap)} under budget` : `✗ Wants: ${fmt(-savingsModels["50/30/20"].wantsGap)} over budget`}
                 </span>
               </div>
               <ResponsiveContainer width="100%" height={180}>
                 <BarChart data={[{ name: "Needs", budget: Math.round(savingsModels["50/30/20"].needs), actual: Math.round(savingsModels["50/30/20"].actualNeeds) }, { name: "Wants", budget: Math.round(savingsModels["50/30/20"].wants), actual: Math.round(savingsModels["50/30/20"].actualWants) }, { name: "Savings", budget: Math.round(savingsModels["50/30/20"].savings), actual: Math.round(savingsModels["50/30/20"].actualSavings) }]}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                  <YAxis tickFormatter={(v) => `£${v}`} tick={{ fontSize: 11 }} />
+                  <XAxis dataKey="name" tick={{ fontSize: FS.small }} />
+                  <YAxis tickFormatter={(v) => `£${v}`} tick={{ fontSize: FS.small }} />
                   <Tooltip formatter={(v) => fmt(v)} />
                   <Legend />
-                  <Bar dataKey="budget" name="Budget" fill="#6366f1" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="actual" name="Actual" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="budget" name="Budget" fill={T.home} radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="actual" name="Actual" fill={T.left} radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </Card>
 
-            <Card title="70 / 20 / 10 Rule" color="#f59e0b">
-              <p style={{ fontSize: 13, color: "#64748b", marginTop: 0 }}>70% Living · 20% Savings · 10% Debt/Giving</p>
-              <div style={{ background: "#f8fafc", borderRadius: 8, padding: 16, marginBottom: 12 }}>
+            <Card title="70 / 20 / 10 rule">
+              <p style={{ fontSize: FS.body, color: T.inkSoft, marginTop: 0 }}>70% Living · 20% Savings · 10% Debt/Giving</p>
+              <div style={{ background: T.paper, borderRadius: 6, padding: 16, marginBottom: 12 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
-                  <StatBox label="Living Budget" value={fmt(savingsModels["70/20/10"].living)} color="#f59e0b" sub="70% target" />
+                  <StatBox label="Living budget" value={fmt(savingsModels["70/20/10"].living)} color={T.warnInk} sub="70% target" />
                   <InfoTip items={[{ label: "Rent/Mortgage", value: fmt(rent) }, { label: "Bills", value: fmt(bills) }, { label: "Food", value: fmt(food) }, { label: "Transport", value: fmt(transport) }, { label: "Subscriptions", value: fmt(subscriptions) }, { label: "Other", value: fmt(otherExpenses) }, ...customExpenses.map(ce => ({ label: ce.name, value: fmt(ce.amount) }))]}>
-                    <StatBox label="Your Living ⓘ" value={fmt(savingsModels["70/20/10"].actualLiving)} color={savingsModels["70/20/10"].livingGap >= 0 ? "#10b981" : "#ef4444"} sub="hover for breakdown" />
+                    <StatBox label="Your living ⓘ" value={fmt(savingsModels["70/20/10"].actualLiving)} color={savingsModels["70/20/10"].livingGap >= 0 ? T.saved : T.neg} sub="hover for breakdown" />
                   </InfoTip>
-                  <StatBox label="Savings Target" value={fmt(savingsModels["70/20/10"].savings)} color="#10b981" sub="20% target" />
-                  <StatBox label="Actual Savings" value={fmt(savingsModels["70/20/10"].actualSavings)} color={savingsModels["70/20/10"].actualSavings >= savingsModels["70/20/10"].savings ? "#10b981" : "#ef4444"} sub="what you'd save" />
-                  <StatBox label="Debt Budget" value={fmt(savingsModels["70/20/10"].debt)} color="#8b5cf6" sub="10% target" />
+                  <StatBox label="Savings target" value={fmt(savingsModels["70/20/10"].savings)} color={T.saved} sub="20% target" />
+                  <StatBox label="Actual savings" value={fmt(savingsModels["70/20/10"].actualSavings)} color={savingsModels["70/20/10"].actualSavings >= savingsModels["70/20/10"].savings ? T.saved : T.neg} sub="what you'd save" />
+                  <StatBox label="Debt budget" value={fmt(savingsModels["70/20/10"].debt)} color={T.ink} sub="10% target" />
                   <InfoTip items={agreementPayments.map(a => ({ label: a.name, value: fmt(a.monthlyPayment) }))}>
-                    <StatBox label="Your Debt ⓘ" value={fmt(savingsModels["70/20/10"].actualDebt)} color={savingsModels["70/20/10"].debtGap >= 0 ? "#10b981" : "#ef4444"} sub="hover for breakdown" />
+                    <StatBox label="Your debt ⓘ" value={fmt(savingsModels["70/20/10"].actualDebt)} color={savingsModels["70/20/10"].debtGap >= 0 ? T.saved : T.neg} sub="hover for breakdown" />
                   </InfoTip>
                 </div>
               </div>
-              <div style={{ fontSize: 13, color: "#64748b", lineHeight: 1.8 }}>
-                <span style={{ color: savingsModels["70/20/10"].livingGap >= 0 ? "#10b981" : "#ef4444", fontWeight: 700 }}>
+              <div style={{ fontSize: FS.body, color: T.inkSoft, lineHeight: 1.8 }}>
+                <span style={{ color: savingsModels["70/20/10"].livingGap >= 0 ? T.saved : T.neg, fontWeight: 700 }}>
                   {savingsModels["70/20/10"].livingGap >= 0 ? `✓ Living: ${fmt(savingsModels["70/20/10"].livingGap)} under budget` : `✗ Living: ${fmt(-savingsModels["70/20/10"].livingGap)} over budget`}
                 </span><br />
-                <span style={{ color: savingsModels["70/20/10"].debtGap >= 0 ? "#10b981" : "#ef4444", fontWeight: 700 }}>
+                <span style={{ color: savingsModels["70/20/10"].debtGap >= 0 ? T.saved : T.neg, fontWeight: 700 }}>
                   {savingsModels["70/20/10"].debtGap >= 0 ? `✓ Debt: ${fmt(savingsModels["70/20/10"].debtGap)} under budget` : `✗ Debt: ${fmt(-savingsModels["70/20/10"].debtGap)} over budget`}
                 </span>
               </div>
               <ResponsiveContainer width="100%" height={180}>
                 <BarChart data={[{ name: "Living", budget: Math.round(savingsModels["70/20/10"].living), actual: Math.round(savingsModels["70/20/10"].actualLiving) }, { name: "Savings", budget: Math.round(savingsModels["70/20/10"].savings), actual: Math.round(savingsModels["70/20/10"].actualSavings) }, { name: "Debt", budget: Math.round(savingsModels["70/20/10"].debt), actual: Math.round(savingsModels["70/20/10"].actualDebt) }]}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                  <YAxis tickFormatter={(v) => `£${v}`} tick={{ fontSize: 11 }} />
+                  <XAxis dataKey="name" tick={{ fontSize: FS.small }} />
+                  <YAxis tickFormatter={(v) => `£${v}`} tick={{ fontSize: FS.small }} />
                   <Tooltip formatter={(v) => fmt(v)} />
                   <Legend />
-                  <Bar dataKey="budget" name="Budget" fill="#f59e0b" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="actual" name="Actual" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="budget" name="Budget" fill={T.left} radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="actual" name="Actual" fill={T.home} radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </Card>
 
-            <Card title="Pay Yourself First" color="#10b981">
-              <p style={{ fontSize: 13, color: "#64748b", marginTop: 0 }}>Set your savings goal, live on the rest</p>
-              <InputGroup label="Monthly Savings Target" value={pyfSavingsTarget} onChange={setPyfSavingsTarget} />
-              <div style={{ background: "#f8fafc", borderRadius: 8, padding: 16, marginBottom: 12 }}>
-                <StatBox label="Savings" value={fmt(savingsModels["Pay Yourself First"].savings)} color="#10b981" sub="your target" />
-                <StatBox label="Remaining for Life" value={fmt(savingsModels["Pay Yourself First"].remaining)} color="#6366f1" sub="income minus savings" />
-                <StatBox label="After All Costs" value={fmt(savingsModels["Pay Yourself First"].actualAfterSavings)} color={savingsModels["Pay Yourself First"].actualAfterSavings >= 0 ? "#10b981" : "#ef4444"} sub="what's actually left" />
+            <Card title="Pay Yourself First">
+              <p style={{ fontSize: FS.body, color: T.inkSoft, marginTop: 0 }}>Set your savings goal, live on the rest</p>
+              <InputGroup label="Monthly savings target" value={pyfSavingsTarget} onChange={setPyfSavingsTarget} />
+              <div style={{ background: T.paper, borderRadius: 6, padding: 16, marginBottom: 12 }}>
+                <StatBox label="Savings" value={fmt(savingsModels["Pay Yourself First"].savings)} color={T.saved} sub="your target" />
+                <StatBox label="Remaining for life" value={fmt(savingsModels["Pay Yourself First"].remaining)} color={T.ink} sub="income minus savings" />
+                <StatBox label="After all costs" value={fmt(savingsModels["Pay Yourself First"].actualAfterSavings)} color={savingsModels["Pay Yourself First"].actualAfterSavings >= 0 ? T.saved : T.neg} sub="what's actually left" />
               </div>
-              <div style={{ fontSize: 13, color: "#64748b", lineHeight: 1.8 }}>
+              <div style={{ fontSize: FS.body, color: T.inkSoft, lineHeight: 1.8 }}>
                 <strong>Your expenses:</strong> {fmt(totalExpenses)}/mo<br />
                 <strong>Finance agreements:</strong> {fmt(totalAgreementMonthly)}/mo<br />
-                <span style={{ color: savingsModels["Pay Yourself First"].actualAfterSavings >= 0 ? "#10b981" : "#ef4444", fontWeight: 700 }}>
+                <span style={{ color: savingsModels["Pay Yourself First"].actualAfterSavings >= 0 ? T.saved : T.neg, fontWeight: 700 }}>
                   {savingsModels["Pay Yourself First"].actualAfterSavings >= 0
                     ? `✓ Target achievable — ${fmt(savingsModels["Pay Yourself First"].actualAfterSavings)}/mo buffer`
                     : `✗ Short by ${fmt(-savingsModels["Pay Yourself First"].actualAfterSavings)}/mo — reduce target or expenses`}
@@ -1981,7 +1981,7 @@ export default function FinanceCalculator() {
             </Card>
 
             <div style={{ gridColumn: "1 / -1" }}>
-              <Card title="Model Comparison — Budget vs Actual Savings" color="#8b5cf6">
+              <Card title="Model comparison — budget vs actual savings">
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart
                     data={[
@@ -1995,10 +1995,10 @@ export default function FinanceCalculator() {
                     <YAxis tickFormatter={(v) => `£${v}`} />
                     <Tooltip formatter={(v) => fmt(v)} />
                     <Legend />
-                    <Bar dataKey="target" name="Monthly Target" fill="#6366f1" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="actual" name="Monthly Actual" fill="#10b981" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="annualTarget" name="Annual Target" fill="#6366f166" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="annualActual" name="Annual Actual" fill="#10b98166" radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="target" name="Monthly target" fill={T.home} radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="actual" name="Monthly actual" fill={T.saved} radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="annualTarget" name="Annual target" fill={T.home} fillOpacity={0.4} radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="annualActual" name="Annual actual" fill={T.saved} fillOpacity={0.4} radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </Card>
@@ -2008,20 +2008,20 @@ export default function FinanceCalculator() {
 
         {tab === 2 && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
-            <Card title="Property Details" color="#6366f1">
-              <InputGroup label="Property Price" value={housePrice} onChange={setHousePrice} />
+            <Card title="Property details">
+              <InputGroup label="Property price" value={housePrice} onChange={setHousePrice} />
               <InputGroup label="Deposit" value={deposit} onChange={setDeposit} />
-              <InputGroup label="Mortgage Term" value={mortgageTerm} onChange={setMortgageTerm} prefix="" suffix="years" />
-              <InputGroup label="Initial Interest Rate" value={mortgageRate} onChange={setMortgageRate} prefix="" suffix="%" step={0.01} />
+              <InputGroup label="Mortgage term" value={mortgageTerm} onChange={setMortgageTerm} prefix="" suffix="years" />
+              <InputGroup label="Initial interest rate" value={mortgageRate} onChange={setMortgageRate} prefix="" suffix="%" step={0.01} />
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 4 }}>First Time Buyer?</label>
+                <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>First time buyer?</label>
                 <Toggle value={firstTimeBuyer} onChange={setFirstTimeBuyer} labels={["No", "Yes"]} />
               </div>
 
-              <div style={{ borderTop: "2px solid #8b5cf6", paddingTop: 16, marginTop: 16 }}>
-                <h4 style={{ margin: "0 0 12px 0", fontSize: 14, fontWeight: 700, color: "#8b5cf6" }}>Lender Deal</h4>
-                <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0" }}>Match these to your mortgage offer or illustration so the payments here agree with your lender's.</p>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 4 }}>
+              <div style={{ borderTop: `2px solid ${T.ruleStrong}`, paddingTop: 16, marginTop: 16 }}>
+                <h4 style={{ margin: "0 0 12px 0", fontSize: FS.body, fontWeight: 700, color: T.ink }}>Lender deal</h4>
+                <p style={{ fontSize: FS.small, color: T.inkSoft, margin: "0 0 12px 0" }}>Match these to your mortgage offer or illustration so the payments here agree with your lender's.</p>
+                <div style={{ fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>
                   Payment calculation{" "}
                   <InfoTip items={[
                     { label: "In advance", value: fmt2(mortgage.paymentAdvance) },
@@ -2030,11 +2030,11 @@ export default function FinanceCalculator() {
                     { label: "Daily interest", value: fmt2(mortgage.dailyInterest) },
                     { label: `First payment (${firstPaymentDays} days)`, value: fmt2(mortgage.calculatedFirstPayment) },
                   ]}>
-                    <span style={{ color: "#8b5cf6", cursor: "help" }}>ⓘ</span>
+                    <span style={{ color: T.ink, cursor: "help" }}>ⓘ</span>
                   </InfoTip>
                 </div>
                 <Toggle value={paymentTiming === "advance" ? 0 : 1} onChange={(i) => setPaymentTiming(i === 0 ? "advance" : "arrears")} labels={["In advance", "Standard (in arrears)"]} />
-                <p style={{ fontSize: 12, color: "#64748b", margin: "8px 0 16px", lineHeight: 1.5 }}>
+                <p style={{ fontSize: FS.small, color: T.inkSoft, margin: "8px 0 16px", lineHeight: 1.5 }}>
                   Paying in advance means each month's payment is collected first, so interest is charged on the balance after that payment. Some lenders illustrate payments this way, so choose whichever method matches your mortgage illustration. The standard formula charges a full month's interest before each payment, giving {fmt2(mortgage.paymentArrears)} rather than {fmt2(mortgage.paymentAdvance)} on {fmt(mortgage.totalBorrowing)} at {mortgage.initialRate}% over {mortgageTerm} years. A product fee paid upfront doesn't change the payment; adding it to the loan raises it.
                   {mortgage.isFirstPaymentOverridden
                     ? ` Your first payment of ${fmt2(mortgage.firstPayment)} is your own figure${mortgage.firstPayment - mortgage.monthlyPayment > 0.005 ? ` — ${fmt2(mortgage.firstPayment - mortgage.monthlyPayment)} more than a normal month` : ""}.`
@@ -2043,7 +2043,7 @@ export default function FinanceCalculator() {
                 <InputGroup label="First payment interest" value={firstPaymentDays} onChange={setFirstPaymentDays} prefix="" suffix="days" min={0} max={62} />
                 <div style={HINT_STYLE}>Interest from completion to the start of your first full month: {firstPaymentDays} days' interest is {fmt2(mortgage.dailyInterest * Math.max(0, firstPaymentDays))}{mortgage.isFirstPaymentOverridden ? " (calculated — your manual first payment is used instead)." : ", added to your first payment."}</div>
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 4 }}>First payment in your upfront costs?</label>
+                  <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>First payment in your upfront costs?</label>
                   <Toggle value={reserveFirstPayment ? 0 : 1} onChange={(i) => setReserveFirstPayment(i === 0)} labels={["Set aside upfront", "Pay from income"]} />
                 </div>
                 <InputGroup label="Product fee" value={productFee} onChange={setProductFee} step={0.01} />
@@ -2051,13 +2051,13 @@ export default function FinanceCalculator() {
                   <div style={{ marginTop: -8, marginBottom: 16 }}>
                     <Toggle value={productFeeAddToLoan ? 1 : 0} onChange={(i) => setProductFeeAddToLoan(i === 1)} labels={["Pay upfront", "Add to loan"]} />
                     {!productFeeAddToLoan && (
-                      <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "#475569", marginTop: 8, cursor: "pointer" }} title="Tick if you've already paid it — it won't count towards the cash you still need">
-                        <input type="checkbox" checked={productFeePaid} onChange={(e) => setProductFeePaid(e.target.checked)} style={{ width: 16, height: 16, accentColor: "#10b981", cursor: "pointer" }} />
+                      <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: FS.body, color: T.inkSoft, marginTop: 8, cursor: "pointer" }} title="Tick if you've already paid it — it won't count towards the cash you still need">
+                        <input type="checkbox" checked={productFeePaid} onChange={(e) => setProductFeePaid(e.target.checked)} style={{ width: 16, height: 16, accentColor: T.saved, cursor: "pointer" }} />
                         Already paid
                       </label>
                     )}
                     {mortgage.feeLoanCost && (
-                      <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 6, lineHeight: 1.4 }}>
+                      <div style={{ fontSize: FS.small, color: T.inkSoft, marginTop: 6, lineHeight: 1.4 }}>
                         {productFeeAddToLoan
                           ? `Adding it to the loan costs ${fmt2(mortgage.feeLoanCost.monthly)} a month more and about ${fmt(mortgage.feeLoanCost.interest)} in extra interest over the full term.`
                           : `Counted in your essentials on the Purchase Plan tab. Adding it to the loan instead would cost ${fmt2(mortgage.feeLoanCost.monthly)} a month more and about ${fmt(mortgage.feeLoanCost.interest)} in extra interest over the full term.`}
@@ -2078,7 +2078,7 @@ export default function FinanceCalculator() {
                         ? "The fixed rate lasts for the whole term."
                         : "Leave the date blank if the rate lasts the whole term. The follow-on rate is usually the lender's standard variable rate (SVR); 0 keeps the initial rate."}
                 </div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#475569", margin: "4px 0 8px" }}>Manual overrides</div>
+                <div style={{ fontSize: FS.body, fontWeight: 600, color: T.inkSoft, margin: "4px 0 8px" }}>Manual overrides</div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                   <div>
                     <InputGroup label="Monthly payment" value={paymentOverride} onChange={setPaymentOverride} step={0.01} />
@@ -2089,24 +2089,24 @@ export default function FinanceCalculator() {
                     <div style={HINT_STYLE}>Calculated: {fmt2(mortgage.calculatedFirstPayment)}</div>
                   </div>
                 </div>
-                <div style={{ fontSize: 12, color: "#94a3b8" }}>To use the exact figures from your illustration, enter them here. Leave at 0 to use the calculated figures.</div>
+                <div style={{ fontSize: FS.small, color: T.inkSoft }}>To use the exact figures from your illustration, enter them here. Leave at 0 to use the calculated figures.</div>
               </div>
 
-              <div style={{ borderTop: "2px solid #f59e0b", paddingTop: 16, marginTop: 16 }}>
-                <h4 style={{ margin: "0 0 12px 0", fontSize: 14, fontWeight: 700, color: "#f59e0b" }}>Ongoing Homeowner Costs</h4>
-                <InputGroup label="Council Tax at the new home (monthly)" value={councilTax} onChange={setCouncilTax} step={0.01} />
-                <InputGroup label="Council tax you pay now (included in Bills)" value={councilTaxInBills} onChange={setCouncilTaxInBills} step={0.01} />
+              <div style={{ borderTop: `2px solid ${T.left}`, paddingTop: 16, marginTop: 16 }}>
+                <h4 style={{ margin: "0 0 12px 0", fontSize: FS.body, fontWeight: 700, color: T.warnInk }}>Ongoing homeowner costs</h4>
+                <InputGroup label="Council tax at the new home (monthly)" value={councilTax} onChange={setCouncilTax} step={0.01} />
+                <InputGroup label="Council tax you pay now (included in bills)" value={councilTaxInBills} onChange={setCouncilTaxInBills} step={0.01} />
                 <div style={HINT_STYLE}>Taken out of Bills after you move, so the new council tax replaces it rather than adding to it.</div>
-                <InputGroup label="House Price Growth (annual)" value={housePriceGrowth} onChange={setHousePriceGrowth} prefix="" suffix="%" step={0.5} />
-                <div style={{ fontSize: 12, color: "#64748b", lineHeight: 1.5 }}>
+                <InputGroup label="House price growth (annual)" value={housePriceGrowth} onChange={setHousePriceGrowth} prefix="" suffix="%" step={0.5} />
+                <div style={{ fontSize: FS.small, color: T.inkSoft, lineHeight: 1.5 }}>
                   Home insurance, solicitor, survey and moving costs go on the <button style={LINK_BTN} onClick={() => setTab(3)}>Purchase Plan</button> tab, where yearly costs can be paid upfront or monthly.
                 </div>
               </div>
 
-              <div style={{ borderTop: "2px solid #10b981", paddingTop: 16, marginTop: 16 }}>
-                <h4 style={{ margin: "0 0 12px 0", fontSize: 14, fontWeight: 700, color: "#10b981" }}>Overpayment Modelling</h4>
-                <InputGroup label="Monthly Overpayment" value={overpayMonthly} onChange={setOverpayMonthly} />
-                <InputGroup label="Annual Lump Sum Overpayment" value={overpayAnnual} onChange={setOverpayAnnual} />
+              <div style={{ borderTop: `2px solid ${T.saved}`, paddingTop: 16, marginTop: 16 }}>
+                <h4 style={{ margin: "0 0 12px 0", fontSize: FS.body, fontWeight: 700, color: T.saved }}>Overpayment modelling</h4>
+                <InputGroup label="Monthly overpayment" value={overpayMonthly} onChange={setOverpayMonthly} />
+                <InputGroup label="Annual lump sum overpayment" value={overpayAnnual} onChange={setOverpayAnnual} />
                 {(overpayMonthly > 0 || overpayAnnual > 0) && mortgage.totalBorrowing > 0 && (
                   <div style={HINT_STYLE}>
                     Year 1 overpayments: {fmt(overpayMonthly * 12 + overpayAnnual)} ({(((overpayMonthly * 12 + overpayAnnual) / mortgage.totalBorrowing) * 100).toFixed(1)}% of the loan). Most fixed-rate deals allow up to 10% a year without an early repayment charge — check your offer.
@@ -2116,26 +2116,26 @@ export default function FinanceCalculator() {
             </Card>
 
             <div>
-              <Card title="Mortgage Summary" color="#10b981">
+              <Card title="Mortgage summary">
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: mortgage.warnings.length > 0 ? 8 : 16 }}>
-                  <StatBox label="Requested Loan" value={fmt(mortgage.requestedLoan)} sub="price − deposit" />
-                  <StatBox label="LTV" value={`${mortgage.ltv}%`} color={parseFloat(mortgage.ltv) > 90 ? "#ef4444" : "#10b981"} sub="on requested loan" />
-                  <StatBox label="Total Borrowing" value={fmt(mortgage.totalBorrowing)} sub={mortgage.feeAddedToLoan > 0 ? `incl. ${fmt2(mortgage.feeAddedToLoan)} fee` : "no fees added"} />
-                  <StatBox label="Monthly Payment" value={fmt2(mortgage.monthlyPayment)} color="#6366f1" sub={mortgage.isPaymentOverridden ? "manual figure" : mortgage.hasFollowOn ? `until ${fmtDate(fixedRateEndDate)}` : "/month"} />
-                  <StatBox label="First Payment" value={fmt2(mortgage.firstPayment)} color="#6366f1" sub={mortgage.isFirstPaymentOverridden ? "manual figure" : `incl. ${firstPaymentDays} days' interest`} />
-                  <StatBox label="After Fixed Rate" value={mortgage.followOnPayment != null ? fmt2(mortgage.followOnPayment) : "—"} color="#8b5cf6" sub={mortgage.followOnPayment != null ? `at ${mortgage.followOnRateUsed}%` : mortgage.fixExpired ? "follow-on rate from the start" : mortgage.repaidBeforeFixEnd ? "repaid before the fix ends" : fixedRateEndDate ? "no follow-on period" : "no fixed end date"} />
-                  <StatBox label="Total Interest" value={fmt(mortgage.totalInterest)} color="#ef4444" sub="full term" />
-                  <StatBox label="Total Repaid" value={fmt(mortgage.totalRepaid)} />
-                  <StatBox label="Stamp Duty" value={fmt(mortgage.stampDuty)} color="#f59e0b" sub={ftbReliefApplies(housePrice, isFirstTimeBuyer) ? "first-time buyer relief" : "standard rates"} />
+                  <StatBox label="Requested loan" value={fmt(mortgage.requestedLoan)} sub="price − deposit" />
+                  <StatBox label="LTV" value={`${mortgage.ltv}%`} color={parseFloat(mortgage.ltv) > 90 ? T.neg : T.saved} sub="on requested loan" />
+                  <StatBox label="Total borrowing" value={fmt(mortgage.totalBorrowing)} sub={mortgage.feeAddedToLoan > 0 ? `incl. ${fmt2(mortgage.feeAddedToLoan)} fee` : "no fees added"} />
+                  <StatBox label="Monthly payment" value={fmt2(mortgage.monthlyPayment)} color={T.ink} sub={mortgage.isPaymentOverridden ? "manual figure" : mortgage.hasFollowOn ? `until ${fmtDate(fixedRateEndDate)}` : "/month"} />
+                  <StatBox label="First payment" value={fmt2(mortgage.firstPayment)} color={T.ink} sub={mortgage.isFirstPaymentOverridden ? "manual figure" : `incl. ${firstPaymentDays} days' interest`} />
+                  <StatBox label="After fixed rate" value={mortgage.followOnPayment != null ? fmt2(mortgage.followOnPayment) : "—"} color={T.ink} sub={mortgage.followOnPayment != null ? `at ${mortgage.followOnRateUsed}%` : mortgage.fixExpired ? "follow-on rate from the start" : mortgage.repaidBeforeFixEnd ? "repaid before the fix ends" : fixedRateEndDate ? "no follow-on period" : "no fixed end date"} />
+                  <StatBox label="Total interest" value={fmt(mortgage.totalInterest)} color={T.neg} sub="full term" />
+                  <StatBox label="Total repaid" value={fmt(mortgage.totalRepaid)} />
+                  <StatBox label="Stamp duty" value={fmt(mortgage.stampDuty)} color={T.warnInk} sub={ftbReliefApplies(housePrice, isFirstTimeBuyer) ? "first-time buyer relief" : "standard rates"} />
                 </div>
                 {mortgage.warnings.map((w, i) => (
-                  <div key={i} style={{ ...WARNING_STYLES[w.level], marginTop: 8, padding: "8px 12px", borderRadius: 8, fontSize: 12, fontWeight: 600 }}>{w.text}</div>
+                  <div key={i} style={{ ...WARNING_STYLES[w.level], marginTop: 8, padding: "8px 12px", borderRadius: 6, fontSize: FS.small, fontWeight: 600 }}>{w.text}</div>
                 ))}
               </Card>
 
               <div style={{ marginTop: 24 }}>
-                <Card title="Purchase Costs" color="#f59e0b">
-                  <div style={{ fontSize: 14, lineHeight: 2 }}>
+                <Card title="Purchase costs">
+                  <div style={{ fontSize: FS.body, lineHeight: 2 }}>
                     {purchasePlan.autoRows.filter((r) => r.counted).map((r) => (
                       <div key={r.key} style={{ display: "flex", justifyContent: "space-between" }}>
                         <span>{r.name}{r.paid ? " (paid)" : ""}</span>
@@ -2146,9 +2146,9 @@ export default function FinanceCalculator() {
                       <span>Other essentials ({purchasePlan.otherEssentialsCount})</span>
                       <strong>{fmt2(purchasePlan.otherEssentialsTotal)}</strong>
                     </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", borderTop: "2px solid #6366f1", paddingTop: 8, marginTop: 8 }}>
-                      <strong style={{ color: "#6366f1" }}>Essentials total</strong>
-                      <strong style={{ color: "#6366f1", fontSize: 18 }}>{fmt2(purchasePlan.essentialsTotal)}</strong>
+                    <div style={{ display: "flex", justifyContent: "space-between", borderTop: `2px solid ${T.ruleStrong}`, paddingTop: 8, marginTop: 8 }}>
+                      <strong style={{ color: T.ink }}>Essentials total</strong>
+                      <strong style={{ color: T.ink, fontSize: FS.heading }}>{fmt2(purchasePlan.essentialsTotal)}</strong>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                       <span>Extras ({purchasePlan.extrasCount})</span>
@@ -2159,19 +2159,19 @@ export default function FinanceCalculator() {
                       <strong>{fmt2(purchasePlan.idealTotal)}</strong>
                     </div>
                     {purchasePlan.paidTotal > 0.005 && (
-                      <div style={{ display: "flex", justifyContent: "space-between", color: "#10b981" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", color: T.saved }}>
                         <span>Already paid (not in the gap)</span>
                         <strong>−{fmt2(purchasePlan.paidTotal)}</strong>
                       </div>
                     )}
                     {purchasePlan.monthlyTotal > 0 && (
-                      <div style={{ display: "flex", justifyContent: "space-between", color: "#64748b" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", color: T.inkSoft }}>
                         <span>Paid monthly</span>
                         <strong>{fmt2(purchasePlan.monthlyTotal)}/mo</strong>
                       </div>
                     )}
                     {purchasePlan.annualTotal > 0 && (
-                      <div style={{ display: "flex", justifyContent: "space-between", color: "#64748b" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", color: T.inkSoft }}>
                         <span>Paid annually (renews from savings)</span>
                         <strong>{fmt2(purchasePlan.annualTotal)}/yr</strong>
                       </div>
@@ -2186,74 +2186,74 @@ export default function FinanceCalculator() {
                         ? `Essentials covered with ${fmt2(-purchasePlan.gap)} spare; ${fmt2(purchasePlan.gapIdeal)} short incl. extras.`
                         : `Covered: ${fmt2(-purchasePlan.gapIdeal)} spare after essentials and extras.`;
                     return (
-                      <div style={{ marginTop: 12, padding: "8px 12px", borderRadius: 8, fontSize: 13, fontWeight: 600, background: short ? "#fef2f2" : "#f0fdf4", border: `1px solid ${short ? "#fecaca" : "#bbf7d0"}`, color: short ? "#991b1b" : "#166534" }}>
+                      <div style={{ marginTop: 12, padding: "8px 12px", borderRadius: 6, fontSize: FS.body, fontWeight: 600, background: T.paper, border: `1px solid ${short ? T.neg : T.saved}`, color: short ? T.neg : T.saved }}>
                         {text}
                       </div>
                     );
                   })()}
-                  <button onClick={() => setTab(3)} style={{ marginTop: 12, width: "100%", padding: 10, background: "#fffbeb", color: "#92400e", border: "1px solid #fde68a", borderRadius: 8, cursor: "pointer", fontWeight: 700, fontSize: 13 }}>
+                  <button onClick={() => setTab(3)} style={{ marginTop: 12, width: "100%", padding: 10, background: T.warnBg, color: T.warnInk, border: `1px solid ${T.warnBg}`, borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body }}>
                     Open Purchase Plan →
                   </button>
                 </Card>
               </div>
 
               <div style={{ marginTop: 24 }}>
-                <Card title="Full Affordability Picture" color="#8b5cf6">
-                  <div style={{ fontSize: 14, lineHeight: 2 }}>
+                <Card title="Full affordability picture">
+                  <div style={{ fontSize: FS.body, lineHeight: 2 }}>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span>Monthly Net Income</span>
+                      <span>Monthly net income</span>
                       <strong>{fmt(totalMonthlyNet)}</strong>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                       <span>Mortgage Payment{mortgage.hasFollowOn ? " (fixed period)" : ""}</span>
-                      <strong style={{ color: "#ef4444" }}>-{fmt(mortgage.monthlyPayment)}</strong>
+                      <strong style={{ color: T.neg }}>-{fmt(mortgage.monthlyPayment)}</strong>
                     </div>
                     {overpayMonthly > 0 && (
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span>Mortgage Overpayment</span>
-                        <strong style={{ color: "#ef4444" }}>-{fmt(overpayMonthly)}</strong>
+                        <span>Mortgage overpayment</span>
+                        <strong style={{ color: T.neg }}>-{fmt(overpayMonthly)}</strong>
                       </div>
                     )}
                     {councilTax > 0 && (
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span>Council Tax</span>
-                        <strong style={{ color: "#ef4444" }}>-{fmt(councilTax)}</strong>
+                        <span>Council tax</span>
+                        <strong style={{ color: T.neg }}>-{fmt(councilTax)}</strong>
                       </div>
                     )}
                     {purchasePlan.monthlyItems.map((c) => (
                       <div key={`pm${c.id}`} style={{ display: "flex", justifyContent: "space-between" }}>
                         <span>{c.label}</span>
-                        <strong style={{ color: "#ef4444" }}>-{fmt(c.monthly)}</strong>
+                        <strong style={{ color: T.neg }}>-{fmt(c.monthly)}</strong>
                       </div>
                     ))}
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                       <span>Other Expenses (excl. rent{councilTaxInBillsApplied > 0 ? " & current council tax" : ""})</span>
-                      <strong style={{ color: "#ef4444" }}>-{fmt(postLivingExpenses)}</strong>
+                      <strong style={{ color: T.neg }}>-{fmt(postLivingExpenses)}</strong>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span>Finance Agreements</span>
-                      <strong style={{ color: "#ef4444" }}>-{fmt(totalAgreementMonthly)}</strong>
+                      <span>Finance agreements</span>
+                      <strong style={{ color: T.neg }}>-{fmt(totalAgreementMonthly)}</strong>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                       <span>Savings Goal ({snapshot.selectedModel})</span>
-                      <strong style={{ color: "#ef4444" }}>-{fmt(snapshot.monthlySavingsGoal)}</strong>
+                      <strong style={{ color: T.neg }}>-{fmt(snapshot.monthlySavingsGoal)}</strong>
                     </div>
                     {snapshot.activePotsMonthly > 0 && (
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
                         <span>Pot Contributions ({pots.filter((p) => (p.monthlyContribution || 0) > 0).length} active)</span>
-                        <strong style={{ color: "#ef4444" }}>-{fmt(snapshot.activePotsMonthly)}</strong>
+                        <strong style={{ color: T.neg }}>-{fmt(snapshot.activePotsMonthly)}</strong>
                       </div>
                     )}
                     {(() => {
                       const remaining = snapshot.postDisposable;
                       return (
                         <>
-                          <div style={{ display: "flex", justifyContent: "space-between", borderTop: "2px solid #8b5cf6", paddingTop: 8, marginTop: 8 }}>
-                            <strong style={{ color: "#8b5cf6" }}>True Remaining</strong>
-                            <strong style={{ color: remaining >= 0 ? "#10b981" : "#ef4444", fontSize: 18 }}>{fmt(remaining)}</strong>
+                          <div style={{ display: "flex", justifyContent: "space-between", borderTop: `2px solid ${T.ruleStrong}`, paddingTop: 8, marginTop: 8 }}>
+                            <strong style={{ color: T.ink }}>True remaining</strong>
+                            <strong style={{ color: remaining >= 0 ? T.saved : T.neg, fontSize: FS.heading }}>{fmt(remaining)}</strong>
                           </div>
                           {remaining < 0 && (
-                            <div style={{ marginTop: 4, fontSize: 12, color: "#ef4444", fontWeight: 600 }}>
+                            <div style={{ marginTop: 4, fontSize: FS.small, color: T.neg, fontWeight: 600 }}>
                               You'd be {fmt(-remaining)}/mo short with all commitments. Consider reducing savings goals or overpayments.
                             </div>
                           )}
@@ -2261,23 +2261,23 @@ export default function FinanceCalculator() {
                       );
                     })()}
                     {mortgage.followOnPayment != null && Math.abs(mortgage.followOnPayment - mortgage.monthlyPayment) >= MORTGAGE_EPS && (
-                      <div style={{ marginTop: 4, fontSize: 12, color: "#64748b", lineHeight: 1.5 }}>
+                      <div style={{ marginTop: 4, fontSize: FS.small, color: T.inkSoft, lineHeight: 1.5 }}>
                         After {fmtDate(fixedRateEndDate)} the mortgage becomes {fmt2(mortgage.followOnPayment)} a month ({fmtSigned2(mortgage.followOnPayment - mortgage.monthlyPayment)}).
                       </div>
                     )}
                     {purchasePlan.annualTotal > 0 && (
-                      <div style={{ marginTop: 4, fontSize: 12, color: "#64748b", lineHeight: 1.5 }}>
+                      <div style={{ marginTop: 4, fontSize: FS.small, color: T.inkSoft, lineHeight: 1.5 }}>
                         Costs paid annually ({fmt2(purchasePlan.annualTotal)} a year, ≈ {fmt2(purchasePlan.annualTotal / 12)}/mo) aren't included above — they're paid upfront and renew from savings each year.
                       </div>
                     )}
                     {overpayAnnual > 0 && (
-                      <div style={{ marginTop: 4, fontSize: 12, color: "#64748b", lineHeight: 1.5 }}>
+                      <div style={{ marginTop: 4, fontSize: FS.small, color: T.inkSoft, lineHeight: 1.5 }}>
                         Your {fmt(overpayAnnual)} yearly lump-sum overpayment isn't included above — it's assumed to come from savings (≈ {fmt(overpayAnnual / 12)}/mo).
                       </div>
                     )}
-                    <div style={{ marginTop: 8, fontSize: 13, color: "#64748b" }}>
+                    <div style={{ marginTop: 8, fontSize: FS.body, color: T.inkSoft }}>
                       Mortgage is <strong>{((mortgage.monthlyPayment / totalMonthlyNet) * 100).toFixed(1)}%</strong> of net income
-                      {mortgage.monthlyPayment / totalMonthlyNet > 0.35 && <span style={{ color: "#ef4444", fontWeight: 700 }}> — lenders typically want this below 35%</span>}
+                      {mortgage.monthlyPayment / totalMonthlyNet > 0.35 && <span style={{ color: T.neg, fontWeight: 700 }}> — lenders typically want this below 35%</span>}
                     </div>
                   </div>
                 </Card>
@@ -2286,16 +2286,16 @@ export default function FinanceCalculator() {
 
             {(overpayMonthly > 0 || overpayAnnual > 0) && (
               <div style={{ gridColumn: "1 / -1" }}>
-                <Card title="Overpayment Impact" color="#10b981">
+                <Card title="Overpayment impact">
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
-                    <StatBox label="Interest Without" value={fmt(mortgageAmortisation.totalInterest)} color="#ef4444" sub="no overpayments" />
-                    <StatBox label="Interest With" value={fmt(mortgageAmortisation.totalInterestOp)} color="#10b981" sub="with overpayments" />
-                    <StatBox label="Interest Saved" value={fmt(mortgageAmortisation.interestSaved)} color="#6366f1" sub="total saved" />
-                    <StatBox label="Term Reduced" value={mortgageAmortisation.monthsReduced > 0 ? fmtYearsMonths(mortgageAmortisation.monthsReduced) : "—"} color="#8b5cf6" sub={mortgageAmortisation.payoffMonthOp ? `repaid after ${fmtYearsMonths(mortgageAmortisation.payoffMonthOp)}` : `full ${mortgageTerm} yr term`} />
+                    <StatBox label="Interest without" value={fmt(mortgageAmortisation.totalInterest)} color={T.neg} sub="no overpayments" />
+                    <StatBox label="Interest with" value={fmt(mortgageAmortisation.totalInterestOp)} color={T.saved} sub="with overpayments" />
+                    <StatBox label="Interest saved" value={fmt(mortgageAmortisation.interestSaved)} color={T.ink} sub="total saved" />
+                    <StatBox label="Term reduced" value={mortgageAmortisation.monthsReduced > 0 ? fmtYearsMonths(mortgageAmortisation.monthsReduced) : "—"} color={T.ink} sub={mortgageAmortisation.payoffMonthOp ? `repaid after ${fmtYearsMonths(mortgageAmortisation.payoffMonthOp)}` : `full ${mortgageTerm} yr term`} />
                   </div>
-                  <div style={{ fontSize: 13, color: "#64748b", padding: "8px 12px", background: "#f0fdf4", borderRadius: 8 }}>
-                    Overpaying <strong>{[overpayMonthly > 0 ? `${fmt(overpayMonthly)} a month` : null, overpayAnnual > 0 ? `a ${fmt(overpayAnnual)} lump sum each year` : null].filter(Boolean).join(" plus ")}</strong> saves you <strong style={{ color: "#10b981" }}>{fmt(mortgageAmortisation.interestSaved)}</strong> in interest
-                    {mortgageAmortisation.monthsReduced > 0 && <> and clears your mortgage <strong style={{ color: "#10b981" }}>{fmtYearsMonths(mortgageAmortisation.monthsReduced)} early</strong></>}.
+                  <div style={{ fontSize: FS.body, color: T.inkSoft, padding: "8px 12px", background: T.paper, borderRadius: 6 }}>
+                    Overpaying <strong>{[overpayMonthly > 0 ? `${fmt(overpayMonthly)} a month` : null, overpayAnnual > 0 ? `a ${fmt(overpayAnnual)} lump sum each year` : null].filter(Boolean).join(" plus ")}</strong> saves you <strong style={{ color: T.saved }}>{fmt(mortgageAmortisation.interestSaved)}</strong> in interest
+                    {mortgageAmortisation.monthsReduced > 0 && <> and clears your mortgage <strong style={{ color: T.saved }}>{fmtYearsMonths(mortgageAmortisation.monthsReduced)} early</strong></>}.
                     {overpayMonthly > 0 && <> That's {fmt(overpayMonthly * 12)} a year in monthly overpayments.</>}
                     {mortgage.hasFollowOn && <> Assumes you keep paying the standard payment after the fixed rate ends.</>}
                   </div>
@@ -2304,7 +2304,7 @@ export default function FinanceCalculator() {
             )}
 
             <div style={{ gridColumn: "1 / -1" }}>
-              <Card title={overpayMonthly > 0 || overpayAnnual > 0 ? "Mortgage Balance — Standard vs Overpayment" : "Mortgage Balance Over Time"} color="#6366f1">
+              <Card title={overpayMonthly > 0 || overpayAnnual > 0 ? "Mortgage Balance — Standard vs Overpayment" : "Mortgage Balance Over Time"} color={T.ink}>
                 <ResponsiveContainer width="100%" height={350}>
                   <AreaChart data={mortgageAmortisation.data}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -2312,13 +2312,13 @@ export default function FinanceCalculator() {
                     <YAxis tickFormatter={(v) => `£${(v / 1000).toFixed(0)}k`} />
                     <Tooltip formatter={(v) => fmt(v)} />
                     <Legend />
-                    <Area type="monotone" dataKey="balance" name="Standard Balance" fill="#6366f122" stroke="#6366f1" strokeWidth={2} />
+                    <Area type="monotone" dataKey="balance" name="Standard balance" fill={T.home} fillOpacity={0.13} stroke={T.home} strokeWidth={2} />
                     {(overpayMonthly > 0 || overpayAnnual > 0) && (
-                      <Area type="monotone" dataKey="balanceOp" name="With Overpayments" fill="#10b98122" stroke="#10b981" strokeWidth={2} strokeDasharray="6 3" />
+                      <Area type="monotone" dataKey="balanceOp" name="With overpayments" fill={T.saved} fillOpacity={0.13} stroke={T.saved} strokeWidth={2} strokeDasharray="6 3" />
                     )}
-                    <Area type="monotone" dataKey="interest" name="Yearly Interest" fill="#ef444422" stroke="#ef4444" strokeWidth={1} />
+                    <Area type="monotone" dataKey="interest" name="Yearly interest" fill={T.neg} fillOpacity={0.13} stroke={T.neg} strokeWidth={1} />
                     {mortgageAmortisation.fixEndYear && (
-                      <ReferenceLine x={mortgageAmortisation.fixEndYear} stroke="#f59e0b" strokeDasharray="4 4" label={{ value: "Fixed rate ends", position: "insideTopRight", fill: "#92400e", fontSize: 11 }} />
+                      <ReferenceLine x={mortgageAmortisation.fixEndYear} stroke={T.left} strokeDasharray="4 4" label={{ value: "Fixed rate ends", position: "insideTopRight", fill: T.warnInk, fontSize: FS.small }} />
                     )}
                   </AreaChart>
                 </ResponsiveContainer>
@@ -2332,47 +2332,47 @@ export default function FinanceCalculator() {
           const costCols = mode === MODE.HOUSEHOLD
             ? "minmax(180px, 2fr) 120px 110px 96px 104px 104px 104px 56px 32px"
             : "minmax(180px, 2fr) 120px 110px 96px 104px 104px 56px 32px";
-          const cellInput = { padding: "6px 8px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, minWidth: 0, width: "100%" };
-          const cellSelect = { ...cellInput, fontSize: 12, padding: "6px 6px" };
-          const dash = <span style={{ textAlign: "center", color: "#cbd5e1" }}>—</span>;
+          const cellInput = { padding: "6px 8px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body, minWidth: 0, width: "100%" };
+          const cellSelect = { ...cellInput, fontSize: FS.small, padding: "6px 6px" };
+          const dash = <span style={{ textAlign: "center", color: T.rule }}>—</span>;
           const isShort = (v) => v > 0.005;
           const paidSetters = { deposit: setDepositPaid, stampDuty: setStampDutyPaid, productFee: setProductFeePaid };
           const monthlyFor = (category) => pp.monthlyItems.filter((r) => r.category === category).reduce((s, r) => s + r.monthly, 0);
           const existingNames = new Set(purchaseCosts.map((c) => c.name.trim().toLowerCase()));
           const quickAdd = QUICK_ADD_COSTS.filter((q) => !existingNames.has(q.name.toLowerCase()));
           const ownerGroups = mode === MODE.HOUSEHOLD
-            ? [{ key: "p1", label: "Person 1", color: "#6366f1" }, { key: "p2", label: "Person 2", color: "#8b5cf6" }, { key: "joint", label: "Joint", color: "#ec4899" }]
-            : [{ key: "all", label: "", color: "#10b981" }];
+            ? [{ key: "p1", label: "Person 1", color: T.ink }, { key: "p2", label: "Person 2", color: T.ink }, { key: "joint", label: "Joint", color: T.ink }]
+            : [{ key: "all", label: "", color: T.saved }];
           const fundCols = `32px minmax(140px, 1fr) 104px 90px${pp.completionInFuture ? " 110px" : ""}`;
 
           const bandTile = (t) => {
             const tile = (
-              <div style={{ background: t.bg, borderRadius: 12, padding: 14, textAlign: "center", border: `1px solid ${t.border}`, height: "100%" }}>
-                <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>{t.label}</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: t.color }}>{t.value}</div>
-                <div style={{ fontSize: 11, color: "#94a3b8" }}>{t.sub}</div>
+              <div style={{ background: t.bg, borderRadius: 6, padding: 14, textAlign: "center", border: `1px solid ${t.border}`, height: "100%" }}>
+                <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>{t.label}</div>
+                <div style={{ fontSize: FS.figure, fontWeight: 700, color: t.color }}>{t.value}</div>
+                <div style={{ fontSize: FS.small, color: T.inkSoft }}>{t.sub}</div>
               </div>
             );
             return t.items ? <InfoTip key={t.key} items={t.items}>{tile}</InfoTip> : <div key={t.key}>{tile}</div>;
           };
-          const red = { bg: "#fef2f2", border: "#fecaca", color: "#ef4444" };
-          const green = { bg: "#f0fdf4", border: "#bbf7d0", color: "#10b981" };
+          const red = { bg: T.paper, border: T.neg, color: T.neg };
+          const green = { bg: T.paper, border: T.saved, color: T.saved };
           const availableItems = [
             ...(mode === MODE.HOUSEHOLD ? ownerGroups.filter((g) => pp.availableByOwner[g.key] > 0).map((g) => ({ label: g.label, value: fmt2(pp.availableByOwner[g.key]) })) : []),
             ...(pp.completionInFuture ? [{ label: "Today", value: fmt2(pp.availableToday) }] : []),
           ];
           const tiles = [
-            { key: "need", label: "CASH NEEDED", value: fmt2(pp.essentialsToPay), sub: `essentials still to pay${pp.essentialsPaid > 0.005 ? ` · ${fmt2(pp.essentialsPaid)} paid` : ""}`, bg: "#fffbeb", border: "#fde68a", color: "#f59e0b" },
-            { key: "ideal", label: "INCL. EXTRAS", value: fmt2(pp.idealToPay), sub: `+ ${fmt2(pp.extrasToPay)} extras`, bg: "#f5f3ff", border: "#ddd6fe", color: "#8b5cf6" },
-            { key: "available", label: availableItems.length > 0 ? "AVAILABLE ⓘ" : "AVAILABLE", value: fmt2(pp.available), sub: pp.completionInFuture ? `forecast for ${fmtDate(completionDate)}` : `${pp.tickedCount} ticked pot${pp.tickedCount === 1 ? "" : "s"}, today`, bg: "#eef2ff", border: "#c7d2fe", color: "#6366f1", items: availableItems.length > 0 ? availableItems : null },
-            { key: "gap", label: "GAP ⓘ", value: fmt2(Math.abs(pp.gap)), sub: isShort(pp.gap) ? "short for essentials" : "spare after essentials", ...(isShort(pp.gap) ? red : green), items: [{ label: "Essentials still to pay", value: fmt2(pp.essentialsToPay) }, { label: "− Available", value: fmt2(pp.available) }, { label: isShort(pp.gap) ? "= Short" : "= Spare", value: fmt2(Math.abs(pp.gap)) }] },
-            { key: "gapIdeal", label: "GAP TO IDEAL ⓘ", value: fmt2(Math.abs(pp.gapIdeal)), sub: isShort(pp.gapIdeal) ? "short incl. extras" : "spare incl. extras", ...(isShort(pp.gapIdeal) ? red : green), items: [{ label: "Incl. extras still to pay", value: fmt2(pp.idealToPay) }, { label: "− Available", value: fmt2(pp.available) }, { label: isShort(pp.gapIdeal) ? "= Short" : "= Spare", value: fmt2(Math.abs(pp.gapIdeal)) }] },
+            { key: "need", label: "Cash needed", value: fmt2(pp.essentialsToPay), sub: `essentials still to pay${pp.essentialsPaid > 0.005 ? ` · ${fmt2(pp.essentialsPaid)} paid` : ""}`, bg: T.warnBg, border: T.warnBg, color: T.warnInk },
+            { key: "ideal", label: "Incl. extras", value: fmt2(pp.idealToPay), sub: `+ ${fmt2(pp.extrasToPay)} extras`, bg: T.paper, border: T.rule, color: T.ink },
+            { key: "available", label: availableItems.length > 0 ? "AVAILABLE ⓘ" : "AVAILABLE", value: fmt2(pp.available), sub: pp.completionInFuture ? `forecast for ${fmtDate(completionDate)}` : `${pp.tickedCount} ticked pot${pp.tickedCount === 1 ? "" : "s"}, today`, bg: T.paper, border: T.rule, color: T.ink, items: availableItems.length > 0 ? availableItems : null },
+            { key: "gap", label: "Gap ⓘ", value: fmt2(Math.abs(pp.gap)), sub: isShort(pp.gap) ? "short for essentials" : "spare after essentials", ...(isShort(pp.gap) ? red : green), items: [{ label: "Essentials still to pay", value: fmt2(pp.essentialsToPay) }, { label: "− Available", value: fmt2(pp.available) }, { label: isShort(pp.gap) ? "= Short" : "= Spare", value: fmt2(Math.abs(pp.gap)) }] },
+            { key: "gapIdeal", label: "Gap to ideal ⓘ", value: fmt2(Math.abs(pp.gapIdeal)), sub: isShort(pp.gapIdeal) ? "short incl. extras" : "spare incl. extras", ...(isShort(pp.gapIdeal) ? red : green), items: [{ label: "Incl. extras still to pay", value: fmt2(pp.idealToPay) }, { label: "− Available", value: fmt2(pp.available) }, { label: isShort(pp.gapIdeal) ? "= Short" : "= Spare", value: fmt2(Math.abs(pp.gapIdeal)) }] },
           ];
 
           const autoRowView = (r) => {
             let pill = "calculated";
             let sub = "";
-            let payCell = <span style={{ fontSize: 12, color: "#64748b" }}>Upfront</span>;
+            let payCell = <span style={{ fontSize: FS.small, color: T.inkSoft }}>Upfront</span>;
             if (r.key === "deposit") {
               pill = "Mortgage tab";
               sub = housePrice > 0 ? `${((deposit / housePrice) * 100).toFixed(1)}% of ${fmt(housePrice)}` : "";
@@ -2397,21 +2397,21 @@ export default function FinanceCalculator() {
               );
             }
             return (
-              <div key={r.key} style={{ display: "grid", gridTemplateColumns: costCols, gap: 8, alignItems: "center", padding: "8px 4px", borderBottom: "1px solid #f1f5f9", background: r.paid ? "#f0fdf4" : "#f8fafc" }}>
+              <div key={r.key} style={{ display: "grid", gridTemplateColumns: costCols, gap: 8, alignItems: "center", padding: "8px 4px", borderBottom: `1px solid ${T.paper}`, background: T.paper }}>
                 <div style={{ minWidth: 0 }}>
-                  <strong style={{ fontSize: 13 }}>{r.name}</strong>
+                  <strong style={{ fontSize: FS.body }}>{r.name}</strong>
                   <span style={PILL_STYLE}>{pill}</span>
-                  {sub && <div style={{ fontSize: 11, color: "#94a3b8" }}>{sub}</div>}
+                  {sub && <div style={{ fontSize: FS.small, color: T.inkSoft }}>{sub}</div>}
                 </div>
-                <span style={{ textAlign: "right", fontWeight: 700, fontSize: 13, color: !r.counted || r.paid ? "#94a3b8" : "#1e293b" }}>{r.counted ? fmt2(r.amount) : "—"}</span>
+                <span style={{ textAlign: "right", fontWeight: 700, fontSize: FS.body, color: !r.counted || r.paid ? T.inkSoft : T.ink }}>{r.counted ? fmt2(r.amount) : "—"}</span>
                 {dash}
-                <span style={{ fontSize: 12, color: "#64748b" }}>Once</span>
+                <span style={{ fontSize: FS.small, color: T.inkSoft }}>Once</span>
                 {payCell}
-                <span style={{ fontSize: 12, color: "#6366f1", fontWeight: 600 }}>Essential</span>
+                <span style={{ fontSize: FS.small, color: T.ink, fontWeight: 600 }}>Essential</span>
                 {mode === MODE.HOUSEHOLD && dash}
                 {r.canMarkPaid ? (
                   <label style={{ display: "flex", justifyContent: "center", cursor: "pointer" }} title="Already paid — no longer counts towards the cash you still need">
-                    <input type="checkbox" checked={!!r.paid} onChange={(e) => paidSetters[r.key](e.target.checked)} style={{ width: 18, height: 18, accentColor: "#10b981", cursor: "pointer" }} />
+                    <input type="checkbox" checked={!!r.paid} onChange={(e) => paidSetters[r.key](e.target.checked)} style={{ width: 18, height: 18, accentColor: T.saved, cursor: "pointer" }} />
                   </label>
                 ) : dash}
                 <span />
@@ -2422,9 +2422,8 @@ export default function FinanceCalculator() {
           const costRowView = (c) => {
             const yearly = c.renews === "yearly";
             const upfrontActive = c.payment === "upfront";
-            const essential = c.category === "essential";
             return (
-              <div key={c.id} style={{ display: "grid", gridTemplateColumns: costCols, gap: 8, alignItems: "center", padding: "8px 4px", borderBottom: "1px solid #f1f5f9", background: c.paid && upfrontActive ? "#f0fdf4" : "transparent" }}>
+              <div key={c.id} style={{ display: "grid", gridTemplateColumns: costCols, gap: 8, alignItems: "center", padding: "8px 4px", borderBottom: `1px solid ${T.paper}`, background: c.paid && upfrontActive ? T.paper : "transparent" }}>
                 <input type="text" value={c.name} onChange={(e) => updatePurchaseCost(c.id, "name", e.target.value)} style={cellInput} />
                 <input type="number" step={0.01} value={c.upfront} onChange={(e) => updatePurchaseCost(c.id, "upfront", parseFloat(e.target.value) || 0)} style={{ ...cellInput, textAlign: "right", ...(upfrontActive ? {} : INACTIVE_INPUT) }} title={yearly ? "Annual price if paid upfront each year" : "One-off cost"} />
                 {yearly ? (
@@ -2439,55 +2438,55 @@ export default function FinanceCalculator() {
                     <option value="upfront">Annually</option>
                     <option value="monthly">Monthly</option>
                   </select>
-                ) : <span style={{ fontSize: 12, color: "#64748b" }}>Upfront</span>}
-                <select value={c.category} onChange={(e) => updatePurchaseCost(c.id, "category", e.target.value)} style={{ ...cellSelect, background: essential ? "#eef2ff" : "#f5f3ff", color: essential ? "#6366f1" : "#8b5cf6", fontWeight: 600 }}>
+                ) : <span style={{ fontSize: FS.small, color: T.inkSoft }}>Upfront</span>}
+                <select value={c.category} onChange={(e) => updatePurchaseCost(c.id, "category", e.target.value)} style={{ ...cellSelect, background: T.paper, color: T.ink, fontWeight: 600 }}>
                   <option value="essential">Essential</option>
                   <option value="extra">Extra</option>
                 </select>
                 {mode === MODE.HOUSEHOLD && (isPaidMonthly(c) ? (
-                  <select value={c.splitType || "shared"} onChange={(e) => updatePurchaseCost(c.id, "splitType", e.target.value)} style={{ ...cellSelect, background: c.splitType === "p1" ? "#eef2ff" : c.splitType === "p2" ? "#f5f3ff" : "#f0fdf4" }} title="Who pays this cost each month after you move in">
+                  <select value={c.splitType || "shared"} onChange={(e) => updatePurchaseCost(c.id, "splitType", e.target.value)} style={{ ...cellSelect, background: T.paper }} title="Who pays this cost each month after you move in">
                     <option value="shared">Shared</option>
                     <option value="p1">P1 only</option>
                     <option value="p2">P2 only</option>
                   </select>
                 ) : dash)}
                 <label style={{ display: "flex", justifyContent: "center", alignItems: "center", opacity: upfrontActive ? 1 : 0.4, cursor: upfrontActive ? "pointer" : "not-allowed" }} title={upfrontActive ? "Already paid — no longer counts towards the cash you still need" : "Only upfront costs can be marked as paid"}>
-                  <input type="checkbox" checked={!!c.paid} disabled={!upfrontActive} onChange={(e) => updatePurchaseCost(c.id, "paid", e.target.checked)} style={{ width: 18, height: 18, accentColor: "#10b981", cursor: upfrontActive ? "pointer" : "not-allowed" }} />
+                  <input type="checkbox" checked={!!c.paid} disabled={!upfrontActive} onChange={(e) => updatePurchaseCost(c.id, "paid", e.target.checked)} style={{ width: 18, height: 18, accentColor: T.saved, cursor: upfrontActive ? "pointer" : "not-allowed" }} />
                 </label>
-                <button onClick={() => removePurchaseCost(c.id)} style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontWeight: 700, fontSize: 18, padding: 0 }}>×</button>
+                <button onClick={() => removePurchaseCost(c.id)} style={{ background: "none", border: "none", color: T.neg, cursor: "pointer", fontWeight: 700, fontSize: FS.heading, padding: 0 }}>×</button>
               </div>
             );
           };
 
           const sectionHead = (text, color) => (
-            <div style={{ padding: "12px 4px 4px", fontSize: 11, fontWeight: 700, color, textTransform: "uppercase", letterSpacing: 0.5, borderBottom: `1px solid ${color}33` }}>{text}</div>
+            <div style={{ padding: "12px 4px 4px", fontSize: FS.small, fontWeight: 700, color, borderBottom: `1px solid ${T.rule}` }}>{text}</div>
           );
           const subtotalRow = (label, upfront, monthly, bg, color) => (
-            <div style={{ display: "grid", gridTemplateColumns: costCols, gap: 8, alignItems: "center", padding: "8px 4px", background: bg, fontWeight: 700, fontSize: 13 }}>
+            <div style={{ display: "grid", gridTemplateColumns: costCols, gap: 8, alignItems: "center", padding: "8px 4px", background: bg, fontWeight: 700, fontSize: FS.body }}>
               <span style={{ color }}>{label}</span>
               <span style={{ textAlign: "right", color }}>{fmt2(upfront)}</span>
-              <span style={{ textAlign: "right", fontSize: 12, color: "#64748b", fontWeight: 600 }}>{monthly > 0.005 ? `${fmt2(monthly)}/mo` : ""}</span>
+              <span style={{ textAlign: "right", fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>{monthly > 0.005 ? `${fmt2(monthly)}/mo` : ""}</span>
             </div>
           );
           const coverLabel = (month, date) => {
             const late = month !== null && month > 0 && !!completionDate && month > pp.monthsToCompletion;
-            const color = month === null || late ? "#ef4444" : "#10b981";
+            const color = month === null || late ? T.neg : T.saved;
             const monthsLate = late ? month - pp.monthsToCompletion : 0;
             return <strong style={{ color }}>{coverText(month, date)}{late ? ` — ${monthsLate} month${monthsLate === 1 ? "" : "s"} after completion` : ""}</strong>;
           };
           const fundRow = (p) => (
-            <div key={p.id} style={{ display: "grid", gridTemplateColumns: fundCols, gap: 8, alignItems: "center", padding: "6px 4px", borderBottom: "1px solid #f1f5f9", fontSize: 13 }}>
+            <div key={p.id} style={{ display: "grid", gridTemplateColumns: fundCols, gap: 8, alignItems: "center", padding: "6px 4px", borderBottom: `1px solid ${T.paper}`, fontSize: FS.body }}>
               <label style={{ display: "flex", justifyContent: "center" }} title="Use this pot for the purchase">
-                <input type="checkbox" checked={!!p.forPurchase} onChange={(e) => updatePot(p.id, "forPurchase", e.target.checked)} style={{ width: 18, height: 18, accentColor: "#10b981", cursor: "pointer" }} />
+                <input type="checkbox" checked={!!p.forPurchase} onChange={(e) => updatePot(p.id, "forPurchase", e.target.checked)} style={{ width: 18, height: 18, accentColor: T.saved, cursor: "pointer" }} />
               </label>
               <span style={{ minWidth: 0 }}>
-                <span style={{ display: "inline-block", width: 8, height: 8, background: POT_TYPE_COLORS[p.type] || "#94a3b8", borderRadius: "50%", marginRight: 6 }} />
+                <span style={{ display: "inline-block", width: 8, height: 8, background: POT_TYPE_COLORS[p.type] || T.inkSoft, borderRadius: "50%", marginRight: 6 }} />
                 <strong>{p.name}</strong>
-                <span style={{ marginLeft: 6, fontSize: 10, color: "#94a3b8", textTransform: "uppercase" }}>{POT_TYPE_LABELS[p.type] || p.type}</span>
+                <span style={{ marginLeft: 6, fontSize: FS.small, color: T.inkSoft }}>{POT_TYPE_LABELS[p.type] || p.type}</span>
               </span>
-              <span style={{ textAlign: "right", color: p.forPurchase ? "#1e293b" : "#94a3b8" }}>{fmt2(p.startingBalance || 0)}</span>
-              <span style={{ textAlign: "right", color: p.forPurchase ? "#10b981" : "#94a3b8" }}>{(p.monthlyContribution || 0) > 0 ? fmt2(p.monthlyContribution) : "—"}</span>
-              {pp.completionInFuture && <span style={{ textAlign: "right", color: p.forPurchase ? "#1e293b" : "#94a3b8" }}>{fmt2(pp.potAtCompletion[p.id] || 0)}</span>}
+              <span style={{ textAlign: "right", color: p.forPurchase ? T.ink : T.inkSoft }}>{fmt2(p.startingBalance || 0)}</span>
+              <span style={{ textAlign: "right", color: p.forPurchase ? T.saved : T.inkSoft }}>{(p.monthlyContribution || 0) > 0 ? fmt2(p.monthlyContribution) : "—"}</span>
+              {pp.completionInFuture && <span style={{ textAlign: "right", color: p.forPurchase ? T.ink : T.inkSoft }}>{fmt2(pp.potAtCompletion[p.id] || 0)}</span>}
             </div>
           );
 
@@ -2498,13 +2497,13 @@ export default function FinanceCalculator() {
               </div>
 
               <div style={{ marginBottom: 24 }}>
-                <Card title="Purchase Costs" color="#f59e0b">
-                  <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0", lineHeight: 1.5 }}>
+                <Card title="Purchase costs">
+                  <p style={{ fontSize: FS.small, color: T.inkSoft, margin: "0 0 12px 0", lineHeight: 1.5 }}>
                     Everything you need to pay to buy. Deposit, stamp duty, the first mortgage payment and the product fee come from the <button style={LINK_BTN} onClick={() => setTab(2)}>Mortgage</button> tab. For yearly costs like insurance, enter both the annual and the monthly price and choose how you'll pay — only the chosen one counts. Paying annually comes out of savings (now and at each renewal); paying monthly comes out of your monthly budget. One-off costs are paid upfront; to spread one (e.g. furniture on finance), add it under <button style={LINK_BTN} onClick={() => setTab(5)}>Finance Agreements</button> instead.
                   </p>
                   <div style={{ overflowX: "auto" }}>
                     <div style={{ minWidth: mode === MODE.HOUSEHOLD ? 980 : 870 }}>
-                      <div style={{ display: "grid", gridTemplateColumns: costCols, gap: 8, alignItems: "center", padding: "0 4px 6px 4px", borderBottom: "2px solid #e2e8f0", fontSize: 11, color: "#64748b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                      <div style={{ display: "grid", gridTemplateColumns: costCols, gap: 8, alignItems: "center", padding: "0 4px 6px 4px", borderBottom: `2px solid ${T.rule}`, fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>
                         <span>Item</span>
                         <span style={{ textAlign: "right" }}>Upfront £</span>
                         <span style={{ textAlign: "right" }}>Monthly £</span>
@@ -2515,78 +2514,78 @@ export default function FinanceCalculator() {
                         <span style={{ textAlign: "center" }} title="Already paid — no longer counts towards the cash you still need">Paid</span>
                         <span></span>
                       </div>
-                      {sectionHead("Essentials", "#6366f1")}
+                      {sectionHead("Essentials", T.ink)}
                       {pp.autoRows.map(autoRowView)}
                       {productFee <= 0 && (
-                        <div style={{ fontSize: 12, color: "#94a3b8", padding: "6px 4px" }}>
+                        <div style={{ fontSize: FS.small, color: T.inkSoft, padding: "6px 4px" }}>
                           No product fee entered — add one under <button style={LINK_BTN} onClick={() => setTab(2)}>Lender Deal</button> on the Mortgage tab.
                         </div>
                       )}
                       {purchaseCosts.filter((c) => c.category === "essential").map(costRowView)}
-                      {subtotalRow("Essentials total", pp.essentialsTotal, monthlyFor("essential"), "#eef2ff", "#6366f1")}
-                      {sectionHead("Extras", "#8b5cf6")}
+                      {subtotalRow("Essentials total", pp.essentialsTotal, monthlyFor("essential"), T.paper, T.ink)}
+                      {sectionHead("Extras", T.ink)}
                       {purchaseCosts.filter((c) => c.category === "extra").map(costRowView)}
                       {purchaseCosts.every((c) => c.category !== "extra") && (
-                        <div style={{ fontSize: 13, color: "#94a3b8", padding: "8px 4px" }}>No extras yet — add furnishings, removals or decorating with + Extra.</div>
+                        <div style={{ fontSize: FS.body, color: T.inkSoft, padding: "8px 4px" }}>No extras yet — add furnishings, removals or decorating with + Extra.</div>
                       )}
-                      {subtotalRow("Extras total", pp.extrasTotal, monthlyFor("extra"), "#f5f3ff", "#8b5cf6")}
-                      <div style={{ display: "grid", gridTemplateColumns: costCols, gap: 8, alignItems: "center", padding: "10px 4px", borderTop: "2px solid #6366f1" }}>
-                        <span style={{ fontSize: 15, fontWeight: 800, color: "#6366f1" }}>Total ideal</span>
-                        <span style={{ textAlign: "right", fontSize: 16, fontWeight: 800, color: "#6366f1" }}>{fmt2(pp.idealTotal)}</span>
-                        <span style={{ textAlign: "right", fontSize: 12, color: "#64748b", fontWeight: 600 }}>{pp.monthlyTotal > 0.005 ? `${fmt2(pp.monthlyTotal)}/mo` : ""}</span>
+                      {subtotalRow("Extras total", pp.extrasTotal, monthlyFor("extra"), T.paper, T.ink)}
+                      <div style={{ display: "grid", gridTemplateColumns: costCols, gap: 8, alignItems: "center", padding: "10px 4px", borderTop: `2px solid ${T.ruleStrong}` }}>
+                        <span style={{ fontSize: FS.input, fontWeight: 700, color: T.ink }}>Total ideal</span>
+                        <span style={{ textAlign: "right", fontSize: FS.input, fontWeight: 700, color: T.ink }}>{fmt2(pp.idealTotal)}</span>
+                        <span style={{ textAlign: "right", fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>{pp.monthlyTotal > 0.005 ? `${fmt2(pp.monthlyTotal)}/mo` : ""}</span>
                       </div>
                     </div>
                   </div>
 
                   <div style={{ display: "flex", gap: 8, marginTop: 16, alignItems: "center", flexWrap: "wrap" }}>
-                    <input type="text" placeholder="New cost (e.g. Valuation fee)" value={newCostName} onChange={(e) => setNewCostName(e.target.value)} style={{ flex: "2 1 220px", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 14 }} />
+                    <input type="text" placeholder="New cost (e.g. Valuation fee)" value={newCostName} onChange={(e) => setNewCostName(e.target.value)} style={{ flex: "2 1 220px", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body }} />
                     <div style={{ display: "flex", alignItems: "center", gap: 4, flex: "1 1 140px" }}>
-                      <span style={{ color: "#94a3b8", fontWeight: 600 }}>£</span>
-                      <input type="number" step={0.01} placeholder="Upfront" value={newCostUpfront || ""} onChange={(e) => setNewCostUpfront(parseFloat(e.target.value) || 0)} style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 14 }} />
+                      <span style={{ color: T.inkSoft, fontWeight: 600 }}>£</span>
+                      <input type="number" step={0.01} placeholder="Upfront" value={newCostUpfront || ""} onChange={(e) => setNewCostUpfront(parseFloat(e.target.value) || 0)} style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body }} />
                     </div>
-                    <button onClick={() => addPurchaseCost("essential")} style={{ padding: "8px 14px", background: "#6366f1", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 700, fontSize: 14, whiteSpace: "nowrap" }}>+ Essential</button>
-                    <button onClick={() => addPurchaseCost("extra")} style={{ padding: "8px 14px", background: "#8b5cf6", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 700, fontSize: 14, whiteSpace: "nowrap" }}>+ Extra</button>
+                    <button onClick={() => addPurchaseCost("essential")} style={{ padding: "8px 14px", background: T.home, color: T.sheet, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body, whiteSpace: "nowrap" }}>+ Essential</button>
+                    <button onClick={() => addPurchaseCost("extra")} style={{ padding: "8px 14px", background: T.home, color: T.sheet, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body, whiteSpace: "nowrap" }}>+ Extra</button>
                   </div>
                   {quickAdd.length > 0 && (
                     <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center", marginTop: 10 }}>
-                      <span style={{ fontSize: 12, color: "#64748b" }}>Common costs:</span>
+                      <span style={{ fontSize: FS.small, color: T.inkSoft }}>Common costs:</span>
                       {quickAdd.map((q) => (
                         <button key={q.name} onClick={() => addPurchaseCost(q.category, q)} style={CHIP_STYLE}>+ {q.name}</button>
                       ))}
                     </div>
                   )}
 
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginTop: 16, paddingTop: 12, borderTop: "1px solid #e2e8f0" }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: "#475569" }}>Buy projection uses</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginTop: 16, paddingTop: 12, borderTop: `1px solid ${T.rule}` }}>
+                    <span style={{ fontSize: FS.body, fontWeight: 600, color: T.inkSoft }}>Buy projection uses</span>
                     <div style={{ minWidth: 260 }}>
                       <Toggle value={includeExtrasInProjection ? 1 : 0} onChange={(i) => setIncludeExtrasInProjection(i === 1)} labels={["Essentials only", "Include extras"]} />
                     </div>
-                    <span style={{ fontSize: 12, color: "#64748b", flex: "1 1 260px" }}>
+                    <span style={{ fontSize: FS.small, color: T.inkSoft, flex: "1 1 260px" }}>
                       Projections and the Report take {fmt2(pp.drainAmount)} from your ticked pots on day one{postPurchasePots.shortfall > 0.005 ? `, leaving a ${fmt2(postPurchasePots.shortfall)} shortfall to recover from monthly savings` : ""}.
                     </span>
                   </div>
 
                   {(pp.paidTotal > 0.005 || pp.monthlyTotal > 0.005 || pp.annualTotal > 0.005) && (
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginTop: 12, padding: 12, background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 13 }}>
-                      <div><div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>ALREADY PAID</div><strong style={{ color: "#10b981" }}>{fmt2(pp.paidTotal)}</strong></div>
-                      <div><div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>STILL TO PAY</div><strong>{fmt2(pp.essentialsToPay)}</strong> <span style={{ color: "#64748b" }}>· {fmt2(pp.idealToPay)} with extras</span></div>
-                      <div><div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>ONGOING</div><strong>{fmt2(pp.monthlyTotal)}/mo</strong>{pp.annualTotal > 0.005 && <span style={{ color: "#64748b" }}> · {fmt2(pp.annualTotal)}/yr from savings</span>}</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginTop: 12, padding: 12, background: T.paper, border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body }}>
+                      <div><div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Already paid</div><strong style={{ color: T.saved }}>{fmt2(pp.paidTotal)}</strong></div>
+                      <div><div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Still to pay</div><strong>{fmt2(pp.essentialsToPay)}</strong> <span style={{ color: T.inkSoft }}>· {fmt2(pp.idealToPay)} with extras</span></div>
+                      <div><div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Ongoing</div><strong>{fmt2(pp.monthlyTotal)}/mo</strong>{pp.annualTotal > 0.005 && <span style={{ color: T.inkSoft }}> · {fmt2(pp.annualTotal)}/yr from savings</span>}</div>
                     </div>
                   )}
                 </Card>
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
-                <Card title="Funding" color="#10b981">
-                  <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0", lineHeight: 1.5 }}>
+                <Card title="Funding">
+                  <p style={{ fontSize: FS.small, color: T.inkSoft, margin: "0 0 12px 0", lineHeight: 1.5 }}>
                     Tick the pots you'll use for the purchase. Balances come from the <button style={LINK_BTN} onClick={() => setTab(4)}>Savings &amp; Investments</button> tab.{pp.completionInFuture ? " The forecast assumes each pot's rate and monthly contribution carry on until completion." : ""}
                   </p>
                   {pots.length === 0 ? (
-                    <p style={{ color: "#94a3b8", textAlign: "center", padding: 12, fontSize: 13 }}>No pots yet — add your savings on the Savings &amp; Investments tab.</p>
+                    <p style={{ color: T.inkSoft, textAlign: "center", padding: 12, fontSize: FS.body }}>No pots yet — add your savings on the Savings &amp; Investments tab.</p>
                   ) : (
                     <div style={{ overflowX: "auto" }}>
                       <div style={{ minWidth: pp.completionInFuture ? 520 : 410 }}>
-                        <div style={{ display: "grid", gridTemplateColumns: fundCols, gap: 8, alignItems: "center", padding: "0 4px 6px 4px", borderBottom: "2px solid #e2e8f0", fontSize: 11, color: "#64748b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                        <div style={{ display: "grid", gridTemplateColumns: fundCols, gap: 8, alignItems: "center", padding: "0 4px 6px 4px", borderBottom: `2px solid ${T.rule}`, fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>
                           <span style={{ textAlign: "center" }}>Use</span>
                           <span>Pot</span>
                           <span style={{ textAlign: "right" }}>Today £</span>
@@ -2598,10 +2597,10 @@ export default function FinanceCalculator() {
                           if (groupPots.length === 0) return null;
                           return (
                             <div key={g.key}>
-                              {g.label && <div style={{ padding: "10px 4px 4px", fontSize: 11, fontWeight: 700, color: g.color, textTransform: "uppercase", letterSpacing: 0.5, borderBottom: `1px solid ${g.color}33` }}>{g.label}</div>}
+                              {g.label && <div style={{ padding: "10px 4px 4px", fontSize: FS.small, fontWeight: 700, color: g.color, borderBottom: `1px solid ${T.rule}` }}>{g.label}</div>}
                               {groupPots.map(fundRow)}
                               {g.key !== "all" && (
-                                <div style={{ display: "grid", gridTemplateColumns: fundCols, gap: 8, alignItems: "center", padding: "6px 4px", background: `${g.color}11`, fontWeight: 700, fontSize: 13, color: g.color }}>
+                                <div style={{ display: "grid", gridTemplateColumns: fundCols, gap: 8, alignItems: "center", padding: "6px 4px", background: T.paper, fontWeight: 700, fontSize: FS.body, color: g.color }}>
                                   <span />
                                   <span>{g.label} — for purchase</span>
                                   <span style={{ textAlign: "right" }}>{fmt2(pp.availableTodayByOwner[g.key])}</span>
@@ -2612,7 +2611,7 @@ export default function FinanceCalculator() {
                             </div>
                           );
                         })}
-                        <div style={{ display: "grid", gridTemplateColumns: fundCols, gap: 8, alignItems: "center", padding: "8px 4px", borderTop: "2px solid #10b981", fontWeight: 800, fontSize: 13, color: "#10b981" }}>
+                        <div style={{ display: "grid", gridTemplateColumns: fundCols, gap: 8, alignItems: "center", padding: "8px 4px", borderTop: `2px solid ${T.saved}`, fontWeight: 700, fontSize: FS.body, color: T.saved }}>
                           <span />
                           <span>Available for the purchase</span>
                           <span style={{ textAlign: "right" }}>{fmt2(pp.availableToday)}</span>
@@ -2623,22 +2622,22 @@ export default function FinanceCalculator() {
                     </div>
                   )}
                   {pots.length > 0 && pp.tickedCount === 0 && (
-                    <div style={{ marginTop: 12, padding: "8px 12px", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 8, fontSize: 12, color: "#92400e", fontWeight: 600 }}>
+                    <div style={{ marginTop: 12, padding: "8px 12px", background: T.warnBg, border: `1px solid ${T.warnBg}`, borderRadius: 6, fontSize: FS.small, color: T.warnInk, fontWeight: 600 }}>
                       No pots are ticked, so nothing counts as available yet.
                     </div>
                   )}
-                  <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 10, lineHeight: 1.5 }}>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft, marginTop: 10, lineHeight: 1.5 }}>
                     Current accounts, savings, ISAs and LISAs are ticked by default; investments, pensions and share schemes aren't. Untick any stocks &amp; shares ISA you don't plan to sell. Changing a pot's type resets its tick.
                   </div>
                 </Card>
 
-                <Card title="Completion Forecast" color="#6366f1">
+                <Card title="Completion forecast">
                   <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
                     <div style={{ flex: 1 }}>
                       <InputGroup label="Completion date" value={completionDate} onChange={(v) => { if (isIsoDateOrEmpty(v)) setCompletionDate(v); }} prefix="" type="date" max="9999-12-31" />
                     </div>
                     {completionDate && (
-                      <button onClick={() => setCompletionDate("")} style={{ marginBottom: 16, padding: "8px 12px", background: "#f1f5f9", color: "#475569", border: "1px solid #cbd5e1", borderRadius: 8, cursor: "pointer", fontWeight: 600, fontSize: 13 }}>Clear</button>
+                      <button onClick={() => setCompletionDate("")} style={{ marginBottom: 16, padding: "8px 12px", background: T.paper, color: T.inkSoft, border: `1px solid ${T.rule}`, borderRadius: 6, cursor: "pointer", fontWeight: 600, fontSize: FS.body }}>Clear</button>
                     )}
                   </div>
                   {!pp.completionInFuture && (
@@ -2647,12 +2646,12 @@ export default function FinanceCalculator() {
                     </div>
                   )}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                    <StatBox label="Months to Go" value={pp.monthsToCompletion} sub={completionDate ? fmtDate(completionDate) : "completing today"} />
-                    <StatBox label="Funds at Completion" value={fmt2(pp.available)} color="#10b981" sub={pp.completionInFuture ? "forecast, ticked pots" : "today, ticked pots"} />
-                    <StatBox label="Into Ticked Pots" value={fmt2(pp.tickedMonthly)} color="#8b5cf6" sub="per month" />
-                    <StatBox label="Gap at Completion" value={fmt2(Math.abs(pp.gap))} color={isShort(pp.gap) ? "#ef4444" : "#10b981"} sub={isShort(pp.gap) ? "short for essentials" : "spare after essentials"} />
+                    <StatBox label="Months to go" value={pp.monthsToCompletion} sub={completionDate ? fmtDate(completionDate) : "completing today"} />
+                    <StatBox label="Funds at completion" value={fmt2(pp.available)} color={T.saved} sub={pp.completionInFuture ? "forecast, ticked pots" : "today, ticked pots"} />
+                    <StatBox label="Into ticked pots" value={fmt2(pp.tickedMonthly)} color={T.ink} sub="per month" />
+                    <StatBox label="Gap at completion" value={fmt2(Math.abs(pp.gap))} color={isShort(pp.gap) ? T.neg : T.saved} sub={isShort(pp.gap) ? "short for essentials" : "spare after essentials"} />
                   </div>
-                  <div style={{ fontSize: 13, lineHeight: 2, marginTop: 8 }}>
+                  <div style={{ fontSize: FS.body, lineHeight: 2, marginTop: 8 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
                       <span>Essentials covered</span>
                       {coverLabel(pp.gapCloseMonth, pp.gapCloseDate)}
@@ -2665,7 +2664,7 @@ export default function FinanceCalculator() {
                   {(() => {
                     if (isShort(pp.gap) && pp.completionInFuture) {
                       return (
-                        <div style={{ marginTop: 8, padding: 12, borderRadius: 8, fontSize: 13, background: "#fef2f2", border: "1px solid #fecaca", color: "#991b1b" }}>
+                        <div style={{ marginTop: 8, padding: 12, borderRadius: 6, fontSize: FS.body, background: T.paper, border: `1px solid ${T.neg}`, color: T.neg }}>
                           To close the gap by {fmtDate(completionDate)}, save an extra <strong>{fmt2(pp.extraMonthlyNeeded)}</strong> a month into your ticked pots.
                           {isShort(pp.gapIdeal) && <> {fmt2(pp.extraMonthlyNeededIdeal)} a month would cover the extras too.</>}
                         </div>
@@ -2673,20 +2672,20 @@ export default function FinanceCalculator() {
                     }
                     if (isShort(pp.gap) && completionDate) {
                       return (
-                        <div style={{ marginTop: 8, padding: 12, borderRadius: 8, fontSize: 13, background: "#fef2f2", border: "1px solid #fecaca", color: "#991b1b" }}>
+                        <div style={{ marginTop: 8, padding: 12, borderRadius: 6, fontSize: FS.body, background: T.paper, border: `1px solid ${T.neg}`, color: T.neg }}>
                           {completionDate > todayISO ? "Completion is less than a month away" : "Your completion date isn't in the future"}, so monthly saving can't close the {fmt2(pp.gap)} gap in time — you'd need it from other savings, by unticking fewer pots, or by cutting costs.
                         </div>
                       );
                     }
                     if (isShort(pp.gap)) {
                       return (
-                        <div style={{ marginTop: 8, padding: 12, borderRadius: 8, fontSize: 13, background: "#fffbeb", border: "1px solid #fde68a", color: "#92400e" }}>
+                        <div style={{ marginTop: 8, padding: 12, borderRadius: 6, fontSize: FS.body, background: T.warnBg, border: `1px solid ${T.warnBg}`, color: T.warnInk }}>
                           Set a completion date to see how much extra you'd need to save each month.
                         </div>
                       );
                     }
                     return (
-                      <div style={{ marginTop: 8, padding: 12, borderRadius: 8, fontSize: 13, background: "#f0fdf4", border: "1px solid #bbf7d0", color: "#166534" }}>
+                      <div style={{ marginTop: 8, padding: 12, borderRadius: 6, fontSize: FS.body, background: T.paper, border: `1px solid ${T.saved}`, color: T.saved }}>
                         {isShort(pp.gapIdeal)
                           ? `Your ticked pots cover the essentials. The extras need another ${fmt2(pp.gapIdeal)}.`
                           : `Your ticked pots cover the essentials and the extras${pp.completionInFuture ? " by completion" : ""}.`}
@@ -2694,22 +2693,22 @@ export default function FinanceCalculator() {
                     );
                   })()}
                   {mortgage.followOnPayment != null && (
-                    <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 8 }}>
+                    <div style={{ fontSize: FS.small, color: T.inkSoft, marginTop: 8 }}>
                       Your fixed rate ends on {fmtDate(fixedRateEndDate)}, {mortgage.fixedMonths} monthly payments after completion.
                     </div>
                   )}
                 </Card>
               </div>
 
-              <Card title="Upfront or Monthly?" color="#8b5cf6">
-                <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0" }}>Some costs, like insurance, can be paid once a year or monthly. Paying annually comes out of savings — more cash before you move and again at each renewal — but frees up your monthly budget. Paying monthly keeps the cash but adds to your monthly outgoings.</p>
+              <Card title="Upfront or monthly?">
+                <p style={{ fontSize: FS.small, color: T.inkSoft, margin: "0 0 12px 0" }}>Some costs, like insurance, can be paid once a year or monthly. Paying annually comes out of savings — more cash before you move and again at each renewal — but frees up your monthly budget. Paying monthly keeps the cash but adds to your monthly outgoings.</p>
                 {pp.comparisonRows.length === 0 ? (
-                  <p style={{ color: "#94a3b8", textAlign: "center", padding: 12, fontSize: 13 }}>Mark a cost as Yearly and enter both an annual and a monthly price (for example, insurance quotes) to compare them here.</p>
+                  <p style={{ color: T.inkSoft, textAlign: "center", padding: 12, fontSize: FS.body }}>Mark a cost as Yearly and enter both an annual and a monthly price (for example, insurance quotes) to compare them here.</p>
                 ) : (
                   <div style={{ overflowX: "auto" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 640 }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: FS.body, minWidth: 640 }}>
                       <thead>
-                        <tr style={{ borderBottom: "2px solid #e2e8f0", color: "#64748b", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                        <tr style={{ borderBottom: `2px solid ${T.rule}`, color: T.inkSoft, fontSize: FS.small }}>
                           <th style={{ padding: "6px 8px", textAlign: "left" }}>Cost</th>
                           <th style={{ padding: "6px 8px", textAlign: "right" }}>Annually</th>
                           <th style={{ padding: "6px 8px", textAlign: "right" }}>Monthly × 12</th>
@@ -2724,10 +2723,10 @@ export default function FinanceCalculator() {
                           const cashLabel = r.category === "extra" ? "cash needed incl. extras" : "cash needed";
                           const cashNow = r.paid ? "already paid, so cash needed is unchanged" : `${payingMonthly ? "+" : "−"}${fmt2(r.upfront)} ${cashLabel} now`;
                           return (
-                            <tr key={r.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                            <tr key={r.id} style={{ borderBottom: `1px solid ${T.paper}` }}>
                               <td style={{ padding: "8px" }}>
                                 <strong>{r.name}</strong>
-                                <div style={{ fontSize: 11, color: "#94a3b8" }}>
+                                <div style={{ fontSize: FS.small, color: T.inkSoft }}>
                                   {payingMonthly
                                     ? `Paying annually instead: ${cashNow} (then each renewal from savings), ${fmt2(r.monthly)} a month off your budget`
                                     : `Paying monthly instead: ${cashNow}, ${fmt2(r.monthly)} a month added to your budget`}
@@ -2736,16 +2735,16 @@ export default function FinanceCalculator() {
                               <td style={{ padding: "8px", textAlign: "right" }}>{fmt2(r.upfront)}</td>
                               <td style={{ padding: "8px", textAlign: "right" }}>
                                 {fmt2(r.annualMonthly)}
-                                <div style={{ fontSize: 11, color: "#94a3b8" }}>12 × {fmt2(r.monthly)}</div>
+                                <div style={{ fontSize: FS.small, color: T.inkSoft }}>12 × {fmt2(r.monthly)}</div>
                               </td>
-                              <td style={{ padding: "8px", textAlign: "right", fontWeight: 600, color: Math.abs(r.saving) > 0.005 ? "#10b981" : "#94a3b8" }}>
+                              <td style={{ padding: "8px", textAlign: "right", fontWeight: 600, color: Math.abs(r.saving) > 0.005 ? T.saved : T.inkSoft }}>
                                 {r.saving > 0.005 ? `Annually saves ${fmt2(r.saving)}` : r.saving < -0.005 ? `Monthly saves ${fmt2(-r.saving)}` : "Same either way"}
                               </td>
                               <td style={{ padding: "8px", textAlign: "center" }}>
-                                <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 99, fontWeight: 600, background: payingMonthly ? "#fffbeb" : "#eef2ff", color: payingMonthly ? "#92400e" : "#6366f1" }}>{payingMonthly ? "Monthly" : "Annually"}</span>
+                                <span style={{ fontSize: FS.small, padding: "2px 8px", borderRadius: 3, fontWeight: 600, background: payingMonthly ? T.warnBg : T.paper, color: payingMonthly ? T.warnInk : T.ink }}>{payingMonthly ? "Monthly" : "Annually"}</span>
                               </td>
                               <td style={{ padding: "8px", textAlign: "right" }}>
-                                <button onClick={() => updatePurchaseCost(r.id, "payment", payingMonthly ? "upfront" : "monthly")} style={{ padding: "4px 10px", background: "#f5f3ff", color: "#8b5cf6", border: "1px solid #ddd6fe", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: 12, whiteSpace: "nowrap" }}>
+                                <button onClick={() => updatePurchaseCost(r.id, "payment", payingMonthly ? "upfront" : "monthly")} style={{ padding: "4px 10px", background: T.paper, color: T.ink, border: `1px solid ${T.rule}`, borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.small, whiteSpace: "nowrap" }}>
                                   {payingMonthly ? "Pay annually" : "Pay monthly"}
                                 </button>
                               </td>
@@ -2792,34 +2791,34 @@ export default function FinanceCalculator() {
           return (
             <div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }}>
-                <div style={{ background: "#f5f3ff", borderRadius: 12, padding: 14, textAlign: "center", border: "1px solid #ddd6fe" }}>
-                  <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>TOTAL BALANCE TODAY</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#8b5cf6" }}>{fmt(totalExistingSavings)}</div>
-                  <div style={{ fontSize: 11, color: "#94a3b8" }}>{pots.length} pot{pots.length === 1 ? "" : "s"}</div>
+                <div style={{ background: T.paper, borderRadius: 6, padding: 14, textAlign: "center", border: `1px solid ${T.rule}` }}>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Total balance today</div>
+                  <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.ink }}>{fmt(totalExistingSavings)}</div>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft }}>{pots.length} pot{pots.length === 1 ? "" : "s"}</div>
                 </div>
-                <div style={{ background: "#f0fdf4", borderRadius: 12, padding: 14, textAlign: "center", border: "1px solid #bbf7d0" }}>
-                  <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>MONTHLY CONTRIBUTIONS</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#10b981" }}>{fmt(totalMonthlyPotContributions)}</div>
-                  <div style={{ fontSize: 11, color: "#94a3b8" }}>across all pots</div>
+                <div style={{ background: T.paper, borderRadius: 6, padding: 14, textAlign: "center", border: `1px solid ${T.saved}` }}>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Monthly contributions</div>
+                  <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.saved }}>{fmt(totalMonthlyPotContributions)}</div>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft }}>across all pots</div>
                 </div>
-                <div style={{ background: "#fffbeb", borderRadius: 12, padding: 14, textAlign: "center", border: "1px solid #fde68a" }}>
-                  <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>BLENDED RETURN</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#f59e0b" }}>{meanRateWeightedByBalance.toFixed(2)}%</div>
-                  <div style={{ fontSize: 11, color: "#94a3b8" }}>weighted by balance</div>
+                <div style={{ background: T.warnBg, borderRadius: 6, padding: 14, textAlign: "center", border: `1px solid ${T.warnBg}` }}>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Blended return</div>
+                  <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.warnInk }}>{meanRateWeightedByBalance.toFixed(2)}%</div>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft }}>weighted by balance</div>
                 </div>
-                <div style={{ background: "#eef2ff", borderRadius: 12, padding: 14, textAlign: "center", border: "1px solid #c7d2fe" }}>
-                  <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>VALUE AT {investYears}Y</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#6366f1" }}>{fmt(finalValue)}</div>
-                  <div style={{ fontSize: 11, color: "#94a3b8" }}>+{fmt(growth)} growth</div>
+                <div style={{ background: T.paper, borderRadius: 6, padding: 14, textAlign: "center", border: `1px solid ${T.rule}` }}>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>VALUE AT {investYears}Y</div>
+                  <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.ink }}>{fmt(finalValue)}</div>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft }}>+{fmt(growth)} growth</div>
                 </div>
               </div>
 
               <div style={{ marginBottom: 24 }}>
-                <Card title="Manage Pots" color="#8b5cf6">
-                  <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0" }}>Each pot compounds at its own rate and cadence. Cash ISAs and most savings accounts pay interest <strong>annually</strong>; stocks &amp; shares ISAs, investments and pensions effectively compound <strong>monthly</strong>. Tick <strong>Sacrifice</strong> for pots paid from gross pay before tax, such as Share Incentive Plan (SIP) partnership shares, so the contribution reduces income tax & NI. A pension entered as Pension Contribution % on the Overview tab is already taken before tax, so don't tick Sacrifice for it too. Pots ticked <strong>Purchase</strong> count towards buying a house on the Purchase Plan tab; current accounts, savings, ISAs and LISAs start ticked.</p>
+                <Card title="Manage pots">
+                  <p style={{ fontSize: FS.small, color: T.inkSoft, margin: "0 0 12px 0" }}>Each pot compounds at its own rate and cadence. Cash ISAs and most savings accounts pay interest <strong>annually</strong>; stocks &amp; shares ISAs, investments and pensions effectively compound <strong>monthly</strong>. Tick <strong>Sacrifice</strong> for pots paid from gross pay before tax, such as Share Incentive Plan (SIP) partnership shares, so the contribution reduces income tax & NI. A pension entered as Pension Contribution % on the Overview tab is already taken before tax, so don't tick Sacrifice for it too. Pots ticked <strong>Purchase</strong> count towards buying a house on the Purchase Plan tab; current accounts, savings, ISAs and LISAs start ticked.</p>
                   <div style={{ overflowX: "auto" }}>
                     <div style={{ minWidth: 1230 }}>
-                      <div style={{ display: "grid", gridTemplateColumns: "minmax(160px, 2fr) 130px 120px 120px 120px 90px 120px 80px 80px 110px 32px", gap: 8, alignItems: "center", padding: "0 4px 6px 4px", borderBottom: "2px solid #e2e8f0", fontSize: 11, color: "#64748b", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "minmax(160px, 2fr) 130px 120px 120px 120px 90px 120px 80px 80px 110px 32px", gap: 8, alignItems: "center", padding: "0 4px 6px 4px", borderBottom: `2px solid ${T.rule}`, fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>
                         <span>Name</span>
                         <span>Type</span>
                         <span>Owner</span>
@@ -2832,83 +2831,82 @@ export default function FinanceCalculator() {
                         <span style={{ textAlign: "right" }}>End £</span>
                         <span></span>
                       </div>
-                      {pots.length === 0 && <p style={{ color: "#94a3b8", textAlign: "center", padding: 20 }}>No pots yet — add one below.</p>}
+                      {pots.length === 0 && <p style={{ color: T.inkSoft, textAlign: "center", padding: 20 }}>No pots yet — add one below.</p>}
                       {pots.map((p) => {
                         const series = longSeries.find((s) => s.id === p.id);
                         const endVal = series ? series.history[months] : 0;
                         const compounding = p.compounding || defaultCompoundingFor(p.type);
                         const sacrificeAllowed = p.owner !== "joint";
                         return (
-                          <div key={p.id} style={{ display: "grid", gridTemplateColumns: "minmax(160px, 2fr) 130px 120px 120px 120px 90px 120px 80px 80px 110px 32px", gap: 8, alignItems: "center", padding: "8px 4px", borderBottom: "1px solid #f1f5f9" }}>
-                            <input type="text" value={p.name} onChange={(e) => updatePot(p.id, "name", e.target.value)} style={{ padding: "6px 8px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, minWidth: 0, width: "100%" }} />
-                            <select value={p.type} onChange={(e) => updatePot(p.id, "type", e.target.value)} style={{ padding: "6px 6px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 12, background: `${POT_TYPE_COLORS[p.type]}15`, color: POT_TYPE_COLORS[p.type], fontWeight: 600, minWidth: 0, width: "100%" }}>
+                          <div key={p.id} style={{ display: "grid", gridTemplateColumns: "minmax(160px, 2fr) 130px 120px 120px 120px 90px 120px 80px 80px 110px 32px", gap: 8, alignItems: "center", padding: "8px 4px", borderBottom: `1px solid ${T.paper}` }}>
+                            <input type="text" value={p.name} onChange={(e) => updatePot(p.id, "name", e.target.value)} style={{ padding: "6px 8px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body, minWidth: 0, width: "100%" }} />
+                            <select value={p.type} onChange={(e) => updatePot(p.id, "type", e.target.value)} style={{ padding: "6px 6px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.small, background: T.paper, color: POT_TYPE_COLORS[p.type], fontWeight: 600, minWidth: 0, width: "100%" }}>
                               {POT_TYPES.map((t) => <option key={t} value={t}>{POT_TYPE_LABELS[t]}</option>)}
                             </select>
-                            <select value={p.owner} onChange={(e) => updatePot(p.id, "owner", e.target.value)} style={{ padding: "6px 6px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 12, minWidth: 0, width: "100%" }}>
+                            <select value={p.owner} onChange={(e) => updatePot(p.id, "owner", e.target.value)} style={{ padding: "6px 6px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.small, minWidth: 0, width: "100%" }}>
                               <option value="p1">Person 1</option>
                               {mode === MODE.HOUSEHOLD && <option value="p2">Person 2</option>}
                               {mode === MODE.HOUSEHOLD && <option value="joint">Joint</option>}
                             </select>
-                            <input type="number" value={p.startingBalance} onChange={(e) => updatePot(p.id, "startingBalance", parseFloat(e.target.value) || 0)} style={{ padding: "6px 8px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, minWidth: 0, width: "100%", textAlign: "right" }} />
-                            <input type="number" value={p.monthlyContribution} onChange={(e) => updatePot(p.id, "monthlyContribution", parseFloat(e.target.value) || 0)} style={{ padding: "6px 8px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, minWidth: 0, width: "100%", textAlign: "right" }} />
-                            <input type="number" step={0.1} value={p.rate} onChange={(e) => updatePot(p.id, "rate", parseFloat(e.target.value) || 0)} style={{ padding: "6px 8px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, minWidth: 0, width: "100%", textAlign: "right" }} />
-                            <select value={compounding} onChange={(e) => updatePot(p.id, "compounding", e.target.value)} title="How interest is applied to this pot" style={{ padding: "6px 6px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 12, minWidth: 0, width: "100%" }}>
+                            <input type="number" value={p.startingBalance} onChange={(e) => updatePot(p.id, "startingBalance", parseFloat(e.target.value) || 0)} style={{ padding: "6px 8px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body, minWidth: 0, width: "100%", textAlign: "right" }} />
+                            <input type="number" value={p.monthlyContribution} onChange={(e) => updatePot(p.id, "monthlyContribution", parseFloat(e.target.value) || 0)} style={{ padding: "6px 8px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body, minWidth: 0, width: "100%", textAlign: "right" }} />
+                            <input type="number" step={0.1} value={p.rate} onChange={(e) => updatePot(p.id, "rate", parseFloat(e.target.value) || 0)} style={{ padding: "6px 8px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body, minWidth: 0, width: "100%", textAlign: "right" }} />
+                            <select value={compounding} onChange={(e) => updatePot(p.id, "compounding", e.target.value)} title="How interest is applied to this pot" style={{ padding: "6px 6px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.small, minWidth: 0, width: "100%" }}>
                               {Object.entries(COMPOUNDING_MODES).map(([c, { label }]) => <option key={c} value={c}>{label}</option>)}
                             </select>
                             <label style={{ display: "flex", justifyContent: "center", alignItems: "center", cursor: sacrificeAllowed ? "pointer" : "not-allowed", opacity: sacrificeAllowed ? 1 : 0.4 }} title={sacrificeAllowed ? "Treat monthly contribution as salary sacrifice — reduces taxable gross" : "Joint pots can't be salary-sacrificed"}>
-                              <input type="checkbox" checked={!!p.salarySacrifice} disabled={!sacrificeAllowed} onChange={(e) => updatePot(p.id, "salarySacrifice", e.target.checked)} style={{ width: 18, height: 18, cursor: sacrificeAllowed ? "pointer" : "not-allowed", accentColor: "#0ea5e9" }} />
+                              <input type="checkbox" checked={!!p.salarySacrifice} disabled={!sacrificeAllowed} onChange={(e) => updatePot(p.id, "salarySacrifice", e.target.checked)} style={{ width: 18, height: 18, cursor: sacrificeAllowed ? "pointer" : "not-allowed", accentColor: T.home }} />
                             </label>
                             <label style={{ display: "flex", justifyContent: "center", alignItems: "center", cursor: "pointer" }} title="Use this pot to fund the house purchase">
-                              <input type="checkbox" checked={!!p.forPurchase} onChange={(e) => updatePot(p.id, "forPurchase", e.target.checked)} style={{ width: 18, height: 18, cursor: "pointer", accentColor: "#10b981" }} />
+                              <input type="checkbox" checked={!!p.forPurchase} onChange={(e) => updatePot(p.id, "forPurchase", e.target.checked)} style={{ width: 18, height: 18, cursor: "pointer", accentColor: T.saved }} />
                             </label>
-                            <span style={{ textAlign: "right", fontWeight: 700, color: "#10b981", fontSize: 13, whiteSpace: "nowrap" }}>{fmt(endVal)}</span>
-                            <button onClick={() => removePot(p.id)} style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontWeight: 700, fontSize: 18, padding: 0 }}>×</button>
+                            <span style={{ textAlign: "right", fontWeight: 700, color: T.saved, fontSize: FS.body, whiteSpace: "nowrap" }}>{fmt(endVal)}</span>
+                            <button onClick={() => removePot(p.id)} style={{ background: "none", border: "none", color: T.neg, cursor: "pointer", fontWeight: 700, fontSize: FS.heading, padding: 0 }}>×</button>
                           </div>
                         );
                       })}
                     </div>
                   </div>
                   <div style={{ display: "flex", gap: 8, marginTop: 16, alignItems: "center" }}>
-                    <input type="text" placeholder="New pot name (e.g. Help to Buy ISA)" value={newPotName} onChange={(e) => setNewPotName(e.target.value)} style={{ flex: 1, padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 14 }} />
-                    <button onClick={addPot} style={{ padding: "8px 18px", background: "#8b5cf6", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 700, fontSize: 14 }}>+ Add Pot</button>
+                    <input type="text" placeholder="New pot name (e.g. Help to Buy ISA)" value={newPotName} onChange={(e) => setNewPotName(e.target.value)} style={{ flex: 1, padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body }} />
+                    <button onClick={addPot} style={{ padding: "8px 18px", background: T.home, color: T.sheet, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body }}>+ Add pot</button>
                   </div>
                 </Card>
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 24, marginBottom: 24 }}>
-                <Card title="Per-Owner Subtotals" color="#6366f1">
-                  <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0" }}>Money-weighted view across pot ownership. Joint pots are shown separately.</p>
+                <Card title="Per-owner subtotals">
+                  <p style={{ fontSize: FS.small, color: T.inkSoft, margin: "0 0 12px 0" }}>Money-weighted view across pot ownership. Joint pots are shown separately.</p>
                   {(() => {
                     const visibleOwners = ["p1", "p2", "joint"].filter((owner) => {
                       if (mode === MODE.SINGLE && owner !== "p1") return false;
                       return potsByOwner[owner].count > 0;
                     });
                     if (visibleOwners.length === 0) {
-                      return <p style={{ color: "#94a3b8", textAlign: "center", padding: 12, fontSize: 13 }}>No pots assigned yet.</p>;
+                      return <p style={{ color: T.inkSoft, textAlign: "center", padding: 12, fontSize: FS.body }}>No pots assigned yet.</p>;
                     }
                     return (
                       <div style={{ display: "grid", gridTemplateColumns: `repeat(${visibleOwners.length}, 1fr)`, gap: 12 }}>
                         {visibleOwners.map((owner) => {
                           const o = potsByOwner[owner];
-                          const ownerColor = owner === "p1" ? "#6366f1" : owner === "p2" ? "#8b5cf6" : "#ec4899";
                           const ownerLabel = owner === "p1" ? "Person 1" : owner === "p2" ? "Person 2" : "Joint";
                           const ownerEnd = pots.filter((p) => p.owner === owner).reduce((s, p) => {
                             const series = longSeries.find((sx) => sx.id === p.id);
                             return s + (series ? series.history[months] : 0);
                           }, 0);
                           return (
-                            <div key={owner} style={{ background: `${ownerColor}11`, borderRadius: 10, padding: 12, border: `1px solid ${ownerColor}33` }}>
+                            <div key={owner} style={{ background: T.paper, borderRadius: 6, padding: 12, border: `1px solid ${T.rule}` }}>
                               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
-                                <strong style={{ color: ownerColor, fontSize: 14 }}>{ownerLabel}</strong>
-                                <span style={{ fontSize: 11, color: "#94a3b8" }}>{o.count} pot{o.count === 1 ? "" : "s"}</span>
+                                <strong style={{ color: T.ink, fontSize: FS.body }}>{ownerLabel}</strong>
+                                <span style={{ fontSize: FS.small, color: T.inkSoft }}>{o.count} pot{o.count === 1 ? "" : "s"}</span>
                               </div>
-                              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#475569" }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", fontSize: FS.small, color: T.inkSoft }}>
                                 <span>Starting</span><strong>{fmt(o.starting)}</strong>
                               </div>
-                              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#475569" }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", fontSize: FS.small, color: T.inkSoft }}>
                                 <span>Monthly</span><strong>{fmt(o.monthly)}/mo</strong>
                               </div>
-                              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: ownerColor, fontWeight: 700, marginTop: 6, paddingTop: 6, borderTop: `1px solid ${ownerColor}33` }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", fontSize: FS.body, color: T.ink, fontWeight: 700, marginTop: 6, paddingTop: 6, borderTop: `1px solid ${T.rule}` }}>
                                 <span>At {investYears}y</span><strong>{fmt(ownerEnd)}</strong>
                               </div>
                             </div>
@@ -2917,16 +2915,16 @@ export default function FinanceCalculator() {
                       </div>
                     );
                   })()}
-                  <div style={{ marginTop: 12, padding: 12, background: "#f8fafc", borderRadius: 8, fontSize: 12, color: "#64748b", border: "1px solid #e2e8f0", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <div style={{ marginTop: 12, padding: 12, background: T.paper, borderRadius: 6, fontSize: FS.small, color: T.inkSoft, border: `1px solid ${T.rule}`, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                     <div style={{ display: "flex", justifyContent: "space-between" }}><span>Total contributed over {investYears}y</span><strong>{fmt(totalContributed)}</strong></div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}><span>Forward blended return</span><strong>{meanRateWeightedByMoneyIn.toFixed(2)}%</strong></div>
                   </div>
                 </Card>
               </div>
 
-              <Card title={`Pot Growth Over ${investYears} Years`} color="#10b981">
+              <Card title={`Pot Growth Over ${investYears} Years`}>
                 <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
-                  <label style={{ fontSize: 13, fontWeight: 600, color: "#475569" }}>Horizon</label>
+                  <label style={{ fontSize: FS.body, fontWeight: 600, color: T.inkSoft }}>Horizon</label>
                   <input type="range" min={1} max={40} value={investYears} onChange={(e) => setInvestYears(parseInt(e.target.value))} style={{ flex: 1 }} />
                   <strong style={{ minWidth: 60, textAlign: "right" }}>{investYears} years</strong>
                 </div>
@@ -2942,7 +2940,7 @@ export default function FinanceCalculator() {
                     ))}
                   </AreaChart>
                 </ResponsiveContainer>
-                <p style={{ fontSize: 11, color: "#94a3b8", textAlign: "center", marginTop: 8 }}>
+                <p style={{ fontSize: FS.small, color: T.inkSoft, textAlign: "center", marginTop: 8 }}>
                   Each pot stacks to show the combined balance. Forecasts use each pot's own rate and compounding. Past performance does not guarantee future results.
                 </p>
               </Card>
@@ -2954,43 +2952,43 @@ export default function FinanceCalculator() {
           <div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
               {agreementPayments.map((a, idx) => (
-                <Card key={idx} title={a.name} color={COLORS[idx % COLORS.length]}>
+                <Card key={idx} title={a.name}>
                   <InputGroup label="Name" value={a.name} onChange={(v) => updateAgreement(idx, "name", v)} prefix="" type="text" />
-                  <InputGroup label="Total Amount" value={a.amount} onChange={(v) => updateAgreement(idx, "amount", v)} />
+                  <InputGroup label="Total amount" value={a.amount} onChange={(v) => updateAgreement(idx, "amount", v)} />
                   <InputGroup label="APR" value={a.rate} onChange={(v) => updateAgreement(idx, "rate", v)} prefix="" suffix="%" step={0.1} />
                   <InputGroup label="Term" value={a.termMonths} onChange={(v) => updateAgreement(idx, "termMonths", v)} prefix="" suffix="months" />
 
-                  <div style={{ background: "#f8fafc", borderRadius: 8, padding: 16, marginTop: 12 }}>
+                  <div style={{ background: T.paper, borderRadius: 6, padding: 16, marginTop: 12 }}>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                      <StatBox label="Monthly Payment" value={fmt(a.monthlyPayment)} color="#6366f1" />
-                      <StatBox label="Total Interest" value={fmt(a.totalInterest)} color="#ef4444" />
-                      <StatBox label="Total Cost" value={fmt(a.totalCost)} />
+                      <StatBox label="Monthly payment" value={fmt(a.monthlyPayment)} color={T.ink} />
+                      <StatBox label="Total interest" value={fmt(a.totalInterest)} color={T.neg} />
+                      <StatBox label="Total cost" value={fmt(a.totalCost)} />
                     </div>
                   </div>
 
-                  <button onClick={() => removeAgreement(idx)} style={{ marginTop: 12, padding: "8px 16px", background: "#fee2e2", color: "#ef4444", border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
+                  <button onClick={() => removeAgreement(idx)} style={{ marginTop: 12, padding: "8px 16px", background: T.paper, color: T.neg, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 600, fontSize: FS.body }}>
                     Remove
                   </button>
                 </Card>
               ))}
             </div>
 
-            <button onClick={addAgreement} style={{ padding: "12px 24px", background: "#6366f1", color: "#fff", border: "none", borderRadius: 10, cursor: "pointer", fontWeight: 700, fontSize: 14 }}>
+            <button onClick={addAgreement} style={{ padding: "12px 24px", background: T.home, color: T.sheet, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body }}>
               + Add Finance Agreement
             </button>
 
             {agreementPayments.length > 0 && (
               <div style={{ marginTop: 24 }}>
-                <Card title="Impact on Monthly Budget" color="#ef4444">
+                <Card title="Impact on monthly budget">
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8 }}>
-                    <StatBox label="Net Income" value={fmt(totalMonthlyNet)} color="#10b981" />
-                    <StatBox label="Expenses" value={fmt(totalExpenses)} color="#f59e0b" />
-                    <StatBox label="Agreement Payments" value={fmt(totalAgreementMonthly)} color="#ef4444" />
-                    <StatBox label="Remaining" value={fmt(totalMonthlyNet - totalExpenses - totalAgreementMonthly)} color={totalMonthlyNet - totalExpenses - totalAgreementMonthly >= 0 ? "#10b981" : "#ef4444"} />
+                    <StatBox label="Net income" value={fmt(totalMonthlyNet)} color={T.saved} />
+                    <StatBox label="Expenses" value={fmt(totalExpenses)} color={T.warnInk} />
+                    <StatBox label="Agreement payments" value={fmt(totalAgreementMonthly)} color={T.neg} />
+                    <StatBox label="Remaining" value={fmt(totalMonthlyNet - totalExpenses - totalAgreementMonthly)} color={totalMonthlyNet - totalExpenses - totalAgreementMonthly >= 0 ? T.saved : T.neg} />
                   </div>
-                  <div style={{ marginTop: 16, padding: 12, background: "#fef2f2", borderRadius: 8, fontSize: 13, color: "#64748b" }}>
-                    Finance agreements consume <strong style={{ color: "#ef4444" }}>{((totalAgreementMonthly / totalMonthlyNet) * 100).toFixed(1)}%</strong> of your monthly net income.
-                    {totalAgreementMonthly / totalMonthlyNet > 0.2 && <span style={{ color: "#ef4444" }}> Consider whether this level of debt servicing is sustainable.</span>}
+                  <div style={{ marginTop: 16, padding: 12, background: T.paper, borderRadius: 6, fontSize: FS.body, color: T.inkSoft }}>
+                    Finance agreements consume <strong style={{ color: T.neg }}>{((totalAgreementMonthly / totalMonthlyNet) * 100).toFixed(1)}%</strong> of your monthly net income.
+                    {totalAgreementMonthly / totalMonthlyNet > 0.2 && <span style={{ color: T.neg }}> Consider whether this level of debt servicing is sustainable.</span>}
                   </div>
                 </Card>
               </div>
@@ -3001,35 +2999,35 @@ export default function FinanceCalculator() {
         {tab === 6 && (
           <div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
-              <Card title="Projection Settings" color="#6366f1">
+              <Card title="Projection settings">
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 4 }}>Projection Period</label>
-                  <Toggle value={projectionMonths === 12 ? 0 : 1} onChange={(v) => setProjectionMonths(v === 0 ? 12 : 24)} labels={["12 Months", "24 Months"]} />
+                  <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>Projection period</label>
+                  <Toggle value={projectionMonths === 12 ? 0 : 1} onChange={(v) => setProjectionMonths(v === 0 ? 12 : 24)} labels={["12 months", "24 months"]} />
                 </div>
-                <InputGroup label="Annual Salary Growth" value={salaryGrowth} onChange={setSalaryGrowth} prefix="" suffix="%" step={0.5} />
-                <InputGroup label="Annual Inflation Rate" value={inflationRate} onChange={setInflationRate} prefix="" suffix="%" step={0.5} />
+                <InputGroup label="Annual salary growth" value={salaryGrowth} onChange={setSalaryGrowth} prefix="" suffix="%" step={0.5} />
+                <InputGroup label="Annual inflation rate" value={inflationRate} onChange={setInflationRate} prefix="" suffix="%" step={0.5} />
               </Card>
 
-              <Card title="Savings Vehicles" color="#8b5cf6">
-                <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0" }}>Toggle which savings strategies to include in the projection. Layer multiple to see combined impact.</p>
+              <Card title="Savings vehicles">
+                <p style={{ fontSize: FS.small, color: T.inkSoft, margin: "0 0 12px 0" }}>Toggle which savings strategies to include in the projection. Layer multiple to see combined impact.</p>
                 {[
-                  { key: "pots", label: `Savings Pots (${pots.length})`, sub: pots.length === 0 ? "No pots configured" : `${fmt(totalMonthlyPotContributions)}/mo across ${pots.length} pot${pots.length === 1 ? "" : "s"} · ${meanRateWeightedByBalance.toFixed(2)}% blended`, active: projIncludePots, set: setProjIncludePots, color: "#8b5cf6" },
-                  { key: "model", label: "Savings Model", sub: `${SAVINGS_MODELS[projSavingsModel]?.name}`, active: projIncludeModel, set: setProjIncludeModel, color: "#6366f1" },
-                  { key: "pyf", label: "Pay Yourself First (Extra)", sub: `${fmt(pyfSavingsTarget)}/mo fixed target`, active: projIncludePYF, set: setProjIncludePYF, color: "#ec4899", disabled: projIncludeModel && projSavingsModel === SAVINGS_MODEL_PYF },
+                  { key: "pots", label: `Savings Pots (${pots.length})`, sub: pots.length === 0 ? "No pots configured" : `${fmt(totalMonthlyPotContributions)}/mo across ${pots.length} pot${pots.length === 1 ? "" : "s"} · ${meanRateWeightedByBalance.toFixed(2)}% blended`, active: projIncludePots, set: setProjIncludePots, color: T.ink },
+                  { key: "model", label: "Savings model", sub: `${SAVINGS_MODELS[projSavingsModel]?.name}`, active: projIncludeModel, set: setProjIncludeModel, color: T.ink },
+                  { key: "pyf", label: "Pay Yourself First (extra)", sub: `${fmt(pyfSavingsTarget)}/mo fixed target`, active: projIncludePYF, set: setProjIncludePYF, color: T.ink, disabled: projIncludeModel && projSavingsModel === SAVINGS_MODEL_PYF },
                 ].map(v => (
-                  <label key={v.key} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: v.active ? `${v.color}11` : "#f8fafc", borderRadius: 10, marginBottom: 6, cursor: v.disabled ? "not-allowed" : "pointer", border: v.active ? `2px solid ${v.color}` : "2px solid #e2e8f0", opacity: v.disabled ? 0.5 : 1, transition: "all 0.15s" }}>
-                    <div style={{ position: "relative", width: 40, height: 22, background: v.active ? v.color : "#cbd5e1", borderRadius: 11, flexShrink: 0, transition: "background 0.2s", cursor: v.disabled ? "not-allowed" : "pointer" }}
+                  <label key={v.key} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: v.active ? T.sheet : T.paper, borderRadius: 6, marginBottom: 6, cursor: v.disabled ? "not-allowed" : "pointer", border: v.active ? `2px solid ${v.color}` : `2px solid ${T.rule}`, opacity: v.disabled ? 0.5 : 1, transition: "all 0.15s" }}>
+                    <div style={{ position: "relative", width: 40, height: 22, background: v.active ? v.color : T.rule, borderRadius: 6, flexShrink: 0, transition: "background 0.2s", cursor: v.disabled ? "not-allowed" : "pointer" }}
                       onClick={(e) => { e.preventDefault(); if (!v.disabled) v.set(!v.active); }}>
-                      <div style={{ position: "absolute", top: 2, left: v.active ? 20 : 2, width: 18, height: 18, background: "#fff", borderRadius: "50%", transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
+                      <div style={{ position: "absolute", top: 2, left: v.active ? 20 : 2, width: 18, height: 18, background: T.sheet, borderRadius: "50%", transition: "left 0.2s" }} />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: v.active ? v.color : "#64748b" }}>{v.label}</div>
-                      <div style={{ fontSize: 11, color: "#94a3b8" }}>{v.sub}</div>
+                      <div style={{ fontSize: FS.body, fontWeight: 700, color: v.active ? v.color : T.inkSoft }}>{v.label}</div>
+                      <div style={{ fontSize: FS.small, color: T.inkSoft }}>{v.sub}</div>
                     </div>
                   </label>
                 ))}
                 {projIncludePYF && projIncludeModel && projSavingsModel === SAVINGS_MODEL_PYF && (
-                  <div style={{ fontSize: 11, color: "#f59e0b", padding: "4px 8px", background: "#fffbeb", borderRadius: 6, marginTop: 4 }}>
+                  <div style={{ fontSize: FS.small, color: T.warnInk, padding: "4px 8px", background: T.warnBg, borderRadius: 6, marginTop: 4 }}>
                     PYF is already included via the savings model — extra PYF toggle disabled to avoid double-counting.
                   </div>
                 )}
@@ -3037,38 +3035,38 @@ export default function FinanceCalculator() {
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
-              <Card title="Savings Model Selection" color="#6366f1">
+              <Card title="Savings model selection">
                 <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 8 }}>Apply Model to Projection</label>
+                  <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 8 }}>Apply model to projection</label>
                   {SAVINGS_MODELS.map(({ name: m }, i) => (
-                    <label key={m} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: projSavingsModel === i ? "#f0f0ff" : "#f8fafc", borderRadius: 8, marginBottom: 4, cursor: "pointer", border: projSavingsModel === i ? "2px solid #6366f1" : "2px solid transparent", opacity: projIncludeModel ? 1 : 0.5 }}>
+                    <label key={m} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: T.paper, borderRadius: 6, marginBottom: 4, cursor: "pointer", border: projSavingsModel === i ? `2px solid ${T.ruleStrong}` : "2px solid transparent", opacity: projIncludeModel ? 1 : 0.5 }}>
                       <input type="radio" checked={projSavingsModel === i} onChange={() => setProjSavingsModel(i)} disabled={!projIncludeModel} />
                       <span style={{ fontWeight: projSavingsModel === i ? 700 : 500 }}>{m}</span>
                     </label>
                   ))}
                 </div>
                 {projSavingsModel === SAVINGS_MODEL_PYF && projIncludeModel && (
-                  <InputGroup label="PYF Monthly Target" value={pyfSavingsTarget} onChange={setPyfSavingsTarget} />
+                  <InputGroup label="PYF monthly target" value={pyfSavingsTarget} onChange={setPyfSavingsTarget} />
                 )}
                 {projIncludePYF && !(projIncludeModel && projSavingsModel === SAVINGS_MODEL_PYF) && (
-                  <InputGroup label="Extra PYF Monthly Target" value={pyfSavingsTarget} onChange={setPyfSavingsTarget} />
+                  <InputGroup label="Extra PYF monthly target" value={pyfSavingsTarget} onChange={setPyfSavingsTarget} />
                 )}
-                {!projIncludeModel && <p style={{ fontSize: 12, color: "#94a3b8", margin: "8px 0 0 0" }}>Enable the "Savings Model" vehicle above to use this.</p>}
+                {!projIncludeModel && <p style={{ fontSize: FS.small, color: T.inkSoft, margin: "8px 0 0 0" }}>Enable the "Savings model" vehicle above to use this.</p>}
               </Card>
 
-              <Card title="Projected Outcomes" color="#10b981">
+              <Card title="Projected outcomes">
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                  <StatBox label={`Total at ${projectionMonths}m`} value={fmt(projectionData[projectionData.length - 1]?.totalSavings || 0)} color="#10b981" />
-                  <StatBox label="Avg Monthly Saving" value={fmt(((projectionData[projectionData.length - 1]?.totalSavings || 0) - totalExistingSavings) / projectionMonths)} color="#6366f1" />
-                  <StatBox label={`Income at M${projectionMonths}`} value={fmt(projectionData[projectionData.length - 1]?.income || 0)} color="#8b5cf6" sub="/month" />
-                  <StatBox label={`Expenses at M${projectionMonths}`} value={fmt(projectionData[projectionData.length - 1]?.expenses || 0)} color="#f59e0b" sub="with inflation" />
+                  <StatBox label={`Total at ${projectionMonths}m`} value={fmt(projectionData[projectionData.length - 1]?.totalSavings || 0)} color={T.saved} />
+                  <StatBox label="Avg monthly saving" value={fmt(((projectionData[projectionData.length - 1]?.totalSavings || 0) - totalExistingSavings) / projectionMonths)} color={T.ink} />
+                  <StatBox label={`Income at M${projectionMonths}`} value={fmt(projectionData[projectionData.length - 1]?.income || 0)} color={T.ink} sub="/month" />
+                  <StatBox label={`Expenses at M${projectionMonths}`} value={fmt(projectionData[projectionData.length - 1]?.expenses || 0)} color={T.warnInk} sub="with inflation" />
                 </div>
                 {snapshot.activeVehicles.length > 0 && (
-                  <div style={{ marginTop: 12, padding: "8px 12px", background: "#f0fdf4", borderRadius: 8, fontSize: 12, color: "#166534" }}>
+                  <div style={{ marginTop: 12, padding: "8px 12px", background: T.paper, borderRadius: 6, fontSize: FS.small, color: T.saved }}>
                     <strong>Active:</strong> {snapshot.activeVehicles.join(" + ")}
                   </div>
                 )}
-                <div style={{ marginTop: 8, padding: "8px 12px", background: "#eef2ff", borderRadius: 8, fontSize: 12, color: "#4338ca" }}>
+                <div style={{ marginTop: 8, padding: "8px 12px", background: T.paper, borderRadius: 6, fontSize: FS.small, color: T.ink }}>
                   <strong>Monthly commitments:</strong> {fmt(snapshot.activePotsMonthly + snapshot.monthlySavingsGoal)} total ({[
                     snapshot.monthlySavingsGoal > 0 ? `${fmt(snapshot.monthlySavingsGoal)} model savings` : null,
                     snapshot.activePotsMonthly > 0 ? `${fmt(snapshot.activePotsMonthly)} pots` : null,
@@ -3078,13 +3076,13 @@ export default function FinanceCalculator() {
             </div>
 
             <div style={{ marginBottom: 24 }}>
-              <Card title="House Deposit Tracker" color="#ec4899">
-                <div style={{ fontSize: 14, marginBottom: 12 }}>
-                  <span style={{ color: "#64748b" }}>Cash still needed: </span>
-                  <strong style={{ color: "#6366f1" }}>{fmt(purchasePlan.essentialsToPay)}</strong>
-                  <span style={{ color: "#64748b" }}> essentials · {fmt(purchasePlan.idealToPay)} with extras</span>
+              <Card title="House deposit tracker">
+                <div style={{ fontSize: FS.body, marginBottom: 12 }}>
+                  <span style={{ color: T.inkSoft }}>Cash still needed: </span>
+                  <strong style={{ color: T.ink }}>{fmt(purchasePlan.essentialsToPay)}</strong>
+                  <span style={{ color: T.inkSoft }}> essentials · {fmt(purchasePlan.idealToPay)} with extras</span>
                   <br />
-                  <span style={{ color: "#8b5cf6", fontSize: 13 }}>
+                  <span style={{ color: T.ink, fontSize: FS.body }}>
                     {purchasePlan.tickedCount > 0
                       ? `${fmt(purchasePlan.availableToday)} today in ${purchasePlan.tickedCount} pot${purchasePlan.tickedCount === 1 ? "" : "s"} ticked for the purchase`
                       : "No pots ticked for the purchase yet"}
@@ -3103,27 +3101,27 @@ export default function FinanceCalculator() {
                   else status = `Your ticked pots should cover the essentials in about ${m} month${m === 1 ? "" : "s"} (${fmtMonthYear(purchasePlan.gapCloseDate)})${completionDate ? (late ? `, ${monthsLate} month${monthsLate === 1 ? "" : "s"} after your completion date` : ", before your completion date") : ""}.`;
                   return (
                     <>
-                      <div style={{ background: "#f1f5f9", borderRadius: 99, height: 24, overflow: "hidden", marginBottom: 8 }}>
-                        <div style={{ background: "linear-gradient(90deg, #6366f1, #ec4899)", height: "100%", width: `${progress}%`, borderRadius: 99, transition: "width 0.5s" }} />
+                      <div style={{ background: T.paper, borderRadius: 3, height: 24, overflow: "hidden", marginBottom: 8 }}>
+                        <div className="meter" style={{ background: T.saved, height: "100%", width: `${progress}%`, borderRadius: 3 }} />
                       </div>
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "#64748b" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: FS.body, color: T.inkSoft }}>
                         <span>{fmt(purchasePlan.availableToday)} available today</span>
                         <span>{progress.toFixed(1)}% of essentials</span>
                       </div>
-                      <div style={{ marginTop: 8, padding: 12, background: good ? "#f0fdf4" : "#fef2f2", borderRadius: 8, fontSize: 13, color: good ? "#10b981" : "#ef4444", fontWeight: 600 }}>
+                      <div style={{ marginTop: 8, padding: 12, background: T.paper, borderRadius: 6, fontSize: FS.body, color: good ? T.saved : T.neg, fontWeight: 600 }}>
                         {status}
                       </div>
                     </>
                   );
                 })()}
-                <div style={{ marginTop: 8, fontSize: 13 }}>
+                <div style={{ marginTop: 8, fontSize: FS.body }}>
                   <button style={LINK_BTN} onClick={() => setTab(3)}>Open Purchase Plan</button>
                 </div>
               </Card>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 24 }}>
-              <Card title="Savings Accumulation" color="#10b981">
+              <Card title="Savings accumulation">
                 <ResponsiveContainer width="100%" height={350}>
                   <AreaChart data={projectionData}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -3131,12 +3129,12 @@ export default function FinanceCalculator() {
                     <YAxis tickFormatter={(v) => `£${(v / 1000).toFixed(1)}k`} />
                     <Tooltip formatter={(v) => fmt(v)} />
                     <Legend />
-                    <Area type="monotone" dataKey="totalSavings" name="Total Savings" fill="#10b98133" stroke="#10b981" strokeWidth={3} />
+                    <Area type="monotone" dataKey="totalSavings" name="Total savings" fill={T.saved} fillOpacity={0.2} stroke={T.saved} strokeWidth={3} />
                   </AreaChart>
                 </ResponsiveContainer>
               </Card>
 
-              <Card title="Monthly Income vs Expenses vs Savings" color="#6366f1">
+              <Card title="Monthly income vs expenses vs savings">
                 <ResponsiveContainer width="100%" height={350}>
                   <BarChart data={projectionData.filter((_, i) => i > 0)}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -3144,15 +3142,15 @@ export default function FinanceCalculator() {
                     <YAxis tickFormatter={(v) => `£${v}`} />
                     <Tooltip formatter={(v) => fmt(v)} />
                     <Legend />
-                    <Bar dataKey="income" name="Income" fill="#10b981" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="expenses" name="Expenses" fill="#ef4444" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="saving" name="Savings" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="income" name="Income" fill={T.saved} radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="expenses" name="Expenses" fill={T.neg} radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="saving" name="Savings" fill={T.home} radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </Card>
 
-              <Card title="Post-Purchase Scenario — If You Completed Today" color="#ec4899">
-                <p style={{ fontSize: 13, color: "#64748b", margin: "0 0 12px 0", lineHeight: 1.6 }}>
+              <Card title="Post-purchase scenario — if you completed today">
+                <p style={{ fontSize: FS.body, color: T.inkSoft, margin: "0 0 12px 0", lineHeight: 1.6 }}>
                   If you completed today, {fmt(postPurchasePots.drainAmount)} of upfront costs{includeExtrasInProjection ? " (including extras)" : " (essentials only)"} would come out of your ticked pots{postPurchasePots.shortfall > 0.005 ? `, leaving ${fmt(postPurchasePots.shortfall)} to recover from monthly savings` : ""}.
                   Rent ({fmt(rent)}/mo) is replaced by the mortgage ({fmt2(mortgage.monthlyPayment)}/mo{overpayMonthly > 0 ? ` + ${fmt(overpayMonthly)} overpayment` : ""}), council tax ({fmt(councilTax)}){purchasePlan.monthlyProjectionTotal > 0 ? ` and ${fmt(purchasePlan.monthlyProjectionTotal)}/mo of purchase costs paid monthly` : ""}.
                   {" "}{reserveFirstPayment ? "The first mortgage payment is already set aside in the upfront costs." : `Month 1 pays the full first payment of ${fmt2(mortgage.firstPayment)} from income.`}
@@ -3161,10 +3159,10 @@ export default function FinanceCalculator() {
                   {" "}Property appreciates at {housePriceGrowth}% p.a.
                 </p>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
-                  <StatBox label="Day 1 Savings" value={fmt(postPurchaseData[0]?.totalSavings || 0)} color={postPurchasePots.shortfall > 0.005 ? "#ef4444" : "#10b981"} sub={postPurchasePots.shortfall > 0.005 ? `${fmt(postPurchasePots.shortfall)} not covered by ticked pots` : "after upfront costs"} />
-                  <StatBox label={`Savings at ${projectionMonths}m`} value={fmt(postPurchaseData[postPurchaseData.length - 1]?.totalSavings || 0)} color="#ec4899" sub="pots + cash" />
-                  <StatBox label={`Equity at ${projectionMonths}m`} value={fmt(postPurchaseData[postPurchaseData.length - 1]?.equity || 0)} color="#10b981" sub="property equity" />
-                  <StatBox label={`Net Wealth at ${projectionMonths}m`} value={fmt(postPurchaseData[postPurchaseData.length - 1]?.netWealth || 0)} color="#6366f1" sub="savings + equity" />
+                  <StatBox label="Day 1 savings" value={fmt(postPurchaseData[0]?.totalSavings || 0)} color={postPurchasePots.shortfall > 0.005 ? T.neg : T.saved} sub={postPurchasePots.shortfall > 0.005 ? `${fmt(postPurchasePots.shortfall)} not covered by ticked pots` : "after upfront costs"} />
+                  <StatBox label={`Savings at ${projectionMonths}m`} value={fmt(postPurchaseData[postPurchaseData.length - 1]?.totalSavings || 0)} color={T.ink} sub="pots + cash" />
+                  <StatBox label={`Equity at ${projectionMonths}m`} value={fmt(postPurchaseData[postPurchaseData.length - 1]?.equity || 0)} color={T.saved} sub="property equity" />
+                  <StatBox label={`Net Wealth at ${projectionMonths}m`} value={fmt(postPurchaseData[postPurchaseData.length - 1]?.netWealth || 0)} color={T.ink} sub="savings + equity" />
                 </div>
                 <ResponsiveContainer width="100%" height={350}>
                   <AreaChart data={projectionData.map((d, i) => ({ label: d.label, rentSavings: d.totalSavings, buySavings: postPurchaseData[i]?.totalSavings || 0, buyNetWealth: postPurchaseData[i]?.netWealth || 0 }))}>
@@ -3173,9 +3171,9 @@ export default function FinanceCalculator() {
                     <YAxis tickFormatter={(v) => `£${(v / 1000).toFixed(0)}k`} />
                     <Tooltip formatter={(v) => fmt(v)} />
                     <Legend />
-                    <Area type="monotone" dataKey="rentSavings" name="Renting — Savings" fill="#6366f122" stroke="#6366f1" strokeWidth={2} />
-                    <Area type="monotone" dataKey="buySavings" name="Buying today — Savings" fill="#ec489922" stroke="#ec4899" strokeWidth={2} strokeDasharray="6 3" />
-                    <Area type="monotone" dataKey="buyNetWealth" name="Buying today — Net Wealth" fill="#10b98122" stroke="#10b981" strokeWidth={2} />
+                    <Area type="monotone" dataKey="rentSavings" name="Renting — savings" fill={T.home} fillOpacity={0.13} stroke={T.home} strokeWidth={2} />
+                    <Area type="monotone" dataKey="buySavings" name="Buying today — savings" fill={T.home} fillOpacity={0.13} stroke={T.home} strokeWidth={2} strokeDasharray="6 3" />
+                    <Area type="monotone" dataKey="buyNetWealth" name="Buying today — net wealth" fill={T.saved} fillOpacity={0.13} stroke={T.saved} strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
               </Card>
@@ -3185,15 +3183,15 @@ export default function FinanceCalculator() {
 
         {tab === 7 && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
-            <Card title="Log an Expense" color="#6366f1">
+            <Card title="Log an expense">
               <InputGroup label="Description" value={newExpenseName} onChange={setNewExpenseName} prefix="" type="text" />
               <InputGroup label="Amount" value={newExpenseAmount} onChange={setNewExpenseAmount} />
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 4 }}>Category</label>
+                <label style={{ display: "block", fontSize: FS.body, fontWeight: 600, color: T.inkSoft, marginBottom: 4 }}>Category</label>
                 <select
                   value={newExpenseCategory}
                   onChange={(e) => setNewExpenseCategory(e.target.value)}
-                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: 8, fontSize: 15 }}
+                  style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.input }}
                 >
                   {["Rent/Housing", "Bills", "Food", "Transport", "Entertainment", "Clothing", "Health", "Subscriptions", "One-off Purchase", "Other"].map((c) => (
                     <option key={c} value={c}>{c}</option>
@@ -3203,20 +3201,20 @@ export default function FinanceCalculator() {
               <InputGroup label="Date" value={newExpenseDate} onChange={setNewExpenseDate} prefix="" type="date" />
               <button
                 onClick={addExpenseEntry}
-                style={{ width: "100%", padding: "12px", background: "#6366f1", color: "#fff", border: "none", borderRadius: 10, cursor: "pointer", fontWeight: 700, fontSize: 14, marginTop: 8 }}
+                style={{ width: "100%", padding: "12px", background: T.home, color: T.sheet, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body, marginTop: 8 }}
               >
                 + Add Expense
               </button>
-              <div style={{ marginTop: 16, padding: 12, background: "#f0f0ff", borderRadius: 8, fontSize: 13, color: "#64748b" }}>
-                Use this log to track actual spending. All entries are included when you <strong>Save Data</strong> and restored when you <strong>Load Data</strong>.
+              <div style={{ marginTop: 16, padding: 12, background: T.paper, borderRadius: 6, fontSize: FS.body, color: T.inkSoft }}>
+                Use this log to track actual spending. All entries are included when you <strong>Save data</strong> and restored when you <strong>Load data</strong>.
               </div>
             </Card>
 
             <div>
-              <Card title="Spending Summary" color="#10b981">
+              <Card title="Spending summary">
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
-                  <StatBox label="Total Logged" value={fmt(expenseLogTotal)} color="#6366f1" />
-                  <StatBox label="Entries" value={expenseLog.length} color="#64748b" />
+                  <StatBox label="Total logged" value={fmt(expenseLogTotal)} color={T.ink} />
+                  <StatBox label="Entries" value={expenseLog.length} color={T.inkSoft} />
                 </div>
                 {expenseLogByCategory.length > 0 && (
                   <ResponsiveContainer width="100%" height={220}>
@@ -3234,28 +3232,28 @@ export default function FinanceCalculator() {
             </div>
 
             <div style={{ gridColumn: "1 / -1" }}>
-              <Card title="Expense History" color="#8b5cf6">
+              <Card title="Expense history">
                 {expenseLog.length === 0 ? (
-                  <p style={{ color: "#94a3b8", textAlign: "center", padding: 24 }}>No expenses logged yet. Add one above to get started.</p>
+                  <p style={{ color: T.inkSoft, textAlign: "center", padding: 24 }}>No expenses logged yet. Add one above to get started.</p>
                 ) : (
                   <div style={{ maxHeight: 500, overflowY: "auto" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: FS.body }}>
                       <thead>
-                        <tr style={{ borderBottom: "2px solid #e2e8f0", textAlign: "left" }}>
-                          <th style={{ padding: "8px 12px", color: "#64748b", fontWeight: 600 }}>Date</th>
-                          <th style={{ padding: "8px 12px", color: "#64748b", fontWeight: 600 }}>Description</th>
-                          <th style={{ padding: "8px 12px", color: "#64748b", fontWeight: 600 }}>Category</th>
-                          <th style={{ padding: "8px 12px", color: "#64748b", fontWeight: 600, textAlign: "right" }}>Amount</th>
+                        <tr style={{ borderBottom: `2px solid ${T.rule}`, textAlign: "left" }}>
+                          <th style={{ padding: "8px 12px", color: T.inkSoft, fontWeight: 600 }}>Date</th>
+                          <th style={{ padding: "8px 12px", color: T.inkSoft, fontWeight: 600 }}>Description</th>
+                          <th style={{ padding: "8px 12px", color: T.inkSoft, fontWeight: 600 }}>Category</th>
+                          <th style={{ padding: "8px 12px", color: T.inkSoft, fontWeight: 600, textAlign: "right" }}>Amount</th>
                           <th style={{ padding: "8px 12px", width: 60 }}></th>
                         </tr>
                       </thead>
                       <tbody>
                         {expenseLog.map((entry) => (
-                          <tr key={entry.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                            <td style={{ padding: "10px 12px", color: "#64748b" }}>{entry.date}</td>
+                          <tr key={entry.id} style={{ borderBottom: `1px solid ${T.paper}` }}>
+                            <td style={{ padding: "10px 12px", color: T.inkSoft }}>{entry.date}</td>
                             <td style={{ padding: "10px 12px", fontWeight: 600 }}>{entry.name}</td>
                             <td style={{ padding: "10px 12px" }}>
-                              <span style={{ background: "#f1f5f9", padding: "2px 10px", borderRadius: 99, fontSize: 12, fontWeight: 600, color: "#6366f1" }}>
+                              <span style={{ background: T.paper, padding: "2px 10px", borderRadius: 3, fontSize: FS.small, fontWeight: 600, color: T.ink }}>
                                 {entry.category}
                               </span>
                             </td>
@@ -3263,7 +3261,7 @@ export default function FinanceCalculator() {
                             <td style={{ padding: "10px 12px" }}>
                               <button
                                 onClick={() => removeExpenseEntry(entry.id)}
-                                style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontWeight: 700, fontSize: 16 }}
+                                style={{ background: "none", border: "none", color: T.neg, cursor: "pointer", fontWeight: 700, fontSize: FS.input }}
                               >
                                 ×
                               </button>
@@ -3281,9 +3279,9 @@ export default function FinanceCalculator() {
 
         {tab === 8 && (() => {
           const rLine = (label, value, color) => (
-            <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", borderBottom: "1px solid #f1f5f9" }}>
-              <span style={{ color: "#475569" }}>{label}</span>
-              <strong style={{ color: color || "#1e293b" }}>{value}</strong>
+            <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", borderBottom: `1px solid ${T.paper}` }}>
+              <span style={{ color: T.inkSoft }}>{label}</span>
+              <strong style={{ color: color || T.ink }}>{value}</strong>
             </div>
           );
           const projEnd = projectionData[projectionData.length - 1];
@@ -3295,21 +3293,21 @@ export default function FinanceCalculator() {
           const upfrontDrawdown = postPurchasePots?.drawdown || {};
           const sectionNum = (() => { let n = 0; return () => ++n; })();
 
-          const SectionHeader = ({ num, title, subtitle, color }) => (
+          const SectionHeader = ({ num, title, subtitle }) => (
             <div style={{ gridColumn: "1 / -1", marginTop: num > 1 ? 12 : 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4 }}>
-                <div style={{ width: 32, height: 32, borderRadius: "50%", background: color || "#6366f1", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: 14, flexShrink: 0 }}>{num}</div>
+                <div style={{ fontFamily: FONT.display, fontSize: FS.heading, fontWeight: 700, color: T.inkSoft, minWidth: 20 }}>{num}</div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: "#1e293b" }}>{title}</h3>
-                  {subtitle && <p style={{ margin: 0, fontSize: 11, color: "#94a3b8" }}>{subtitle}</p>}
+                  <h3 style={{ margin: 0, fontFamily: FONT.display, fontSize: FS.heading, fontWeight: 700, color: T.ink }}>{title}</h3>
+                  {subtitle && <p style={{ margin: 0, fontSize: FS.small, color: T.inkSoft }}>{subtitle}</p>}
                 </div>
               </div>
-              <div style={{ height: 2, background: `linear-gradient(to right, ${color || "#6366f1"}, transparent)`, marginBottom: 12 }} />
+              <div style={{ height: 1, background: T.ruleStrong, marginBottom: 12 }} />
             </div>
           );
 
           const SubHead = ({ text, color }) => (
-            <div style={{ fontSize: 12, fontWeight: 700, color: color || "#6366f1", textTransform: "uppercase", letterSpacing: "0.05em", margin: "14px 0 6px 0", borderBottom: `1px solid ${color || "#6366f1"}33`, paddingBottom: 3 }}>{text}</div>
+            <div style={{ fontSize: FS.small, fontWeight: 700, color: color || T.ink, margin: "14px 0 6px 0", borderBottom: `1px solid ${T.rule}`, paddingBottom: 3 }}>{text}</div>
           );
 
           const expenseRows = splitExpenseRows;
@@ -3326,129 +3324,129 @@ export default function FinanceCalculator() {
 
           return (
             <div>
-              <div style={{ background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)", borderRadius: 16, padding: "28px 32px", marginBottom: 24, color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ borderBottom: `1.5px solid ${T.ruleStrong}`, padding: "8px 0 20px", marginBottom: 24, display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 16, flexWrap: "wrap" }}>
                 <div>
-                  <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em" }}>Personal Finance Report</h2>
-                  <p style={{ margin: "6px 0 0 0", fontSize: 13, opacity: 0.85 }}>
+                  <h2 style={{ margin: 0, fontFamily: FONT.display, fontSize: FS.figure, fontWeight: 700, lineHeight: 1.1 }}>Personal finance report</h2>
+                  <p style={{ margin: "6px 0 0 0", fontSize: FS.body, color: T.inkSoft }}>
                     {mode === MODE.HOUSEHOLD ? "Household" : "Individual"} · {snapshot.activeVehicles.length > 0 ? snapshot.activeVehicles.join(" + ") : "No savings vehicles"} · {projectionMonths}-Month Outlook
                   </p>
-                  <p style={{ margin: "2px 0 0 0", fontSize: 12, opacity: 0.7 }}>
+                  <p style={{ margin: "2px 0 0 0", fontSize: FS.small, color: T.inkSoft }}>
                     Generated {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
                   </p>
                 </div>
                 <button
                   onClick={() => window.print()}
-                  style={{ padding: "10px 24px", background: "rgba(255,255,255,0.2)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 10, cursor: "pointer", fontWeight: 700, fontSize: 14, backdropFilter: "blur(4px)" }}
+                  className="no-print" style={{ padding: "9px 18px", background: T.ink, color: T.paper, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 600, fontSize: FS.body }}
                 >
                   Print / Save as PDF
                 </button>
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 12, marginBottom: 24 }}>
-                <div style={{ background: "#f0fdf4", borderRadius: 12, padding: "14px 16px", textAlign: "center", border: "1px solid #bbf7d0" }}>
-                  <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Monthly Net Income</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#10b981" }}>{fmt(totalMonthlyNet)}</div>
+                <div style={{ background: T.paper, borderRadius: 6, padding: "14px 16px", textAlign: "center", border: `1px solid ${T.saved}` }}>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Monthly net income</div>
+                  <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.saved }}>{fmt(totalMonthlyNet)}</div>
                 </div>
-                <div style={{ background: "#fef2f2", borderRadius: 12, padding: "14px 16px", textAlign: "center", border: "1px solid #fecaca" }}>
-                  <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Monthly Expenses</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: "#ef4444" }}>{fmt(totalExpenses)}</div>
+                <div style={{ background: T.paper, borderRadius: 6, padding: "14px 16px", textAlign: "center", border: `1px solid ${T.neg}` }}>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Monthly expenses</div>
+                  <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.neg }}>{fmt(totalExpenses)}</div>
                 </div>
-                <div style={{ background: "#eef2ff", borderRadius: 12, padding: "14px 16px", textAlign: "center", border: "1px solid #c7d2fe" }}>
-                  <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Disposable Now</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: snapshot.preDisposable >= 0 ? "#6366f1" : "#ef4444" }}>{fmt(snapshot.preDisposable)}</div>
-                  <div style={{ fontSize: 10, color: "#94a3b8" }}>with rent & all commitments</div>
+                <div style={{ background: T.paper, borderRadius: 6, padding: "14px 16px", textAlign: "center", border: `1px solid ${T.rule}` }}>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Disposable now</div>
+                  <div style={{ fontSize: FS.figure, fontWeight: 700, color: snapshot.preDisposable >= 0 ? T.ink : T.neg }}>{fmt(snapshot.preDisposable)}</div>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft }}>with rent & all commitments</div>
                 </div>
-                <div style={{ background: "#fdf4ff", borderRadius: 12, padding: "14px 16px", textAlign: "center", border: "1px solid #f0abfc" }}>
-                  <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Disposable Post-Mortgage</div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: snapshot.postDisposable >= 0 ? "#8b5cf6" : "#ef4444" }}>{fmt(snapshot.postDisposable)}</div>
-                  <div style={{ fontSize: 10, color: "#94a3b8" }}>rent → mortgage + council tax{purchasePlan.monthlyTotal > 0 ? " + monthly costs" : ""}</div>
+                <div style={{ background: T.paper, borderRadius: 6, padding: "14px 16px", textAlign: "center", border: `1px solid ${T.rule}` }}>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Disposable post-mortgage</div>
+                  <div style={{ fontSize: FS.figure, fontWeight: 700, color: snapshot.postDisposable >= 0 ? T.ink : T.neg }}>{fmt(snapshot.postDisposable)}</div>
+                  <div style={{ fontSize: FS.small, color: T.inkSoft }}>rent → mortgage + council tax{purchasePlan.monthlyTotal > 0 ? " + monthly costs" : ""}</div>
                 </div>
               </div>
 
-              <div id="report-content" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, fontSize: 13 }}>
+              <div id="report-content" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, fontSize: FS.body }}>
 
-                <SectionHeader num={secIncome} title="Income Breakdown" subtitle="Tax, NI, pension & student loan deductions" color="#10b981" />
+                <SectionHeader num={secIncome} title="Income breakdown" subtitle="Tax, NI, pension & student loan deductions" />
 
-                <Card title="Person 1 — Income">
-                  {rLine("Gross Annual Salary", fmt(calc1.gross))}
-                  {calc1.seIncome > 0 && rLine("↳ of which Self-Employed", fmt(calc1.seIncome), "#0ea5e9")}
-                  {rLine("Income Tax", fmt(calc1.tax), "#ef4444")}
-                  {rLine("National Insurance", fmt(calc1.ni), "#ef4444")}
-                  {calc1.class4Ni > 0 && rLine("↳ of which Class 4 NI (SA)", fmt(calc1.class4Ni), "#ef4444")}
-                  {rLine("Pension Contribution", fmt(calc1.pensionAmt), "#8b5cf6")}
-                  {calc1.sacrificeAmt > 0 && rLine("Salary Sacrifice", fmt(calc1.sacrificeAmt), "#0ea5e9")}
-                  {calc1.slRepay > 0 && rLine("Student Loan Repayment", fmt(calc1.slRepay), "#ec4899")}
-                  {calc1.saTaxBill > 0 && rLine("Self Assessment Bill (annual)", fmt(calc1.saTaxBill), "#ef4444")}
-                  <div style={{ borderTop: "2px solid #10b981", marginTop: 8, paddingTop: 6 }}>
-                    {calc1.seIncome > 0 && rLine("PAYE Monthly Take-Home", fmt(calc1.payeMonthly), "#10b981")}
-                    {rLine(calc1.seIncome > 0 ? "Total Monthly (smoothed)" : "Monthly Take-Home", fmt(calc1.smoothedMonthlyNet), "#10b981")}
-                    {rLine("Annual Take-Home", fmt(calc1.net), "#10b981")}
+                <Card title="Person 1 — income">
+                  {rLine("Gross annual salary", fmt(calc1.gross))}
+                  {calc1.seIncome > 0 && rLine("↳ of which self-employed", fmt(calc1.seIncome), T.ink)}
+                  {rLine("Income tax", fmt(calc1.tax), T.neg)}
+                  {rLine("National insurance", fmt(calc1.ni), T.neg)}
+                  {calc1.class4Ni > 0 && rLine("↳ of which Class 4 NI (SA)", fmt(calc1.class4Ni), T.neg)}
+                  {rLine("Pension contribution", fmt(calc1.pensionAmt), T.ink)}
+                  {calc1.sacrificeAmt > 0 && rLine("Salary sacrifice", fmt(calc1.sacrificeAmt), T.ink)}
+                  {calc1.slRepay > 0 && rLine("Student loan repayment", fmt(calc1.slRepay), T.ink)}
+                  {calc1.saTaxBill > 0 && rLine("Self Assessment bill (annual)", fmt(calc1.saTaxBill), T.neg)}
+                  <div style={{ borderTop: `2px solid ${T.saved}`, marginTop: 8, paddingTop: 6 }}>
+                    {calc1.seIncome > 0 && rLine("PAYE monthly take-home", fmt(calc1.payeMonthly), T.saved)}
+                    {rLine(calc1.seIncome > 0 ? "Total Monthly (smoothed)" : "Monthly Take-Home", fmt(calc1.smoothedMonthlyNet), T.saved)}
+                    {rLine("Annual take-home", fmt(calc1.net), T.saved)}
                   </div>
                 </Card>
 
                 {mode === MODE.HOUSEHOLD ? (
-                  <Card title="Person 2 — Income">
-                    {rLine("Gross Annual Salary", fmt(calc2.gross))}
-                    {calc2.seIncome > 0 && rLine("↳ of which Self-Employed", fmt(calc2.seIncome), "#0ea5e9")}
-                    {rLine("Income Tax", fmt(calc2.tax), "#ef4444")}
-                    {rLine("National Insurance", fmt(calc2.ni), "#ef4444")}
-                    {calc2.class4Ni > 0 && rLine("↳ of which Class 4 NI (SA)", fmt(calc2.class4Ni), "#ef4444")}
-                    {rLine("Pension Contribution", fmt(calc2.pensionAmt), "#8b5cf6")}
-                    {calc2.sacrificeAmt > 0 && rLine("Salary Sacrifice", fmt(calc2.sacrificeAmt), "#0ea5e9")}
-                    {calc2.slRepay > 0 && rLine("Student Loan Repayment", fmt(calc2.slRepay), "#ec4899")}
-                    {calc2.saTaxBill > 0 && rLine("Self Assessment Bill (annual)", fmt(calc2.saTaxBill), "#ef4444")}
-                    <div style={{ borderTop: "2px solid #10b981", marginTop: 8, paddingTop: 6 }}>
-                      {rLine("Monthly Take-Home", fmt(calc2.smoothedMonthlyNet), "#10b981")}
-                      {rLine("Annual Take-Home", fmt(calc2.smoothedMonthlyNet * 12), "#10b981")}
+                  <Card title="Person 2 — income">
+                    {rLine("Gross annual salary", fmt(calc2.gross))}
+                    {calc2.seIncome > 0 && rLine("↳ of which self-employed", fmt(calc2.seIncome), T.ink)}
+                    {rLine("Income tax", fmt(calc2.tax), T.neg)}
+                    {rLine("National insurance", fmt(calc2.ni), T.neg)}
+                    {calc2.class4Ni > 0 && rLine("↳ of which Class 4 NI (SA)", fmt(calc2.class4Ni), T.neg)}
+                    {rLine("Pension contribution", fmt(calc2.pensionAmt), T.ink)}
+                    {calc2.sacrificeAmt > 0 && rLine("Salary sacrifice", fmt(calc2.sacrificeAmt), T.ink)}
+                    {calc2.slRepay > 0 && rLine("Student loan repayment", fmt(calc2.slRepay), T.ink)}
+                    {calc2.saTaxBill > 0 && rLine("Self Assessment bill (annual)", fmt(calc2.saTaxBill), T.neg)}
+                    <div style={{ borderTop: `2px solid ${T.saved}`, marginTop: 8, paddingTop: 6 }}>
+                      {rLine("Monthly take-home", fmt(calc2.smoothedMonthlyNet), T.saved)}
+                      {rLine("Annual take-home", fmt(calc2.smoothedMonthlyNet * 12), T.saved)}
                     </div>
                   </Card>
                 ) : (
-                  <Card title="Income Summary">
-                    <div style={{ background: "#f0fdf4", borderRadius: 8, padding: 12, textAlign: "center" }}>
-                      <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>EFFECTIVE TAX RATE</div>
-                      <div style={{ fontSize: 24, fontWeight: 800, color: "#ef4444" }}>{((calc1.tax + calc1.ni) / calc1.gross * 100).toFixed(1)}%</div>
+                  <Card title="Income summary">
+                    <div style={{ background: T.paper, borderRadius: 6, padding: 12, textAlign: "center" }}>
+                      <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Effective tax rate</div>
+                      <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.neg }}>{((calc1.tax + calc1.ni) / calc1.gross * 100).toFixed(1)}%</div>
                     </div>
                     <div style={{ marginTop: 12 }}>
-                      {rLine("Total Deductions", fmt(calc1.tax + calc1.ni + calc1.pensionAmt + calc1.slRepay), "#ef4444")}
-                      {rLine("Monthly Net", fmt(calc1.smoothedMonthlyNet), "#10b981")}
+                      {rLine("Total deductions", fmt(calc1.tax + calc1.ni + calc1.pensionAmt + calc1.slRepay), T.neg)}
+                      {rLine("Monthly net", fmt(calc1.smoothedMonthlyNet), T.saved)}
                     </div>
                   </Card>
                 )}
 
                 {mode === MODE.HOUSEHOLD && (
                   <div style={{ gridColumn: "1 / -1" }}>
-                    <div style={{ background: "#f0fdf4", borderRadius: 10, padding: "10px 20px", display: "flex", justifyContent: "space-around", alignItems: "center", border: "1px solid #bbf7d0" }}>
+                    <div style={{ background: T.paper, borderRadius: 6, padding: "10px 20px", display: "flex", justifyContent: "space-around", alignItems: "center", border: `1px solid ${T.saved}` }}>
                       <div style={{ textAlign: "center" }}>
-                        <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>PERSON 1 NET</div>
-                        <div style={{ fontSize: 18, fontWeight: 800, color: "#6366f1" }}>{fmt(calc1.smoothedMonthlyNet)}</div>
+                        <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Person 1 net</div>
+                        <div style={{ fontSize: FS.heading, fontWeight: 700, color: T.ink }}>{fmt(calc1.smoothedMonthlyNet)}</div>
                       </div>
-                      <div style={{ fontSize: 20, color: "#94a3b8" }}>+</div>
+                      <div style={{ fontSize: FS.heading, color: T.inkSoft }}>+</div>
                       <div style={{ textAlign: "center" }}>
-                        <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>PERSON 2 NET</div>
-                        <div style={{ fontSize: 18, fontWeight: 800, color: "#8b5cf6" }}>{fmt(calc2.smoothedMonthlyNet)}</div>
+                        <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Person 2 net</div>
+                        <div style={{ fontSize: FS.heading, fontWeight: 700, color: T.ink }}>{fmt(calc2.smoothedMonthlyNet)}</div>
                       </div>
-                      <div style={{ fontSize: 20, color: "#94a3b8" }}>=</div>
+                      <div style={{ fontSize: FS.heading, color: T.inkSoft }}>=</div>
                       <div style={{ textAlign: "center" }}>
-                        <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>HOUSEHOLD NET</div>
-                        <div style={{ fontSize: 18, fontWeight: 800, color: "#10b981" }}>{fmt(totalMonthlyNet)}</div>
+                        <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Household net</div>
+                        <div style={{ fontSize: FS.heading, fontWeight: 700, color: T.saved }}>{fmt(totalMonthlyNet)}</div>
                       </div>
                     </div>
                   </div>
                 )}
 
-                <SectionHeader num={secExpenses} title="Monthly Expenses" subtitle="Living costs, subscriptions & finance agreements" color="#f59e0b" />
+                <SectionHeader num={secExpenses} title="Monthly expenses" subtitle="Living costs, subscriptions & finance agreements" />
 
-                <Card title="Expense Breakdown">
+                <Card title="Expense breakdown">
                   {expenseRows.map((e, i) => <div key={i}>{rLine(e.name, fmt(e.amount))}</div>)}
-                  <div style={{ borderTop: "2px solid #f59e0b", marginTop: 8, paddingTop: 6 }}>
-                    {rLine("Total Monthly Expenses", fmt(totalExpenses), "#ef4444")}
+                  <div style={{ borderTop: `2px solid ${T.left}`, marginTop: 8, paddingTop: 6 }}>
+                    {rLine("Total monthly expenses", fmt(totalExpenses), T.neg)}
                   </div>
                 </Card>
 
-                <Card title="Expense Distribution">
+                <Card title="Expense distribution">
                   <ResponsiveContainer width="100%" height={200}>
                     <PieChart>
-                      <Pie data={expensePieData} cx="50%" cy="50%" innerRadius={40} outerRadius={75} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false} style={{ fontSize: 10 }}>
+                      <Pie data={expensePieData} cx="50%" cy="50%" innerRadius={40} outerRadius={75} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false} style={{ fontSize: FS.small }}>
                         {expensePieData.map((_, i) => (
                           <Cell key={i} fill={COLORS[i % COLORS.length]} />
                         ))}
@@ -3460,18 +3458,18 @@ export default function FinanceCalculator() {
 
                 {totalAgreementMonthly > 0 && (
                   <div style={{ gridColumn: "1 / -1" }}>
-                    <Card title="Finance Agreements">
+                    <Card title="Finance agreements">
                       <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(agreementPayments.length, 4)}, 1fr)`, gap: 12 }}>
                         {agreementPayments.map((a, i) => (
-                          <div key={i} style={{ background: "#fffbeb", borderRadius: 8, padding: 12, border: "1px solid #fde68a" }}>
-                            <div style={{ fontSize: 12, fontWeight: 700, color: "#92400e", marginBottom: 4 }}>{a.name}</div>
+                          <div key={i} style={{ background: T.warnBg, borderRadius: 6, padding: 12, border: `1px solid ${T.warnBg}` }}>
+                            <div style={{ fontSize: FS.small, fontWeight: 700, color: T.warnInk, marginBottom: 4 }}>{a.name}</div>
                             {rLine("Monthly", fmt(a.monthlyPayment))}
-                            {rLine("Total Interest", fmt(a.totalInterest))}
+                            {rLine("Total interest", fmt(a.totalInterest))}
                           </div>
                         ))}
                       </div>
-                      <div style={{ borderTop: "2px solid #f59e0b", marginTop: 12, paddingTop: 6 }}>
-                        {rLine("Total Agreement Payments", fmt(totalAgreementMonthly), "#ef4444")}
+                      <div style={{ borderTop: `2px solid ${T.left}`, marginTop: 12, paddingTop: 6 }}>
+                        {rLine("Total agreement payments", fmt(totalAgreementMonthly), T.neg)}
                       </div>
                     </Card>
                   </div>
@@ -3479,334 +3477,334 @@ export default function FinanceCalculator() {
 
                 {mode === MODE.HOUSEHOLD && (
                   <>
-                    <SectionHeader num={secHousehold} title="Household Contribution Split" subtitle={`Split method: ${splitMode === SPLIT_MODE.EARNINGS_RATIO ? "Ratio of Earnings" : "Custom %"} — Person 1: ${splitP1Pct.toFixed(1)}% · Person 2: ${splitP2Pct.toFixed(1)}%`} color="#ec4899" />
+                    <SectionHeader num={secHousehold} title="Household contribution split" subtitle={`Split method: ${splitMode === SPLIT_MODE.EARNINGS_RATIO ? "Ratio of Earnings" : "Custom %"} — Person 1: ${splitP1Pct.toFixed(1)}% · Person 2: ${splitP2Pct.toFixed(1)}%`} />
 
                     <div style={{ gridColumn: "1 / -1" }}>
-                      <Card title="Expense-by-Expense Breakdown">
-                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                      <Card title="Expense-by-expense breakdown">
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: FS.small }}>
                           <thead>
-                            <tr style={{ borderBottom: "2px solid #e2e8f0", background: "#fdf2f8" }}>
-                              <th style={{ padding: "8px 10px", textAlign: "left", color: "#64748b", fontWeight: 700 }}>Expense</th>
-                              <th style={{ padding: "8px 10px", textAlign: "right", color: "#64748b", fontWeight: 700 }}>Total</th>
-                              <th style={{ padding: "8px 10px", textAlign: "right", color: "#6366f1", fontWeight: 700 }}>Person 1 ({splitP1Pct.toFixed(1)}%)</th>
-                              <th style={{ padding: "8px 10px", textAlign: "right", color: "#8b5cf6", fontWeight: 700 }}>Person 2 ({splitP2Pct.toFixed(1)}%)</th>
+                            <tr style={{ borderBottom: `2px solid ${T.rule}`, background: T.paper }}>
+                              <th style={{ padding: "8px 10px", textAlign: "left", color: T.inkSoft, fontWeight: 700 }}>Expense</th>
+                              <th style={{ padding: "8px 10px", textAlign: "right", color: T.inkSoft, fontWeight: 700 }}>Total</th>
+                              <th style={{ padding: "8px 10px", textAlign: "right", color: T.ink, fontWeight: 700 }}>Person 1 ({splitP1Pct.toFixed(1)}%)</th>
+                              <th style={{ padding: "8px 10px", textAlign: "right", color: T.ink, fontWeight: 700 }}>Person 2 ({splitP2Pct.toFixed(1)}%)</th>
                             </tr>
                           </thead>
                           <tbody>
                             {expenseRows.map((e, i) => (
-                              <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                              <tr key={i} style={{ borderBottom: `1px solid ${T.paper}` }}>
                                 <td style={{ padding: "6px 10px" }}>
                                   {e.name}
-                                  {e.splitType !== "shared" && <span style={{ fontSize: 9, marginLeft: 6, padding: "1px 4px", borderRadius: 3, background: e.splitType === "p1" ? "#eef2ff" : "#f5f3ff", color: e.splitType === "p1" ? "#6366f1" : "#8b5cf6", fontWeight: 600 }}>{e.splitType === "p1" ? "P1" : "P2"} only</span>}
+                                  {e.splitType !== "shared" && <span style={{ fontSize: FS.small, marginLeft: 6, padding: "1px 4px", borderRadius: 3, background: T.paper, color: T.ink, fontWeight: 600 }}>{e.splitType === "p1" ? "P1" : "P2"} only</span>}
                                 </td>
                                 <td style={{ padding: "6px 10px", textAlign: "right", fontWeight: 600 }}>{fmt(e.amount)}</td>
-                                <td style={{ padding: "6px 10px", textAlign: "right", color: "#6366f1", fontWeight: 600 }}>{fmt(e.p1)}</td>
-                                <td style={{ padding: "6px 10px", textAlign: "right", color: "#8b5cf6", fontWeight: 600 }}>{fmt(e.p2)}</td>
+                                <td style={{ padding: "6px 10px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(e.p1)}</td>
+                                <td style={{ padding: "6px 10px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(e.p2)}</td>
                               </tr>
                             ))}
-                            <tr style={{ borderTop: "1px solid #e2e8f0", fontWeight: 600, background: "#fdf2f8" }}>
-                              <td style={{ padding: "6px 10px", color: "#64748b" }}>Household Expenses</td>
+                            <tr style={{ borderTop: `1px solid ${T.rule}`, fontWeight: 600, background: T.paper }}>
+                              <td style={{ padding: "6px 10px", color: T.inkSoft }}>Household expenses</td>
                               <td style={{ padding: "6px 10px", textAlign: "right" }}>{fmt(totalExpenses)}</td>
-                              <td style={{ padding: "6px 10px", textAlign: "right", color: "#6366f1" }}>{fmt(splitTotalP1)}</td>
-                              <td style={{ padding: "6px 10px", textAlign: "right", color: "#8b5cf6" }}>{fmt(splitTotalP2)}</td>
+                              <td style={{ padding: "6px 10px", textAlign: "right", color: T.ink }}>{fmt(splitTotalP1)}</td>
+                              <td style={{ padding: "6px 10px", textAlign: "right", color: T.ink }}>{fmt(splitTotalP2)}</td>
                             </tr>
                             {personalCommitmentRows.map((r, i) => (
-                              <tr key={`c${i}`} style={{ borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>
+                              <tr key={`c${i}`} style={{ borderBottom: `1px solid ${T.paper}`, background: T.paper }}>
                                 <td style={{ padding: "6px 10px", fontStyle: "italic" }}>{r.name}</td>
                                 <td style={{ padding: "6px 10px", textAlign: "right", fontWeight: 600 }}>{fmt(r.amount)}</td>
-                                <td style={{ padding: "6px 10px", textAlign: "right", color: "#6366f1", fontWeight: 600 }}>{fmt(r.person === "p1" ? r.amount : 0)}</td>
-                                <td style={{ padding: "6px 10px", textAlign: "right", color: "#8b5cf6", fontWeight: 600 }}>{fmt(r.person === "p2" ? r.amount : 0)}</td>
+                                <td style={{ padding: "6px 10px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(r.person === "p1" ? r.amount : 0)}</td>
+                                <td style={{ padding: "6px 10px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(r.person === "p2" ? r.amount : 0)}</td>
                               </tr>
                             ))}
-                            <tr style={{ borderTop: "2px solid #ec4899", fontWeight: 700, background: "#fdf2f8" }}>
-                              <td style={{ padding: "8px 10px" }}>Total All Commitments</td>
+                            <tr style={{ borderTop: `2px solid ${T.ruleStrong}`, fontWeight: 700, background: T.paper }}>
+                              <td style={{ padding: "8px 10px" }}>Total all commitments</td>
                               <td style={{ padding: "8px 10px", textAlign: "right" }}>{fmt(totalExpenses + commitTotal)}</td>
-                              <td style={{ padding: "8px 10px", textAlign: "right", color: "#6366f1" }}>{fmt(splitTotalP1 + commitP1)}</td>
-                              <td style={{ padding: "8px 10px", textAlign: "right", color: "#8b5cf6" }}>{fmt(splitTotalP2 + commitP2)}</td>
+                              <td style={{ padding: "8px 10px", textAlign: "right", color: T.ink }}>{fmt(splitTotalP1 + commitP1)}</td>
+                              <td style={{ padding: "8px 10px", textAlign: "right", color: T.ink }}>{fmt(splitTotalP2 + commitP2)}</td>
                             </tr>
                           </tbody>
                         </table>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 14 }}>
-                          <div style={{ background: "#eef2ff", borderRadius: 10, padding: 14, textAlign: "center", border: "1px solid #c7d2fe" }}>
-                            <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>PERSON 1 — REMAINING AFTER ALL COMMITMENTS</div>
-                            <div style={{ fontSize: 22, fontWeight: 800, color: calc1.smoothedMonthlyNet - splitTotalP1 - commitP1 >= 0 ? "#10b981" : "#ef4444" }}>
+                          <div style={{ background: T.paper, borderRadius: 6, padding: 14, textAlign: "center", border: `1px solid ${T.rule}` }}>
+                            <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Person 1 — remaining after all commitments</div>
+                            <div style={{ fontSize: FS.figure, fontWeight: 700, color: calc1.smoothedMonthlyNet - splitTotalP1 - commitP1 >= 0 ? T.saved : T.neg }}>
                               {fmt(calc1.smoothedMonthlyNet - splitTotalP1 - commitP1)}
                             </div>
-                            <div style={{ fontSize: 11, color: "#94a3b8" }}>from {fmt(calc1.smoothedMonthlyNet)} take-home</div>
+                            <div style={{ fontSize: FS.small, color: T.inkSoft }}>from {fmt(calc1.smoothedMonthlyNet)} take-home</div>
                           </div>
-                          <div style={{ background: "#f5f3ff", borderRadius: 10, padding: 14, textAlign: "center", border: "1px solid #ddd6fe" }}>
-                            <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>PERSON 2 — REMAINING AFTER ALL COMMITMENTS</div>
-                            <div style={{ fontSize: 22, fontWeight: 800, color: calc2.smoothedMonthlyNet - splitTotalP2 - commitP2 >= 0 ? "#10b981" : "#ef4444" }}>
+                          <div style={{ background: T.paper, borderRadius: 6, padding: 14, textAlign: "center", border: `1px solid ${T.rule}` }}>
+                            <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Person 2 — remaining after all commitments</div>
+                            <div style={{ fontSize: FS.figure, fontWeight: 700, color: calc2.smoothedMonthlyNet - splitTotalP2 - commitP2 >= 0 ? T.saved : T.neg }}>
                               {fmt(calc2.smoothedMonthlyNet - splitTotalP2 - commitP2)}
                             </div>
-                            <div style={{ fontSize: 11, color: "#94a3b8" }}>from {fmt(calc2.smoothedMonthlyNet)} take-home</div>
+                            <div style={{ fontSize: FS.small, color: T.inkSoft }}>from {fmt(calc2.smoothedMonthlyNet)} take-home</div>
                           </div>
                         </div>
                       </Card>
                     </div>
 
                     <div style={{ gridColumn: "1 / -1" }}>
-                      <Card title="Post-Mortgage Contribution Split" color="#10b981">
-                        <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0" }}>Projected household costs after purchase — rent replaced by the mortgage, plus council tax and any purchase costs paid monthly</p>
-                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                      <Card title="Post-mortgage contribution split">
+                        <p style={{ fontSize: FS.small, color: T.inkSoft, margin: "0 0 12px 0" }}>Projected household costs after purchase — rent replaced by the mortgage, plus council tax and any purchase costs paid monthly</p>
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: FS.small }}>
                           <thead>
-                            <tr style={{ borderBottom: "2px solid #e2e8f0", background: "#f0fdf4" }}>
-                              <th style={{ padding: "8px 10px", textAlign: "left", color: "#64748b", fontWeight: 700 }}>Expense</th>
-                              <th style={{ padding: "8px 10px", textAlign: "right", color: "#64748b", fontWeight: 700 }}>Total</th>
-                              <th style={{ padding: "8px 10px", textAlign: "right", color: "#6366f1", fontWeight: 700 }}>Person 1 ({splitP1Pct.toFixed(1)}%)</th>
-                              <th style={{ padding: "8px 10px", textAlign: "right", color: "#8b5cf6", fontWeight: 700 }}>Person 2 ({splitP2Pct.toFixed(1)}%)</th>
+                            <tr style={{ borderBottom: `2px solid ${T.rule}`, background: T.paper }}>
+                              <th style={{ padding: "8px 10px", textAlign: "left", color: T.inkSoft, fontWeight: 700 }}>Expense</th>
+                              <th style={{ padding: "8px 10px", textAlign: "right", color: T.inkSoft, fontWeight: 700 }}>Total</th>
+                              <th style={{ padding: "8px 10px", textAlign: "right", color: T.ink, fontWeight: 700 }}>Person 1 ({splitP1Pct.toFixed(1)}%)</th>
+                              <th style={{ padding: "8px 10px", textAlign: "right", color: T.ink, fontWeight: 700 }}>Person 2 ({splitP2Pct.toFixed(1)}%)</th>
                             </tr>
                           </thead>
                           <tbody>
                             {postMortgageSplitRows.map((e, i) => (
-                              <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                              <tr key={i} style={{ borderBottom: `1px solid ${T.paper}` }}>
                                 <td style={{ padding: "6px 10px" }}>
                                   {e.name}
-                                  {e.splitType !== "shared" && <span style={{ fontSize: 9, marginLeft: 6, padding: "1px 4px", borderRadius: 3, background: e.splitType === "p1" ? "#eef2ff" : "#f5f3ff", color: e.splitType === "p1" ? "#6366f1" : "#8b5cf6", fontWeight: 600 }}>{e.splitType === "p1" ? "P1" : "P2"} only</span>}
+                                  {e.splitType !== "shared" && <span style={{ fontSize: FS.small, marginLeft: 6, padding: "1px 4px", borderRadius: 3, background: T.paper, color: T.ink, fontWeight: 600 }}>{e.splitType === "p1" ? "P1" : "P2"} only</span>}
                                 </td>
                                 <td style={{ padding: "6px 10px", textAlign: "right", fontWeight: 600 }}>{fmt(e.amount)}</td>
-                                <td style={{ padding: "6px 10px", textAlign: "right", color: "#6366f1", fontWeight: 600 }}>{fmt(e.p1)}</td>
-                                <td style={{ padding: "6px 10px", textAlign: "right", color: "#8b5cf6", fontWeight: 600 }}>{fmt(e.p2)}</td>
+                                <td style={{ padding: "6px 10px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(e.p1)}</td>
+                                <td style={{ padding: "6px 10px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(e.p2)}</td>
                               </tr>
                             ))}
-                            <tr style={{ borderTop: "1px solid #e2e8f0", fontWeight: 600, background: "#f0fdf4" }}>
-                              <td style={{ padding: "6px 10px", color: "#64748b" }}>Household Expenses</td>
+                            <tr style={{ borderTop: `1px solid ${T.rule}`, fontWeight: 600, background: T.paper }}>
+                              <td style={{ padding: "6px 10px", color: T.inkSoft }}>Household expenses</td>
                               <td style={{ padding: "6px 10px", textAlign: "right" }}>{fmt(postSplitTotal)}</td>
-                              <td style={{ padding: "6px 10px", textAlign: "right", color: "#6366f1" }}>{fmt(postSplitTotalP1)}</td>
-                              <td style={{ padding: "6px 10px", textAlign: "right", color: "#8b5cf6" }}>{fmt(postSplitTotalP2)}</td>
+                              <td style={{ padding: "6px 10px", textAlign: "right", color: T.ink }}>{fmt(postSplitTotalP1)}</td>
+                              <td style={{ padding: "6px 10px", textAlign: "right", color: T.ink }}>{fmt(postSplitTotalP2)}</td>
                             </tr>
                             {personalCommitmentRows.map((r, i) => (
-                              <tr key={`c${i}`} style={{ borderBottom: "1px solid #f1f5f9", background: "#f8fafc" }}>
+                              <tr key={`c${i}`} style={{ borderBottom: `1px solid ${T.paper}`, background: T.paper }}>
                                 <td style={{ padding: "6px 10px", fontStyle: "italic" }}>{r.name}</td>
                                 <td style={{ padding: "6px 10px", textAlign: "right", fontWeight: 600 }}>{fmt(r.amount)}</td>
-                                <td style={{ padding: "6px 10px", textAlign: "right", color: "#6366f1", fontWeight: 600 }}>{fmt(r.person === "p1" ? r.amount : 0)}</td>
-                                <td style={{ padding: "6px 10px", textAlign: "right", color: "#8b5cf6", fontWeight: 600 }}>{fmt(r.person === "p2" ? r.amount : 0)}</td>
+                                <td style={{ padding: "6px 10px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(r.person === "p1" ? r.amount : 0)}</td>
+                                <td style={{ padding: "6px 10px", textAlign: "right", color: T.ink, fontWeight: 600 }}>{fmt(r.person === "p2" ? r.amount : 0)}</td>
                               </tr>
                             ))}
-                            <tr style={{ borderTop: "2px solid #10b981", fontWeight: 700, background: "#f0fdf4" }}>
-                              <td style={{ padding: "8px 10px" }}>Total All Commitments</td>
+                            <tr style={{ borderTop: `2px solid ${T.saved}`, fontWeight: 700, background: T.paper }}>
+                              <td style={{ padding: "8px 10px" }}>Total all commitments</td>
                               <td style={{ padding: "8px 10px", textAlign: "right" }}>{fmt(postSplitTotal + commitTotal)}</td>
-                              <td style={{ padding: "8px 10px", textAlign: "right", color: "#6366f1" }}>{fmt(postSplitTotalP1 + commitP1)}</td>
-                              <td style={{ padding: "8px 10px", textAlign: "right", color: "#8b5cf6" }}>{fmt(postSplitTotalP2 + commitP2)}</td>
+                              <td style={{ padding: "8px 10px", textAlign: "right", color: T.ink }}>{fmt(postSplitTotalP1 + commitP1)}</td>
+                              <td style={{ padding: "8px 10px", textAlign: "right", color: T.ink }}>{fmt(postSplitTotalP2 + commitP2)}</td>
                             </tr>
                           </tbody>
                         </table>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 14 }}>
-                          <div style={{ background: "#eef2ff", borderRadius: 10, padding: 14, textAlign: "center", border: "1px solid #c7d2fe" }}>
-                            <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>PERSON 1 — REMAINING POST-MORTGAGE</div>
-                            <div style={{ fontSize: 22, fontWeight: 800, color: calc1.smoothedMonthlyNet - postSplitTotalP1 - commitP1 >= 0 ? "#10b981" : "#ef4444" }}>
+                          <div style={{ background: T.paper, borderRadius: 6, padding: 14, textAlign: "center", border: `1px solid ${T.rule}` }}>
+                            <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Person 1 — remaining post-mortgage</div>
+                            <div style={{ fontSize: FS.figure, fontWeight: 700, color: calc1.smoothedMonthlyNet - postSplitTotalP1 - commitP1 >= 0 ? T.saved : T.neg }}>
                               {fmt(calc1.smoothedMonthlyNet - postSplitTotalP1 - commitP1)}
                             </div>
-                            <div style={{ fontSize: 11, color: "#94a3b8" }}>from {fmt(calc1.smoothedMonthlyNet)} take-home</div>
+                            <div style={{ fontSize: FS.small, color: T.inkSoft }}>from {fmt(calc1.smoothedMonthlyNet)} take-home</div>
                           </div>
-                          <div style={{ background: "#f5f3ff", borderRadius: 10, padding: 14, textAlign: "center", border: "1px solid #ddd6fe" }}>
-                            <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>PERSON 2 — REMAINING POST-MORTGAGE</div>
-                            <div style={{ fontSize: 22, fontWeight: 800, color: calc2.smoothedMonthlyNet - postSplitTotalP2 - commitP2 >= 0 ? "#10b981" : "#ef4444" }}>
+                          <div style={{ background: T.paper, borderRadius: 6, padding: 14, textAlign: "center", border: `1px solid ${T.rule}` }}>
+                            <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Person 2 — remaining post-mortgage</div>
+                            <div style={{ fontSize: FS.figure, fontWeight: 700, color: calc2.smoothedMonthlyNet - postSplitTotalP2 - commitP2 >= 0 ? T.saved : T.neg }}>
                               {fmt(calc2.smoothedMonthlyNet - postSplitTotalP2 - commitP2)}
                             </div>
-                            <div style={{ fontSize: 11, color: "#94a3b8" }}>from {fmt(calc2.smoothedMonthlyNet)} take-home</div>
+                            <div style={{ fontSize: FS.small, color: T.inkSoft }}>from {fmt(calc2.smoothedMonthlyNet)} take-home</div>
                           </div>
                         </div>
-                        <div style={{ background: "#f0fdf4", borderRadius: 8, padding: 10, marginTop: 12, textAlign: "center", border: "1px solid #bbf7d0" }}>
-                          <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>MONTHLY DIFFERENCE VS CURRENT</div>
-                          <div style={{ fontSize: 18, fontWeight: 800, color: postSplitTotal <= totalExpenses ? "#10b981" : "#ef4444" }}>
+                        <div style={{ background: T.paper, borderRadius: 6, padding: 10, marginTop: 12, textAlign: "center", border: `1px solid ${T.saved}` }}>
+                          <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Monthly difference vs current</div>
+                          <div style={{ fontSize: FS.heading, fontWeight: 700, color: postSplitTotal <= totalExpenses ? T.saved : T.neg }}>
                             {postSplitTotal > totalExpenses ? "+" : ""}{fmt(postSplitTotal - totalExpenses)}/mo
                           </div>
-                          <div style={{ fontSize: 11, color: "#94a3b8" }}>({fmt(totalExpenses)} current → {fmt(postSplitTotal)} post-mortgage)</div>
+                          <div style={{ fontSize: FS.small, color: T.inkSoft }}>({fmt(totalExpenses)} current → {fmt(postSplitTotal)} post-mortgage)</div>
                         </div>
                       </Card>
                     </div>
                   </>
                 )}
 
-                <SectionHeader num={secSavings} title="Savings & Investments" subtitle="Current balances, goals & projected growth" color="#8b5cf6" />
+                <SectionHeader num={secSavings} title="Savings & investments" subtitle="Current balances, goals & projected growth" />
 
-                <Card title="Current Position">
-                  <SubHead text="Pot Balances" color="#8b5cf6" />
-                  {pots.length === 0 && rLine("No pots configured", "—", "#94a3b8")}
+                <Card title="Current position">
+                  <SubHead text="Pot balances" color={T.ink} />
+                  {pots.length === 0 && rLine("No pots configured", "—", T.inkSoft)}
                   {pots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type}${mode === MODE.HOUSEHOLD ? ` · ${p.owner === "joint" ? "Joint" : p.owner === "p2" ? "P2" : "P1"}` : ""})`, fmt(p.startingBalance || 0), POT_TYPE_COLORS[p.type])}</div>)}
-                  <div style={{ borderTop: "2px solid #8b5cf6", marginTop: 8, paddingTop: 6 }}>
-                    {rLine("Total Existing Savings", fmt(totalExistingSavings), "#8b5cf6")}
+                  <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
+                    {rLine("Total existing savings", fmt(totalExistingSavings), T.ink)}
                   </div>
                   {mode === MODE.HOUSEHOLD && (
                     <>
-                      <SubHead text="By Owner" color="#8b5cf6" />
-                      {potsByOwner.p1.count > 0 && rLine(`Person 1 (${potsByOwner.p1.count} pot${potsByOwner.p1.count === 1 ? "" : "s"})`, fmt(potsByOwner.p1.starting), "#6366f1")}
-                      {potsByOwner.p2.count > 0 && rLine(`Person 2 (${potsByOwner.p2.count} pot${potsByOwner.p2.count === 1 ? "" : "s"})`, fmt(potsByOwner.p2.starting), "#8b5cf6")}
-                      {potsByOwner.joint.count > 0 && rLine(`Joint (${potsByOwner.joint.count} pot${potsByOwner.joint.count === 1 ? "" : "s"})`, fmt(potsByOwner.joint.starting), "#ec4899")}
+                      <SubHead text="By owner" color={T.ink} />
+                      {potsByOwner.p1.count > 0 && rLine(`Person 1 (${potsByOwner.p1.count} pot${potsByOwner.p1.count === 1 ? "" : "s"})`, fmt(potsByOwner.p1.starting), T.ink)}
+                      {potsByOwner.p2.count > 0 && rLine(`Person 2 (${potsByOwner.p2.count} pot${potsByOwner.p2.count === 1 ? "" : "s"})`, fmt(potsByOwner.p2.starting), T.ink)}
+                      {potsByOwner.joint.count > 0 && rLine(`Joint (${potsByOwner.joint.count} pot${potsByOwner.joint.count === 1 ? "" : "s"})`, fmt(potsByOwner.joint.starting), T.ink)}
                     </>
                   )}
-                  <SubHead text="Active Savings Vehicles" color="#8b5cf6" />
-                  {snapshot.activeVehicles.map((v, i) => <div key={i}>{rLine(v, "Active", "#10b981")}</div>)}
-                  {snapshot.activeVehicles.length === 0 && rLine("No savings vehicles enabled", "—", "#94a3b8")}
-                  <SubHead text="Monthly Saving Commitments" color="#8b5cf6" />
-                  {snapshot.monthlySavingsGoal > 0 && rLine(`Savings Goal (${snapshot.selectedModel})`, fmt(snapshot.monthlySavingsGoal))}
+                  <SubHead text="Active savings vehicles" color={T.ink} />
+                  {snapshot.activeVehicles.map((v, i) => <div key={i}>{rLine(v, "Active", T.saved)}</div>)}
+                  {snapshot.activeVehicles.length === 0 && rLine("No savings vehicles enabled", "—", T.inkSoft)}
+                  <SubHead text="Monthly saving commitments" color={T.ink} />
+                  {snapshot.monthlySavingsGoal > 0 && rLine(`Savings goal (${snapshot.selectedModel})`, fmt(snapshot.monthlySavingsGoal))}
                   {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution), POT_TYPE_COLORS[p.type])}</div>)}
-                  <div style={{ borderTop: "2px solid #6366f1", marginTop: 8, paddingTop: 6 }}>
-                    {rLine("Total Monthly Commitments", fmt(snapshot.monthlySavingsGoal + rPotsMonthly), "#6366f1")}
+                  <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
+                    {rLine("Total monthly commitments", fmt(snapshot.monthlySavingsGoal + rPotsMonthly), T.ink)}
                   </div>
                 </Card>
 
                 <Card title={`Projected at ${projectionMonths} Months`}>
-                  <SubHead text="Without Buying — Keep Renting" color="#6366f1" />
-                  <div style={{ background: "#f5f3ff", borderRadius: 10, padding: 14, textAlign: "center", marginBottom: 12, border: "1px solid #ddd6fe" }}>
-                    <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>PROJECTED TOTAL SAVINGS</div>
-                    <div style={{ fontSize: 26, fontWeight: 800, color: "#8b5cf6" }}>{fmt(projEnd?.totalSavings || 0)}</div>
-                    <div style={{ fontSize: 11, color: "#94a3b8" }}>up from {fmt(totalExistingSavings)}</div>
+                  <SubHead text="Without buying — keep renting" color={T.ink} />
+                  <div style={{ background: T.paper, borderRadius: 6, padding: 14, textAlign: "center", marginBottom: 12, border: `1px solid ${T.rule}` }}>
+                    <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Projected total savings</div>
+                    <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.ink }}>{fmt(projEnd?.totalSavings || 0)}</div>
+                    <div style={{ fontSize: FS.small, color: T.inkSoft }}>up from {fmt(totalExistingSavings)}</div>
                   </div>
-                  {projIncludePots && rLine("Pots Projected Value", fmt(projEnd?.potsValue || 0), "#8b5cf6")}
+                  {projIncludePots && rLine("Pots projected value", fmt(projEnd?.potsValue || 0), T.ink)}
                   {projIncludePots && pots.length > 0 && (
                     <div style={{ marginLeft: 12, marginTop: 4 }}>
                       {pots.map((p) => <div key={p.id}>{rLine(`↳ ${p.name}`, fmt(potEndValues[p.id] || 0), POT_TYPE_COLORS[p.type])}</div>)}
                     </div>
                   )}
-                  {rLine("Cash Savings (model)", fmt(projEnd?.cashSavings || 0), "#10b981")}
-                  {rLine(`Income at Month ${projectionMonths}`, fmt(projEnd?.income || 0))}
-                  {rLine(`Expenses at Month ${projectionMonths}`, fmt(projEnd?.expenses || 0), "#ef4444")}
+                  {rLine("Cash savings (model)", fmt(projEnd?.cashSavings || 0), T.saved)}
+                  {rLine(`Income at month ${projectionMonths}`, fmt(projEnd?.income || 0))}
+                  {rLine(`Expenses at month ${projectionMonths}`, fmt(projEnd?.expenses || 0), T.neg)}
 
-                  <SubHead text="Deposit Readiness" color="#6366f1" />
-                  {rLine("Cash Still Needed (essentials)", fmt(purchasePlan.essentialsToPay))}
+                  <SubHead text="Deposit readiness" color={T.ink} />
+                  {rLine("Cash still needed (essentials)", fmt(purchasePlan.essentialsToPay))}
                   {rLine(purchasePlan.completionInFuture ? "Ticked Pots at Completion" : "Ticked Pots Today", fmt(purchasePlan.available))}
-                  {rLine("Essentials Covered", coverText(purchasePlan.gapCloseMonth, purchasePlan.gapCloseDate))}
+                  {rLine("Essentials covered", coverText(purchasePlan.gapCloseMonth, purchasePlan.gapCloseDate))}
                   {purchasePlan.gap <= 0.005
-                    ? <div style={{ background: "#f0fdf4", borderRadius: 8, padding: "8px 12px", marginTop: 6, display: "flex", justifyContent: "space-between", border: "1px solid #bbf7d0" }}><span style={{ color: "#166534" }}>Spare (essentials)</span><strong style={{ color: "#10b981" }}>{fmt(-purchasePlan.gap)}</strong></div>
-                    : <div style={{ background: "#fef2f2", borderRadius: 8, padding: "8px 12px", marginTop: 6, display: "flex", justifyContent: "space-between", border: "1px solid #fecaca" }}><span style={{ color: "#991b1b" }}>Gap (essentials)</span><strong style={{ color: "#ef4444" }}>{fmt(purchasePlan.gap)}</strong></div>}
+                    ? <div style={{ background: T.paper, borderRadius: 6, padding: "8px 12px", marginTop: 6, display: "flex", justifyContent: "space-between", border: `1px solid ${T.saved}` }}><span style={{ color: T.saved }}>Spare (essentials)</span><strong style={{ color: T.saved }}>{fmt(-purchasePlan.gap)}</strong></div>
+                    : <div style={{ background: T.paper, borderRadius: 6, padding: "8px 12px", marginTop: 6, display: "flex", justifyContent: "space-between", border: `1px solid ${T.neg}` }}><span style={{ color: T.neg }}>Gap (essentials)</span><strong style={{ color: T.neg }}>{fmt(purchasePlan.gap)}</strong></div>}
 
-                  <SubHead text="After Buying (if completed today) — Savings & Wealth" color="#ec4899" />
+                  <SubHead text="After buying (if completed today) — savings & wealth" color={T.ink} />
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
-                    <div style={{ background: "#fdf2f8", borderRadius: 10, padding: 14, textAlign: "center", border: "1px solid #f0abfc" }}>
-                      <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>SAVINGS AT {projectionMonths}M</div>
-                      <div style={{ fontSize: 22, fontWeight: 800, color: "#ec4899" }}>{fmt(postProjEnd?.totalSavings || 0)}</div>
-                      <div style={{ fontSize: 10, color: "#94a3b8" }}>{postPurchasePots.shortfall > 0.005 ? `after ${fmt(postPurchasePots.shortfall)} of today's upfront costs${includeExtrasInProjection ? " (incl. extras)" : ""} not covered by ticked pots` : "pots + cash after upfront costs"}</div>
+                    <div style={{ background: T.paper, borderRadius: 6, padding: 14, textAlign: "center", border: `1px solid ${T.rule}` }}>
+                      <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>SAVINGS AT {projectionMonths}M</div>
+                      <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.ink }}>{fmt(postProjEnd?.totalSavings || 0)}</div>
+                      <div style={{ fontSize: FS.small, color: T.inkSoft }}>{postPurchasePots.shortfall > 0.005 ? `after ${fmt(postPurchasePots.shortfall)} of today's upfront costs${includeExtrasInProjection ? " (incl. extras)" : ""} not covered by ticked pots` : "pots + cash after upfront costs"}</div>
                     </div>
-                    <div style={{ background: "#f0fdf4", borderRadius: 10, padding: 14, textAlign: "center", border: "1px solid #bbf7d0" }}>
-                      <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>TOTAL NET WEALTH AT {projectionMonths}M</div>
-                      <div style={{ fontSize: 22, fontWeight: 800, color: "#10b981" }}>{fmt(postProjEnd?.netWealth || 0)}</div>
-                      <div style={{ fontSize: 10, color: "#94a3b8" }}>savings + property equity</div>
+                    <div style={{ background: T.paper, borderRadius: 6, padding: 14, textAlign: "center", border: `1px solid ${T.saved}` }}>
+                      <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>TOTAL NET WEALTH AT {projectionMonths}M</div>
+                      <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.saved }}>{fmt(postProjEnd?.netWealth || 0)}</div>
+                      <div style={{ fontSize: FS.small, color: T.inkSoft }}>savings + property equity</div>
                     </div>
                   </div>
-                  <SubHead text="Property Equity Breakdown" color="#10b981" />
-                  {rLine(`Property Value at ${projectionMonths}m`, fmt(postProjEnd?.propertyValue || 0), "#10b981")}
-                  {rLine(`Appreciation (${housePriceGrowth}% p.a.)`, fmt((postProjEnd?.propertyValue || 0) - housePrice), "#10b981")}
-                  {rLine(`Remaining Mortgage`, fmt(postProjEnd?.mortgageBalance || 0), "#ef4444")}
-                  <div style={{ borderTop: "2px solid #10b981", marginTop: 6, paddingTop: 6 }}>
-                    {rLine("Property Equity", fmt(postProjEnd?.equity || 0), "#10b981")}
+                  <SubHead text="Property equity breakdown" color={T.saved} />
+                  {rLine(`Property value at ${projectionMonths}m`, fmt(postProjEnd?.propertyValue || 0), T.saved)}
+                  {rLine(`Appreciation (${housePriceGrowth}% p.a.)`, fmt((postProjEnd?.propertyValue || 0) - housePrice), T.saved)}
+                  {rLine(`Remaining mortgage`, fmt(postProjEnd?.mortgageBalance || 0), T.neg)}
+                  <div style={{ borderTop: `2px solid ${T.saved}`, marginTop: 6, paddingTop: 6 }}>
+                    {rLine("Property equity", fmt(postProjEnd?.equity || 0), T.saved)}
                   </div>
-                  {projIncludePots && rLine("Pots Projected Value", fmt(postProjEnd?.potsValue || 0), "#8b5cf6")}
+                  {projIncludePots && rLine("Pots projected value", fmt(postProjEnd?.potsValue || 0), T.ink)}
                   {projIncludePots && pots.length > 0 && (
                     <div style={{ marginLeft: 12, marginTop: 4 }}>
                       {pots.map((p) => <div key={p.id}>{rLine(`↳ ${p.name}${upfrontDrawdown[p.id] ? ` (−${fmt(upfrontDrawdown[p.id])} drawn)` : ""}`, fmt(postPotEndValues[p.id] || 0), POT_TYPE_COLORS[p.type])}</div>)}
                     </div>
                   )}
-                  {rLine(`Monthly Outgoings`, fmt(postProjEnd?.expenses || 0), "#ef4444")}
+                  {rLine(`Monthly outgoings`, fmt(postProjEnd?.expenses || 0), T.neg)}
 
-                  <div style={{ background: "#f8fafc", borderRadius: 8, padding: 12, marginTop: 12, border: "1px solid #e2e8f0" }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "#475569", marginBottom: 6 }}>Wealth Comparison at {projectionMonths} Months</div>
+                  <div style={{ background: T.paper, borderRadius: 6, padding: 12, marginTop: 12, border: `1px solid ${T.rule}` }}>
+                    <div style={{ fontSize: FS.small, fontWeight: 700, color: T.inkSoft, marginBottom: 6 }}>Wealth Comparison at {projectionMonths} Months</div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                      <div style={{ background: "#eef2ff", borderRadius: 8, padding: 10, textAlign: "center" }}>
-                        <div style={{ fontSize: 10, color: "#64748b", fontWeight: 600 }}>KEEP RENTING</div>
-                        <div style={{ fontSize: 11, color: "#94a3b8" }}>Cash Only</div>
-                        <div style={{ fontSize: 20, fontWeight: 800, color: "#6366f1" }}>{fmt(projEnd?.totalSavings || 0)}</div>
+                      <div style={{ background: T.paper, borderRadius: 6, padding: 10, textAlign: "center" }}>
+                        <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Keep renting</div>
+                        <div style={{ fontSize: FS.small, color: T.inkSoft }}>Cash only</div>
+                        <div style={{ fontSize: FS.heading, fontWeight: 700, color: T.ink }}>{fmt(projEnd?.totalSavings || 0)}</div>
                       </div>
-                      <div style={{ background: "#f0fdf4", borderRadius: 8, padding: 10, textAlign: "center" }}>
-                        <div style={{ fontSize: 10, color: "#64748b", fontWeight: 600 }}>BUY HOUSE</div>
-                        <div style={{ fontSize: 11, color: "#94a3b8" }}>Cash + Property Equity</div>
-                        <div style={{ fontSize: 20, fontWeight: 800, color: "#10b981" }}>{fmt(postProjEnd?.netWealth || 0)}</div>
+                      <div style={{ background: T.paper, borderRadius: 6, padding: 10, textAlign: "center" }}>
+                        <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Buy house</div>
+                        <div style={{ fontSize: FS.small, color: T.inkSoft }}>Cash + property equity</div>
+                        <div style={{ fontSize: FS.heading, fontWeight: 700, color: T.saved }}>{fmt(postProjEnd?.netWealth || 0)}</div>
                       </div>
                     </div>
                     <div style={{ textAlign: "center", marginTop: 8 }}>
-                      <div style={{ fontSize: 10, color: "#64748b", fontWeight: 600 }}>NET WEALTH DIFFERENCE</div>
-                      <div style={{ fontSize: 18, fontWeight: 800, color: (postProjEnd?.netWealth || 0) >= (projEnd?.totalSavings || 0) ? "#10b981" : "#ef4444" }}>
+                      <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Net wealth difference</div>
+                      <div style={{ fontSize: FS.heading, fontWeight: 700, color: (postProjEnd?.netWealth || 0) >= (projEnd?.totalSavings || 0) ? T.saved : T.neg }}>
                         {(postProjEnd?.netWealth || 0) >= (projEnd?.totalSavings || 0) ? "+" : ""}{fmt((postProjEnd?.netWealth || 0) - (projEnd?.totalSavings || 0))}
                       </div>
-                      <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 2 }}>
+                      <div style={{ fontSize: FS.small, color: T.inkSoft, marginTop: 2 }}>
                         {(postProjEnd?.netWealth || 0) >= (projEnd?.totalSavings || 0) ? "Buying builds more wealth" : "Renting & saving builds more wealth"} over {projectionMonths} months at {housePriceGrowth}% growth
                       </div>
                     </div>
                   </div>
                 </Card>
 
-                <SectionHeader num={secMortgage} title="Mortgage Scenario" subtitle="Loan, lender deal, stamp duty & overpayment impact" color="#6366f1" />
+                <SectionHeader num={secMortgage} title="Mortgage scenario" subtitle="Loan, lender deal, stamp duty & overpayment impact" />
 
-                <Card title="Property & Loan">
-                  {rLine("Property Price", fmt(housePrice))}
+                <Card title="Property & loan">
+                  {rLine("Property price", fmt(housePrice))}
                   {rLine("Deposit", fmt(deposit))}
-                  {rLine("Requested Loan", fmt(mortgage.requestedLoan))}
-                  {mortgage.feeAddedToLoan > 0 && rLine("Product Fee Added to Loan", fmt2(mortgage.feeAddedToLoan))}
-                  {mortgage.feeAddedToLoan > 0 && rLine("Total Borrowing", fmt(mortgage.totalBorrowing))}
-                  {rLine("Loan-to-Value (LTV)", `${mortgage.ltv}%`)}
+                  {rLine("Requested loan", fmt(mortgage.requestedLoan))}
+                  {mortgage.feeAddedToLoan > 0 && rLine("Product fee added to loan", fmt2(mortgage.feeAddedToLoan))}
+                  {mortgage.feeAddedToLoan > 0 && rLine("Total borrowing", fmt(mortgage.totalBorrowing))}
+                  {rLine("Loan-to-value (LTV)", `${mortgage.ltv}%`)}
                   {mortgage.fixExpired
                     ? rLine("Rate", `${mortgage.initialRate}% (follow-on — fixed rate ended ${fmtDate(fixedRateEndDate)})`)
-                    : rLine("Initial Rate", `${mortgageRate}%${mortgage.hasFollowOn ? ` until ${fmtDate(fixedRateEndDate)}` : ""}`)}
-                  {mortgage.hasFollowOn && rLine("Follow-on Rate", `${mortgage.followOnRateUsed}%`)}
-                  {rLine("Mortgage Term", `${mortgageTerm} years`)}
-                  {rLine("Payment Method", paymentTiming === "arrears" ? "Standard (in arrears)" : "In advance")}
-                  <div style={{ borderTop: "2px solid #6366f1", marginTop: 8, paddingTop: 6 }}>
-                    {rLine(`Monthly Payment${mortgage.isPaymentOverridden ? " (manual)" : ""}`, fmt2(mortgage.monthlyPayment), "#6366f1")}
-                    {rLine(`First Payment${mortgage.isFirstPaymentOverridden ? " (manual)" : ` (incl. ${firstPaymentDays} days' interest)`}`, fmt2(mortgage.firstPayment), "#6366f1")}
-                    {mortgage.followOnPayment != null && rLine("Payment After Fixed Rate", fmt2(mortgage.followOnPayment), "#8b5cf6")}
+                    : rLine("Initial rate", `${mortgageRate}%${mortgage.hasFollowOn ? ` until ${fmtDate(fixedRateEndDate)}` : ""}`)}
+                  {mortgage.hasFollowOn && rLine("Follow-on rate", `${mortgage.followOnRateUsed}%`)}
+                  {rLine("Mortgage term", `${mortgageTerm} years`)}
+                  {rLine("Payment method", paymentTiming === "arrears" ? "Standard (in arrears)" : "In advance")}
+                  <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
+                    {rLine(`Monthly payment${mortgage.isPaymentOverridden ? " (manual)" : ""}`, fmt2(mortgage.monthlyPayment), T.ink)}
+                    {rLine(`First payment${mortgage.isFirstPaymentOverridden ? " (manual)" : ` (incl. ${firstPaymentDays} days' interest)`}`, fmt2(mortgage.firstPayment), T.ink)}
+                    {mortgage.followOnPayment != null && rLine("Payment after fixed rate", fmt2(mortgage.followOnPayment), T.ink)}
                   </div>
-                  <SubHead text="Costs" color="#f59e0b" />
-                  {rLine("Stamp Duty", fmt(mortgage.stampDuty), "#f59e0b")}
-                  {productFee > 0 && rLine(`Product Fee (${productFeeAddToLoan ? "added to loan" : productFeePaid ? "paid" : "upfront"})`, fmt2(productFee), "#f59e0b")}
-                  {rLine("Total Interest (full term)", fmt(mortgage.totalInterest), "#ef4444")}
-                  {rLine("Total Repaid", fmt(mortgage.totalRepaid))}
-                  {rLine("Essential Upfront Costs", fmt2(purchasePlan.essentialsTotal), "#6366f1")}
+                  <SubHead text="Costs" color={T.warnInk} />
+                  {rLine("Stamp duty", fmt(mortgage.stampDuty), T.warnInk)}
+                  {productFee > 0 && rLine(`Product fee (${productFeeAddToLoan ? "added to loan" : productFeePaid ? "paid" : "upfront"})`, fmt2(productFee), T.warnInk)}
+                  {rLine("Total interest (full term)", fmt(mortgage.totalInterest), T.neg)}
+                  {rLine("Total repaid", fmt(mortgage.totalRepaid))}
+                  {rLine("Essential upfront costs", fmt2(purchasePlan.essentialsTotal), T.ink)}
                   {mortgage.warnings.filter((w) => w.level !== "info").map((w, i) => (
-                    <div key={i} style={{ fontSize: 11, fontWeight: 600, color: w.level === "error" ? "#ef4444" : "#92400e", marginTop: 6 }}>{w.text}</div>
+                    <div key={i} style={{ fontSize: FS.small, fontWeight: 600, color: w.level === "error" ? T.neg : T.warnInk, marginTop: 6 }}>{w.text}</div>
                   ))}
                 </Card>
 
                 {(overpayMonthly > 0 || overpayAnnual > 0) ? (
-                  <Card title="Overpayment Impact">
-                    <div style={{ background: "#f0fdf4", borderRadius: 10, padding: 14, textAlign: "center", marginBottom: 12, border: "1px solid #bbf7d0" }}>
-                      <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>INTEREST SAVED</div>
-                      <div style={{ fontSize: 26, fontWeight: 800, color: "#10b981" }}>{fmt(mortgageAmortisation.interestSaved)}</div>
-                      {mortgageAmortisation.monthsReduced > 0 && <div style={{ fontSize: 12, color: "#166534", marginTop: 2 }}>{fmtYearsMonths(mortgageAmortisation.monthsReduced)} off the term</div>}
+                  <Card title="Overpayment impact">
+                    <div style={{ background: T.paper, borderRadius: 6, padding: 14, textAlign: "center", marginBottom: 12, border: `1px solid ${T.saved}` }}>
+                      <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Interest saved</div>
+                      <div style={{ fontSize: FS.figure, fontWeight: 700, color: T.saved }}>{fmt(mortgageAmortisation.interestSaved)}</div>
+                      {mortgageAmortisation.monthsReduced > 0 && <div style={{ fontSize: FS.small, color: T.saved, marginTop: 2 }}>{fmtYearsMonths(mortgageAmortisation.monthsReduced)} off the term</div>}
                     </div>
-                    {overpayMonthly > 0 && rLine("Monthly Overpayment", fmt(overpayMonthly))}
-                    {overpayAnnual > 0 && rLine("Annual Lump Sum", fmt(overpayAnnual))}
-                    {rLine("Original Total Interest", fmt(mortgageAmortisation.totalInterest), "#ef4444")}
-                    {rLine("Reduced Total Interest", fmt(mortgageAmortisation.totalInterestOp), "#10b981")}
-                    {mortgage.hasFollowOn && <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 6 }}>Assumes you keep paying the standard payment after the fixed rate ends.</div>}
+                    {overpayMonthly > 0 && rLine("Monthly overpayment", fmt(overpayMonthly))}
+                    {overpayAnnual > 0 && rLine("Annual lump sum", fmt(overpayAnnual))}
+                    {rLine("Original total interest", fmt(mortgageAmortisation.totalInterest), T.neg)}
+                    {rLine("Reduced total interest", fmt(mortgageAmortisation.totalInterestOp), T.saved)}
+                    {mortgage.hasFollowOn && <div style={{ fontSize: FS.small, color: T.inkSoft, marginTop: 6 }}>Assumes you keep paying the standard payment after the fixed rate ends.</div>}
                   </Card>
                 ) : (
-                  <Card title="Overpayment Impact">
-                    <div style={{ textAlign: "center", padding: 24, color: "#94a3b8", fontSize: 13 }}>
+                  <Card title="Overpayment impact">
+                    <div style={{ textAlign: "center", padding: 24, color: T.inkSoft, fontSize: FS.body }}>
                       No overpayments configured. Add overpayments in the Mortgage tab to see the impact here.
                     </div>
                   </Card>
                 )}
 
-                <SectionHeader num={secPurchase} title="Purchase Plan" subtitle={`Cash needed to buy, savings set aside and the gap · ${completionDate ? `completion ${fmtDate(completionDate)}` : "assumes completion today"}`} color="#f59e0b" />
+                <SectionHeader num={secPurchase} title="Purchase plan" subtitle={`Cash needed to buy, savings set aside and the gap · ${completionDate ? `completion ${fmtDate(completionDate)}` : "assumes completion today"}`} />
 
-                <Card title="Upfront Costs">
-                  <SubHead text="Essentials" color="#6366f1" />
+                <Card title="Upfront costs">
+                  <SubHead text="Essentials" color={T.ink} />
                   {purchasePlan.upfrontRows.filter((r) => r.category === "essential").map((r) => (
-                    <div key={r.key}>{rLine(`${r.name}${r.paid ? " (paid)" : ""}`, fmt2(r.amount), r.paid ? "#94a3b8" : undefined)}</div>
+                    <div key={r.key}>{rLine(`${r.name}${r.paid ? " (paid)" : ""}`, fmt2(r.amount), r.paid ? T.inkSoft : undefined)}</div>
                   ))}
-                  <div style={{ borderTop: "2px solid #6366f1", marginTop: 8, paddingTop: 6 }}>
-                    {rLine("Total (essentials)", fmt2(purchasePlan.essentialsTotal), "#6366f1")}
+                  <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
+                    {rLine("Total (essentials)", fmt2(purchasePlan.essentialsTotal), T.ink)}
                   </div>
-                  <SubHead text="Extras" color="#8b5cf6" />
+                  <SubHead text="Extras" color={T.ink} />
                   {purchasePlan.upfrontRows.filter((r) => r.category === "extra").map((r) => (
-                    <div key={r.key}>{rLine(`${r.name}${r.paid ? " (paid)" : ""}`, fmt2(r.amount), r.paid ? "#94a3b8" : undefined)}</div>
+                    <div key={r.key}>{rLine(`${r.name}${r.paid ? " (paid)" : ""}`, fmt2(r.amount), r.paid ? T.inkSoft : undefined)}</div>
                   ))}
-                  {purchasePlan.extrasCount === 0 && rLine("No extras", "—", "#94a3b8")}
-                  <div style={{ borderTop: "2px solid #8b5cf6", marginTop: 8, paddingTop: 6 }}>
-                    {rLine("Extras total", fmt2(purchasePlan.extrasTotal), "#8b5cf6")}
+                  {purchasePlan.extrasCount === 0 && rLine("No extras", "—", T.inkSoft)}
+                  <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
+                    {rLine("Extras total", fmt2(purchasePlan.extrasTotal), T.ink)}
                   </div>
-                  <div style={{ borderTop: "2px solid #1e293b", marginTop: 8, paddingTop: 6 }}>
+                  <div style={{ borderTop: `2px solid ${T.ink}`, marginTop: 8, paddingTop: 6 }}>
                     {rLine("Total ideal", fmt2(purchasePlan.idealTotal))}
                   </div>
-                  {productFee > 0 && productFeeAddToLoan && <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 6 }}>Product fee of {fmt2(productFee)} added to the loan, not paid upfront.</div>}
-                  {!reserveFirstPayment && <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 6 }}>First mortgage payment of {fmt2(mortgage.firstPayment)} paid from income in month 1.</div>}
+                  {productFee > 0 && productFeeAddToLoan && <div style={{ fontSize: FS.small, color: T.inkSoft, marginTop: 6 }}>Product fee of {fmt2(productFee)} added to the loan, not paid upfront.</div>}
+                  {!reserveFirstPayment && <div style={{ fontSize: FS.small, color: T.inkSoft, marginTop: 6 }}>First mortgage payment of {fmt2(mortgage.firstPayment)} paid from income in month 1.</div>}
                 </Card>
 
-                <Card title="Savings & Gap">
-                  <SubHead text="Savings for the purchase" color="#10b981" />
+                <Card title="Savings & gap">
+                  <SubHead text="Savings for the purchase" color={T.saved} />
                   {mode === MODE.HOUSEHOLD ? (
-                    [{ key: "p1", label: "Person 1", color: "#6366f1" }, { key: "p2", label: "Person 2", color: "#8b5cf6" }, { key: "joint", label: "Joint", color: "#ec4899" }].map((g) => {
+                    [{ key: "p1", label: "Person 1", color: T.ink }, { key: "p2", label: "Person 2", color: T.ink }, { key: "joint", label: "Joint", color: T.ink }].map((g) => {
                       const groupPots = pots.filter((p) => p.forPurchase && (p.owner === "p2" || p.owner === "joint" ? p.owner : "p1") === g.key);
                       if (groupPots.length === 0) return null;
                       return (
@@ -3821,103 +3819,103 @@ export default function FinanceCalculator() {
                   ) : (
                     pots.filter((p) => p.forPurchase).map((p) => <div key={p.id}>{rLine(p.name, fmt2(Math.max(0, p.startingBalance || 0)), POT_TYPE_COLORS[p.type])}</div>)
                   )}
-                  {purchasePlan.tickedCount === 0 && rLine("No pots ticked for the purchase", "—", "#94a3b8")}
-                  <div style={{ borderTop: "2px solid #10b981", marginTop: 8, paddingTop: 6 }}>
-                    {rLine("Total", fmt2(purchasePlan.availableToday), "#10b981")}
-                    {purchasePlan.completionInFuture && rLine(`Forecast at completion (${fmtDate(completionDate)})`, fmt2(purchasePlan.availableAtCompletion), "#10b981")}
+                  {purchasePlan.tickedCount === 0 && rLine("No pots ticked for the purchase", "—", T.inkSoft)}
+                  <div style={{ borderTop: `2px solid ${T.saved}`, marginTop: 8, paddingTop: 6 }}>
+                    {rLine("Total", fmt2(purchasePlan.availableToday), T.saved)}
+                    {purchasePlan.completionInFuture && rLine(`Forecast at completion (${fmtDate(completionDate)})`, fmt2(purchasePlan.availableAtCompletion), T.saved)}
                   </div>
-                  <SubHead text="Gap" color="#ef4444" />
+                  <SubHead text="Gap" color={T.neg} />
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                     {[{ label: "Gap", value: purchasePlan.gap, note: "essentials" }, { label: "Gap to ideal", value: purchasePlan.gapIdeal, note: "incl. extras" }].map((g) => {
                       const short = g.value > 0.005;
                       return (
-                        <div key={g.label} style={{ background: short ? "#fef2f2" : "#f0fdf4", borderRadius: 8, padding: "8px 12px", textAlign: "center", border: `1px solid ${short ? "#fecaca" : "#bbf7d0"}` }}>
-                          <div style={{ fontSize: 10, color: "#64748b", fontWeight: 600 }}>{g.label.toUpperCase()}</div>
-                          <div style={{ fontSize: 18, fontWeight: 800, color: short ? "#ef4444" : "#10b981" }}>{fmt2(Math.abs(g.value))}</div>
-                          <div style={{ fontSize: 10, color: "#94a3b8" }}>{short ? "short" : "spare"} · {g.note}</div>
+                        <div key={g.label} style={{ background: T.paper, borderRadius: 6, padding: "8px 12px", textAlign: "center", border: `1px solid ${short ? T.neg : T.saved}` }}>
+                          <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>{g.label.toUpperCase()}</div>
+                          <div style={{ fontSize: FS.heading, fontWeight: 700, color: short ? T.neg : T.saved }}>{fmt2(Math.abs(g.value))}</div>
+                          <div style={{ fontSize: FS.small, color: T.inkSoft }}>{short ? "short" : "spare"} · {g.note}</div>
                         </div>
                       );
                     })}
                   </div>
-                  {purchasePlan.paidTotal > 0.005 && rLine("Already paid (not in the gap)", fmt2(purchasePlan.paidTotal), "#10b981")}
+                  {purchasePlan.paidTotal > 0.005 && rLine("Already paid (not in the gap)", fmt2(purchasePlan.paidTotal), T.saved)}
                   {(purchasePlan.monthlyItems.length > 0 || purchasePlan.annualItems.length > 0) && (
                     <>
-                      <SubHead text="Ongoing costs" color="#8b5cf6" />
+                      <SubHead text="Ongoing costs" color={T.ink} />
                       {purchasePlan.monthlyItems.map((c) => <div key={`rm${c.id}`}>{rLine(`${c.label} (monthly budget)`, `${fmt2(c.monthly)}/mo`)}</div>)}
                       {purchasePlan.annualItems.map((c) => <div key={`ra${c.id}`}>{rLine(`${c.name} (annually, from savings)`, `${fmt2(c.annual)}/yr`)}</div>)}
                     </>
                   )}
-                  <SubHead text="Timing" color="#6366f1" />
+                  <SubHead text="Timing" color={T.ink} />
                   {rLine("Completion", completionDate ? fmtDate(completionDate) : "Not set (today)")}
                   {rLine("Essentials covered", coverText(purchasePlan.gapCloseMonth, purchasePlan.gapCloseDate))}
-                  {purchasePlan.extraMonthlyNeeded != null && rLine("Extra saving needed by completion", `${fmt2(purchasePlan.extraMonthlyNeeded)}/mo`, "#ef4444")}
+                  {purchasePlan.extraMonthlyNeeded != null && rLine("Extra saving needed by completion", `${fmt2(purchasePlan.extraMonthlyNeeded)}/mo`, T.neg)}
                 </Card>
 
-                <SectionHeader num={secBudget} title="Complete Monthly Budget" subtitle="Full picture after mortgage, savings, investments & agreements" color="#0ea5e9" />
+                <SectionHeader num={secBudget} title="Complete monthly budget" subtitle="Full picture after mortgage, savings, investments & agreements" />
 
                 <div style={{ gridColumn: "1 / -1" }}>
-                  <Card title="Monthly Budget Comparison — Current vs Post-Mortgage">
+                  <Card title="Monthly budget comparison — current vs post-mortgage">
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
                       <div>
-                        <SubHead text="Current (Renting)" color="#6366f1" />
-                        {rLine("Total Net Income", fmt(totalMonthlyNet), "#10b981")}
+                        <SubHead text="Current (renting)" color={T.ink} />
+                        {rLine("Total net income", fmt(totalMonthlyNet), T.saved)}
                         <div style={{ marginTop: 6 }} />
                         {rLine("Rent", fmt(rent))}
-                        {rLine("Living Expenses (excl. rent)", fmt(totalExpenses - rent))}
-                        {totalAgreementMonthly > 0 && rLine("Finance Agreements", fmt(totalAgreementMonthly))}
+                        {rLine("Living expenses (excl. rent)", fmt(totalExpenses - rent))}
+                        {totalAgreementMonthly > 0 && rLine("Finance agreements", fmt(totalAgreementMonthly))}
                         {snapshot.monthlySavingsGoal > 0 && rLine(`Savings (${snapshot.selectedModel})`, fmt(snapshot.monthlySavingsGoal))}
                         {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution), POT_TYPE_COLORS[p.type])}</div>)}
-                        <div style={{ borderTop: "2px solid #6366f1", marginTop: 8, paddingTop: 6 }}>
-                          {rLine("Total Outgoings", fmt(snapshot.preCommitted), "#6366f1")}
+                        <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
+                          {rLine("Total outgoings", fmt(snapshot.preCommitted), T.ink)}
                         </div>
-                        <div style={{ background: snapshot.preDisposable >= 0 ? "#f0fdf4" : "#fef2f2", borderRadius: 8, padding: 12, textAlign: "center", marginTop: 8, border: `1px solid ${snapshot.preDisposable >= 0 ? "#bbf7d0" : "#fecaca"}` }}>
-                          <div style={{ fontSize: 10, color: "#64748b", fontWeight: 600 }}>DISPOSABLE</div>
-                          <div style={{ fontSize: 22, fontWeight: 800, color: snapshot.preDisposable >= 0 ? "#10b981" : "#ef4444" }}>{fmt(snapshot.preDisposable)}</div>
+                        <div style={{ background: T.paper, borderRadius: 6, padding: 12, textAlign: "center", marginTop: 8, border: `1px solid ${snapshot.preDisposable >= 0 ? T.saved : T.neg}` }}>
+                          <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Disposable</div>
+                          <div style={{ fontSize: FS.figure, fontWeight: 700, color: snapshot.preDisposable >= 0 ? T.saved : T.neg }}>{fmt(snapshot.preDisposable)}</div>
                         </div>
                       </div>
                       <div>
-                        <SubHead text="Post-Purchase (Mortgage)" color="#ec4899" />
-                        {rLine("Total Net Income", fmt(totalMonthlyNet), "#10b981")}
+                        <SubHead text="Post-purchase (mortgage)" color={T.ink} />
+                        {rLine("Total net income", fmt(totalMonthlyNet), T.saved)}
                         <div style={{ marginTop: 6 }} />
-                        {rLine("Mortgage Payment", fmt2(mortgage.monthlyPayment))}
-                        {overpayMonthly > 0 && rLine("Mortgage Overpayment", fmt(overpayMonthly))}
-                        {rLine("Council Tax", fmt(councilTax))}
+                        {rLine("Mortgage payment", fmt2(mortgage.monthlyPayment))}
+                        {overpayMonthly > 0 && rLine("Mortgage overpayment", fmt(overpayMonthly))}
+                        {rLine("Council tax", fmt(councilTax))}
                         {purchasePlan.monthlyItems.map((c) => <div key={`bm${c.id}`}>{rLine(c.label, fmt(c.monthly))}</div>)}
-                        {rLine(`Living Expenses (excl. rent${councilTaxInBillsApplied > 0 ? " & current council tax" : ""})`, fmt(postLivingExpenses))}
-                        {totalAgreementMonthly > 0 && rLine("Finance Agreements", fmt(totalAgreementMonthly))}
+                        {rLine(`Living expenses (excl. rent${councilTaxInBillsApplied > 0 ? " & current council tax" : ""})`, fmt(postLivingExpenses))}
+                        {totalAgreementMonthly > 0 && rLine("Finance agreements", fmt(totalAgreementMonthly))}
                         {snapshot.monthlySavingsGoal > 0 && rLine(`Savings (${snapshot.selectedModel})`, fmt(snapshot.monthlySavingsGoal))}
                         {activeContribPots.map((p) => <div key={p.id}>{rLine(`${p.name} (${p.type})`, fmt(p.monthlyContribution), POT_TYPE_COLORS[p.type])}</div>)}
-                        <div style={{ borderTop: "2px solid #ec4899", marginTop: 8, paddingTop: 6 }}>
-                          {rLine("Total Outgoings", fmt(snapshot.postCommitted), "#ec4899")}
+                        <div style={{ borderTop: `2px solid ${T.ruleStrong}`, marginTop: 8, paddingTop: 6 }}>
+                          {rLine("Total outgoings", fmt(snapshot.postCommitted), T.ink)}
                         </div>
-                        <div style={{ background: snapshot.postDisposable >= 0 ? "#f0fdf4" : "#fef2f2", borderRadius: 8, padding: 12, textAlign: "center", marginTop: 8, border: `1px solid ${snapshot.postDisposable >= 0 ? "#bbf7d0" : "#fecaca"}` }}>
-                          <div style={{ fontSize: 10, color: "#64748b", fontWeight: 600 }}>DISPOSABLE</div>
-                          <div style={{ fontSize: 22, fontWeight: 800, color: snapshot.postDisposable >= 0 ? "#10b981" : "#ef4444" }}>{fmt(snapshot.postDisposable)}</div>
+                        <div style={{ background: T.paper, borderRadius: 6, padding: 12, textAlign: "center", marginTop: 8, border: `1px solid ${snapshot.postDisposable >= 0 ? T.saved : T.neg}` }}>
+                          <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Disposable</div>
+                          <div style={{ fontSize: FS.figure, fontWeight: 700, color: snapshot.postDisposable >= 0 ? T.saved : T.neg }}>{fmt(snapshot.postDisposable)}</div>
                         </div>
                         {purchasePlan.annualTotal > 0 && (
-                          <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 6 }}>
+                          <div style={{ fontSize: FS.small, color: T.inkSoft, marginTop: 6 }}>
                             Not included: {fmt(purchasePlan.annualTotal)} a year paid annually from savings (≈ {fmt(purchasePlan.annualTotal / 12)}/mo).
                           </div>
                         )}
                       </div>
                     </div>
-                    <div style={{ background: "#f8fafc", borderRadius: 8, padding: 12, marginTop: 14, border: "1px solid #e2e8f0" }}>
+                    <div style={{ background: T.paper, borderRadius: 6, padding: 12, marginTop: 14, border: `1px solid ${T.rule}` }}>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, textAlign: "center" }}>
                         <div>
-                          <div style={{ fontSize: 10, color: "#64748b", fontWeight: 600 }}>MONTHLY COST CHANGE</div>
-                          <div style={{ fontSize: 16, fontWeight: 800, color: snapshot.postCommitted > snapshot.preCommitted ? "#ef4444" : "#10b981" }}>
+                          <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Monthly cost change</div>
+                          <div style={{ fontSize: FS.input, fontWeight: 700, color: snapshot.postCommitted > snapshot.preCommitted ? T.neg : T.saved }}>
                             {snapshot.postCommitted > snapshot.preCommitted ? "+" : ""}{fmt(snapshot.postCommitted - snapshot.preCommitted)}
                           </div>
                         </div>
                         <div>
-                          <div style={{ fontSize: 10, color: "#64748b", fontWeight: 600 }}>DISPOSABLE CHANGE</div>
-                          <div style={{ fontSize: 16, fontWeight: 800, color: snapshot.postDisposable < snapshot.preDisposable ? "#ef4444" : "#10b981" }}>
+                          <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Disposable change</div>
+                          <div style={{ fontSize: FS.input, fontWeight: 700, color: snapshot.postDisposable < snapshot.preDisposable ? T.neg : T.saved }}>
                             {snapshot.postDisposable - snapshot.preDisposable >= 0 ? "+" : ""}{fmt(snapshot.postDisposable - snapshot.preDisposable)}
                           </div>
                         </div>
                         <div>
-                          <div style={{ fontSize: 10, color: "#64748b", fontWeight: 600 }}>ANNUAL IMPACT</div>
-                          <div style={{ fontSize: 16, fontWeight: 800, color: snapshot.postDisposable < snapshot.preDisposable ? "#ef4444" : "#10b981" }}>
+                          <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>Annual impact</div>
+                          <div style={{ fontSize: FS.input, fontWeight: 700, color: snapshot.postDisposable < snapshot.preDisposable ? T.neg : T.saved }}>
                             {(snapshot.postDisposable - snapshot.preDisposable) * 12 >= 0 ? "+" : ""}{fmt((snapshot.postDisposable - snapshot.preDisposable) * 12)}
                           </div>
                         </div>
@@ -3925,17 +3923,17 @@ export default function FinanceCalculator() {
                     </div>
                     {mode === MODE.HOUSEHOLD && (
                       <div style={{ marginTop: 12 }}>
-                        <SubHead text="Per-Person View (Post-Mortgage)" color="#ec4899" />
+                        <SubHead text="Per-person view (post-mortgage)" color={T.ink} />
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                          <div style={{ background: "#eef2ff", borderRadius: 8, padding: 10, textAlign: "center" }}>
-                            <div style={{ fontSize: 10, color: "#64748b", fontWeight: 600 }}>P1 TOTAL COMMITMENTS</div>
-                            <div style={{ fontSize: 16, fontWeight: 800, color: "#6366f1" }}>{fmt(postSplitTotalP1 + commitP1)}</div>
-                            <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 2 }}>remaining: {fmt(calc1.smoothedMonthlyNet - postSplitTotalP1 - commitP1)}</div>
+                          <div style={{ background: T.paper, borderRadius: 6, padding: 10, textAlign: "center" }}>
+                            <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>P1 total commitments</div>
+                            <div style={{ fontSize: FS.input, fontWeight: 700, color: T.ink }}>{fmt(postSplitTotalP1 + commitP1)}</div>
+                            <div style={{ fontSize: FS.small, color: T.inkSoft, marginTop: 2 }}>remaining: {fmt(calc1.smoothedMonthlyNet - postSplitTotalP1 - commitP1)}</div>
                           </div>
-                          <div style={{ background: "#f5f3ff", borderRadius: 8, padding: 10, textAlign: "center" }}>
-                            <div style={{ fontSize: 10, color: "#64748b", fontWeight: 600 }}>P2 TOTAL COMMITMENTS</div>
-                            <div style={{ fontSize: 16, fontWeight: 800, color: "#8b5cf6" }}>{fmt(postSplitTotalP2 + commitP2)}</div>
-                            <div style={{ fontSize: 10, color: "#94a3b8", marginTop: 2 }}>remaining: {fmt(calc2.smoothedMonthlyNet - postSplitTotalP2 - commitP2)}</div>
+                          <div style={{ background: T.paper, borderRadius: 6, padding: 10, textAlign: "center" }}>
+                            <div style={{ fontSize: FS.small, color: T.inkSoft, fontWeight: 600 }}>P2 total commitments</div>
+                            <div style={{ fontSize: FS.input, fontWeight: 700, color: T.ink }}>{fmt(postSplitTotalP2 + commitP2)}</div>
+                            <div style={{ fontSize: FS.small, color: T.inkSoft, marginTop: 2 }}>remaining: {fmt(calc2.smoothedMonthlyNet - postSplitTotalP2 - commitP2)}</div>
                           </div>
                         </div>
                       </div>
@@ -3943,10 +3941,10 @@ export default function FinanceCalculator() {
                   </Card>
                 </div>
 
-                <SectionHeader num={secCharts} title="Visual Analysis" subtitle="Charts showing savings trajectory and mortgage impact" color="#ec4899" />
+                <SectionHeader num={secCharts} title="Visual analysis" subtitle="Charts showing savings trajectory and mortgage impact" />
 
                 <div style={{ gridColumn: "1 / -1" }}>
-                  <Card title="Wealth Projection — Renting vs Buying">
+                  <Card title="Wealth projection — renting vs buying">
                     <ResponsiveContainer width="100%" height={300}>
                       <AreaChart data={projectionData.map((d, i) => ({ label: d.label, rentSavings: d.totalSavings, buySavings: postPurchaseData[i]?.totalSavings || 0, buyNetWealth: postPurchaseData[i]?.netWealth || 0 }))}>
                         <CartesianGrid strokeDasharray="3 3" />
@@ -3954,12 +3952,12 @@ export default function FinanceCalculator() {
                         <YAxis tickFormatter={(v) => `£${(v / 1000).toFixed(0)}k`} />
                         <Tooltip formatter={(v) => fmt(v)} />
                         <Legend />
-                        <Area type="monotone" dataKey="rentSavings" name="Renting — Savings" fill="#6366f122" stroke="#6366f1" strokeWidth={2} />
-                        <Area type="monotone" dataKey="buySavings" name="Buying today — Savings" fill="#ec489922" stroke="#ec4899" strokeWidth={2} strokeDasharray="6 3" />
-                        <Area type="monotone" dataKey="buyNetWealth" name="Buying today — Net Wealth (incl. equity)" fill="#10b98122" stroke="#10b981" strokeWidth={2} />
+                        <Area type="monotone" dataKey="rentSavings" name="Renting — savings" fill={T.home} fillOpacity={0.13} stroke={T.home} strokeWidth={2} />
+                        <Area type="monotone" dataKey="buySavings" name="Buying today — savings" fill={T.home} fillOpacity={0.13} stroke={T.home} strokeWidth={2} strokeDasharray="6 3" />
+                        <Area type="monotone" dataKey="buyNetWealth" name="Buying today — net wealth (incl. equity)" fill={T.saved} fillOpacity={0.13} stroke={T.saved} strokeWidth={2} />
                       </AreaChart>
                     </ResponsiveContainer>
-                    <div style={{ fontSize: 11, color: "#94a3b8", textAlign: "center", marginTop: 4 }}>
+                    <div style={{ fontSize: FS.small, color: T.inkSoft, textAlign: "center", marginTop: 4 }}>
                       Net wealth includes cash savings + property equity ({housePriceGrowth}% annual appreciation, mortgage paydown)
                     </div>
                   </Card>
@@ -3967,7 +3965,7 @@ export default function FinanceCalculator() {
 
                 {(overpayMonthly > 0 || overpayAnnual > 0) && (
                   <div style={{ gridColumn: "1 / -1" }}>
-                    <Card title="Mortgage Balance — Standard vs Overpayment">
+                    <Card title="Mortgage balance — standard vs overpayment">
                       <ResponsiveContainer width="100%" height={260}>
                         <AreaChart data={mortgageAmortisation.data.filter((_, i) => i % 2 === 0 || i === mortgageAmortisation.data.length - 1)}>
                           <CartesianGrid strokeDasharray="3 3" />
@@ -3975,43 +3973,43 @@ export default function FinanceCalculator() {
                           <YAxis tickFormatter={(v) => `£${(v / 1000).toFixed(0)}k`} />
                           <Tooltip formatter={(v) => fmt(v)} />
                           <Legend />
-                          <Area type="monotone" dataKey="balance" name="Standard" fill="#6366f122" stroke="#6366f1" strokeWidth={2} />
-                          <Area type="monotone" dataKey="balanceOp" name="With Overpayments" fill="#10b98122" stroke="#10b981" strokeWidth={2} />
+                          <Area type="monotone" dataKey="balance" name="Standard" fill={T.home} fillOpacity={0.13} stroke={T.home} strokeWidth={2} />
+                          <Area type="monotone" dataKey="balanceOp" name="With overpayments" fill={T.saved} fillOpacity={0.13} stroke={T.saved} strokeWidth={2} />
                         </AreaChart>
                       </ResponsiveContainer>
                     </Card>
                   </div>
                 )}
 
-                <SectionHeader num={secProjection} title={`${projectionMonths}-Month Projection`} subtitle={`Vehicles: ${snapshot.activeVehicles.length > 0 ? snapshot.activeVehicles.join(" + ") : "None"} · ${salaryGrowth}% salary growth · ${inflationRate}% inflation`} color="#0ea5e9" />
+                <SectionHeader num={secProjection} title={`${projectionMonths}-Month Projection`} subtitle={`Vehicles: ${snapshot.activeVehicles.length > 0 ? snapshot.activeVehicles.join(" + ") : "None"} · ${salaryGrowth}% salary growth · ${inflationRate}% inflation`} color={T.ink} />
 
                 <div style={{ gridColumn: "1 / -1" }}>
-                  <Card title="Month-by-Month Projection">
+                  <Card title="Month-by-month projection">
                     <div style={{ overflowX: "auto" }}>
-                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: FS.small }}>
                         <thead>
-                          <tr style={{ borderBottom: "2px solid #e2e8f0", background: "#f8fafc" }}>
-                            <th style={{ padding: "5px 8px", textAlign: "left", color: "#64748b", fontWeight: 700 }}>Month</th>
-                            <th style={{ padding: "5px 8px", textAlign: "right", color: "#64748b", fontWeight: 700 }}>Income</th>
-                            <th style={{ padding: "5px 8px", textAlign: "right", color: "#64748b", fontWeight: 700 }}>Expenses</th>
-                            <th style={{ padding: "5px 8px", textAlign: "right", color: "#6366f1", fontWeight: 700 }}>Rent Savings</th>
-                            <th style={{ padding: "5px 8px", textAlign: "right", color: "#ec4899", fontWeight: 700 }}>Buy Savings</th>
-                            <th style={{ padding: "5px 8px", textAlign: "right", color: "#10b981", fontWeight: 700 }}>Equity</th>
-                            <th style={{ padding: "5px 8px", textAlign: "right", color: "#10b981", fontWeight: 700 }}>Net Wealth</th>
+                          <tr style={{ borderBottom: `2px solid ${T.rule}`, background: T.paper }}>
+                            <th style={{ padding: "5px 8px", textAlign: "left", color: T.inkSoft, fontWeight: 700 }}>Month</th>
+                            <th style={{ padding: "5px 8px", textAlign: "right", color: T.inkSoft, fontWeight: 700 }}>Income</th>
+                            <th style={{ padding: "5px 8px", textAlign: "right", color: T.inkSoft, fontWeight: 700 }}>Expenses</th>
+                            <th style={{ padding: "5px 8px", textAlign: "right", color: T.ink, fontWeight: 700 }}>Rent savings</th>
+                            <th style={{ padding: "5px 8px", textAlign: "right", color: T.ink, fontWeight: 700 }}>Buy savings</th>
+                            <th style={{ padding: "5px 8px", textAlign: "right", color: T.saved, fontWeight: 700 }}>Equity</th>
+                            <th style={{ padding: "5px 8px", textAlign: "right", color: T.saved, fontWeight: 700 }}>Net wealth</th>
                           </tr>
                         </thead>
                         <tbody>
                           {projectionData.filter((_, i) => i > 0 && (i % 3 === 0 || i === projectionData.length - 1)).map((d, idx) => {
                             const ppd = postPurchaseData[d.month];
                             return (
-                              <tr key={d.month} style={{ borderBottom: "1px solid #f1f5f9", background: idx % 2 === 0 ? "#fff" : "#fafafa" }}>
+                              <tr key={d.month} style={{ borderBottom: `1px solid ${T.paper}`, background: idx % 2 === 0 ? T.sheet : T.paper }}>
                                 <td style={{ padding: "4px 8px", fontWeight: 600 }}>M{d.month}</td>
                                 <td style={{ padding: "4px 8px", textAlign: "right" }}>{fmt(d.income)}</td>
                                 <td style={{ padding: "4px 8px", textAlign: "right" }}>{fmt(d.expenses)}</td>
-                                <td style={{ padding: "4px 8px", textAlign: "right", fontWeight: 600, color: "#6366f1" }}>{fmt(d.totalSavings)}</td>
-                                <td style={{ padding: "4px 8px", textAlign: "right", color: "#ec4899" }}>{fmt(ppd?.totalSavings || 0)}</td>
-                                <td style={{ padding: "4px 8px", textAlign: "right", color: "#10b981" }}>{fmt(ppd?.equity || 0)}</td>
-                                <td style={{ padding: "4px 8px", textAlign: "right", fontWeight: 600, color: "#10b981" }}>{fmt(ppd?.netWealth || 0)}</td>
+                                <td style={{ padding: "4px 8px", textAlign: "right", fontWeight: 600, color: T.ink }}>{fmt(d.totalSavings)}</td>
+                                <td style={{ padding: "4px 8px", textAlign: "right", color: T.ink }}>{fmt(ppd?.totalSavings || 0)}</td>
+                                <td style={{ padding: "4px 8px", textAlign: "right", color: T.saved }}>{fmt(ppd?.equity || 0)}</td>
+                                <td style={{ padding: "4px 8px", textAlign: "right", fontWeight: 600, color: T.saved }}>{fmt(ppd?.netWealth || 0)}</td>
                               </tr>
                             );
                           })}
@@ -4022,7 +4020,7 @@ export default function FinanceCalculator() {
                 </div>
               </div>
 
-              <div style={{ textAlign: "center", marginTop: 24, fontSize: 11, color: "#94a3b8", borderTop: "1px solid #e2e8f0", paddingTop: 16 }}>
+              <div style={{ textAlign: "center", marginTop: 24, fontSize: FS.small, color: T.inkSoft, borderTop: `1px solid ${T.rule}`, paddingTop: 16 }}>
                 For illustrative purposes only — not financial advice · Generated by Personal Finance Calculator · UK Tax Year 2026/27
               </div>
             </div>
@@ -4030,7 +4028,7 @@ export default function FinanceCalculator() {
         })()}
       </div>
 
-      <div style={{ textAlign: "center", padding: "24px 16px", color: "#94a3b8", fontSize: 12, borderTop: "1px solid #e2e8f0", marginTop: 32 }}>
+      <div style={{ textAlign: "center", padding: "24px 16px", color: T.inkSoft, fontSize: FS.small, borderTop: `1px solid ${T.rule}`, marginTop: 32 }}>
         Personal Finance Calculator · UK Tax Year 2026/27 · For illustrative purposes only — not financial advice
       </div>
     </div>
