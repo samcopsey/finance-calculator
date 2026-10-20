@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useState, useMemo, useCallback, useRef, useId } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, Area, AreaChart, ReferenceLine } from "recharts";
 
 const TAX_FREE_ALLOWANCE = 12570;
@@ -337,6 +337,28 @@ function fmtSigned2(n) {
   return v === 0 ? "no change" : `${v > 0 ? "+" : "−"}${fmt2(Math.abs(v))}`;
 }
 
+const T = Object.freeze({
+  paper: "#F1F2EF",
+  sheet: "#FFFFFF",
+  rule: "#D7D9D3",
+  ruleStrong: "#23262B",
+  ink: "#23262B",
+  inkSoft: "#5F636B",
+  tax: "#8C8F96",
+  home: "#2F5D8A",
+  living: "#56708A",
+  saved: "#2E7D5B",
+  left: "#E5A100",
+  neg: "#B3261E",
+  warnBg: "#FBF1D6",
+  warnInk: "#6B4A00",
+  focus: "#2F5D8A",
+});
+const FONT = Object.freeze({
+  display: "'Bricolage Grotesque Variable', system-ui, sans-serif",
+  ui: "'Geologica Variable', system-ui, sans-serif",
+});
+const FS = Object.freeze({ small: 12, body: 14, input: 16, heading: 20, figure: 28, hero: 44 });
 const COLORS = ["#6366f1", "#f59e0b", "#10b981", "#ef4444", "#8b5cf6", "#ec4899", "#14b8a6", "#f97316"];
 const TAB_STYLE = (active) => ({
   padding: "10px 16px",
@@ -362,48 +384,44 @@ const WARNING_STYLES = {
 };
 
 function InputGroup({ label, value, onChange, prefix = "£", suffix, type = "number", min, max, step }) {
+  const id = useId();
   return (
     <div style={{ marginBottom: 16 }}>
-      <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 4 }}>{label}</label>
-      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-        {prefix && <span style={{ color: "#94a3b8", fontWeight: 600, fontSize: 15 }}>{prefix}</span>}
+      <label htmlFor={id} style={{ display: "block", fontSize: FS.body, fontWeight: 500, color: T.ink, marginBottom: 6 }}>{label}</label>
+      <div className="field" style={{ display: "flex", alignItems: "center", gap: 6, background: T.sheet, border: `1.5px solid ${T.rule}`, borderRadius: 6, padding: "0 12px" }}>
+        {prefix && <span aria-hidden="true" style={{ color: T.inkSoft, fontSize: FS.input }}>{prefix}</span>}
         <input
+          id={id}
           type={type}
           value={value}
           onChange={(e) => onChange(type === "number" ? parseFloat(e.target.value) || 0 : e.target.value)}
           min={min}
           max={max}
           step={step || 1}
-          style={{
-            width: "100%",
-            padding: "8px 12px",
-            border: "1px solid #cbd5e1",
-            borderRadius: 8,
-            fontSize: 15,
-            outline: "none",
-          }}
+          style={{ width: "100%", minWidth: 0, padding: "9px 0", border: "none", background: "transparent", color: T.ink, fontSize: FS.input }}
         />
-        {suffix && <span style={{ color: "#94a3b8", fontSize: 13, whiteSpace: "nowrap" }}>{suffix}</span>}
+        {suffix && <span style={{ color: T.inkSoft, fontSize: FS.body, whiteSpace: "nowrap" }}>{suffix}</span>}
       </div>
     </div>
   );
 }
 
-function Card({ title, children, color = "#6366f1" }) {
+function Card({ title, children }) {
   return (
-    <div style={{ background: "#fff", borderRadius: 12, padding: 24, boxShadow: "0 1px 3px rgba(0,0,0,0.08)", border: "1px solid #e2e8f0" }}>
-      {title && <h3 style={{ margin: "0 0 16px 0", fontSize: 16, fontWeight: 700, color, borderBottom: `2px solid ${color}22`, paddingBottom: 8 }}>{title}</h3>}
+    <section className="panel" style={{ borderTop: `1px solid ${T.rule}`, padding: "20px 0 8px", minWidth: 0 }}>
+      {title && <h3 style={{ margin: "0 0 16px 0", fontFamily: FONT.display, fontSize: FS.heading, fontWeight: 700, color: T.ink, lineHeight: 1.2 }}>{title}</h3>}
       {children}
-    </div>
+    </section>
   );
 }
 
-function StatBox({ label, value, color = "#1e293b", sub }) {
+function StatBox({ label, value, color = T.ink, sub }) {
+  const negative = typeof value === "string" && value.startsWith("-£");
   return (
-    <div style={{ textAlign: "center", padding: "12px 8px" }}>
-      <div style={{ fontSize: 12, color: "#94a3b8", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>{label}</div>
-      <div style={{ fontSize: 22, fontWeight: 800, color, marginTop: 4 }}>{value}</div>
-      {sub && <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 2 }}>{sub}</div>}
+    <div style={{ padding: "10px 0" }}>
+      <div style={{ fontSize: FS.small, color: T.inkSoft }}>{label}</div>
+      <div style={{ fontSize: FS.figure, fontWeight: 700, lineHeight: 1.15, color: negative ? T.neg : color, marginTop: 2 }}>{value}</div>
+      {sub && <div style={{ fontSize: FS.small, color: T.inkSoft, marginTop: 2 }}>{sub}</div>}
     </div>
   );
 }
@@ -428,24 +446,26 @@ function InfoTip({ items, children }) {
   );
 }
 
-function Toggle({ value, onChange, labels }) {
+function Toggle({ value, onChange, labels, label }) {
   return (
-    <div style={{ display: "flex", background: "#f1f5f9", borderRadius: 10, padding: 3, gap: 2 }}>
+    <div role="group" aria-label={label} style={{ display: "flex", border: `1.5px solid ${T.rule}`, background: T.sheet, borderRadius: 6, padding: 2, gap: 2 }}>
       {labels.map((l, i) => (
         <button
           key={l}
+          type="button"
+          aria-pressed={value === i}
           onClick={() => onChange(i)}
           style={{
             flex: 1,
-            padding: "8px 16px",
+            padding: "7px 14px",
             border: "none",
-            borderRadius: 8,
-            background: value === i ? "#6366f1" : "transparent",
-            color: value === i ? "#fff" : "#64748b",
-            fontWeight: value === i ? 700 : 500,
+            borderRadius: 4,
+            background: value === i ? T.ink : "transparent",
+            color: value === i ? T.paper : T.inkSoft,
+            fontWeight: value === i ? 600 : 500,
             cursor: "pointer",
-            fontSize: 13,
-            transition: "all 0.2s",
+            fontSize: FS.body,
+            whiteSpace: "nowrap",
           }}
         >
           {l}
@@ -1487,7 +1507,7 @@ export default function FinanceCalculator() {
   ].filter((d) => d.value > 0);
 
   return (
-    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", background: "#f8fafc", minHeight: "100vh", color: "#1e293b" }}>
+    <div style={{ fontFamily: FONT.ui, fontVariantNumeric: "tabular-nums", fontSize: FS.body, lineHeight: 1.45, background: T.paper, minHeight: "100vh", color: T.ink, "--focus": T.focus }}>
       <div style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)", padding: "24px 32px", color: "#fff" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800 }}>Personal Finance Calculator</h1>
