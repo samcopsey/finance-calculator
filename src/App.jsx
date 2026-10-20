@@ -28,6 +28,20 @@ const STUDENT_LOAN_OPTIONS = [
 const MODE = Object.freeze({ SINGLE: 0, HOUSEHOLD: 1 });
 const SPLIT_MODE = Object.freeze({ EARNINGS_RATIO: 0, CUSTOM_PERCENT: 1 });
 
+const SAVINGS_MODELS = [
+  { name: "50/30/20", savingsRate: 0.2 },
+  { name: "70/20/10", savingsRate: 0.2 },
+  { name: "Pay Yourself First", savingsRate: null },
+];
+const SAVINGS_MODEL_PYF = 2;
+
+function monthlySavings(modelIndex, includeModel, includePYF, income, pyfTarget) {
+  const model = SAVINGS_MODELS[modelIndex];
+  const modelSaving = includeModel ? (model?.savingsRate ? income * model.savingsRate : pyfTarget) : 0;
+  const extraPYF = includePYF && !(includeModel && model === SAVINGS_MODELS[SAVINGS_MODEL_PYF]);
+  return { modelName: model?.name, extraPYF, total: modelSaving + (extraPYF ? pyfTarget : 0) };
+}
+
 const STAMP_DUTY_BANDS = [
   { limit: 125000, rate: 0 },
   { limit: 250000, rate: 0.02 },
@@ -1243,18 +1257,8 @@ export default function FinanceCalculator() {
   const postSplitTotal = postMortgageSplitRows.reduce((s, e) => s + e.amount, 0);
 
   const activeSavingsGoal = useMemo(() => {
-    const models = ["50/30/20", "70/20/10", "Pay Yourself First"];
-    const selectedModel = models[projSavingsModel];
-    let goal = 0;
-    if (projIncludeModel) {
-      if (selectedModel === "50/30/20") goal = totalMonthlyNet * 0.2;
-      else if (selectedModel === "70/20/10") goal = totalMonthlyNet * 0.2;
-      else goal = pyfSavingsTarget;
-    }
-    if (projIncludePYF && !(projIncludeModel && selectedModel === "Pay Yourself First")) {
-      goal += pyfSavingsTarget;
-    }
-    return { amount: goal, label: projIncludeModel ? models[projSavingsModel] : (projIncludePYF ? "Pay Yourself First" : "") };
+    const { modelName, total } = monthlySavings(projSavingsModel, projIncludeModel, projIncludePYF, totalMonthlyNet, pyfSavingsTarget);
+    return { amount: total, label: projIncludeModel ? modelName : (projIncludePYF ? "Pay Yourself First" : "") };
   }, [projSavingsModel, projIncludeModel, projIncludePYF, totalMonthlyNet, pyfSavingsTarget]);
 
   const personalCommitmentRows = useMemo(() => {
@@ -1281,22 +1285,12 @@ export default function FinanceCalculator() {
     let cashSavings = 0;
     let monthlyIncome = totalMonthlyNet;
     let monthlyExp = totalExpenses;
-    const models = ["50/30/20", "70/20/10", "Pay Yourself First"];
-    const selectedModel = models[projSavingsModel];
 
     for (let m = 0; m <= projectionMonths; m++) {
       if (m > 0 && m % 12 === 0) monthlyIncome *= 1 + salaryGrowth / 100;
       if (m > 0) monthlyExp *= 1 + inflationRate / 100 / 12;
 
-      let modelSaving = 0;
-      if (projIncludeModel) {
-        if (selectedModel === "50/30/20") modelSaving = monthlyIncome * 0.2;
-        else if (selectedModel === "70/20/10") modelSaving = monthlyIncome * 0.2;
-        else modelSaving = pyfSavingsTarget;
-      }
-      const pyfSaving = projIncludePYF && !(projIncludeModel && selectedModel === "Pay Yourself First") ? pyfSavingsTarget : 0;
-
-      const totalMonthlyTarget = modelSaving + pyfSaving;
+      const totalMonthlyTarget = monthlySavings(projSavingsModel, projIncludeModel, projIncludePYF, monthlyIncome, pyfSavingsTarget).total;
       const activePotsMonthly = projIncludePots ? monthlyNonSacrificedPotContributions : 0;
       const afterExpenses = monthlyIncome - monthlyExp - totalAgreementMonthly;
       const afterCommitments = afterExpenses - activePotsMonthly;
@@ -1371,8 +1365,6 @@ export default function FinanceCalculator() {
     let cash = -postPurchasePots.shortfall;
     let monthlyIncome = totalMonthlyNet;
     let livingCosts = postLivingExpenses + councilTax + purchasePlan.monthlyProjectionTotal;
-    const models = ["50/30/20", "70/20/10", "Pay Yourself First"];
-    const selectedModel = models[projSavingsModel];
     const potsProj = postPurchasePots.projection;
     const { op } = mortgage.projectionSchedule;
     let propertyValue = housePrice;
@@ -1389,14 +1381,7 @@ export default function FinanceCalculator() {
       const renewal = m > 0 && m % 12 === 0 ? purchasePlan.annualRenewalTotal : 0;
       const oneOff = firstFromIncome + (row ? row.lump : 0) + renewal;
 
-      let modelSaving = 0;
-      if (projIncludeModel) {
-        if (selectedModel === "50/30/20") modelSaving = monthlyIncome * 0.2;
-        else if (selectedModel === "70/20/10") modelSaving = monthlyIncome * 0.2;
-        else modelSaving = pyfSavingsTarget;
-      }
-      const pyfSaving = projIncludePYF && !(projIncludeModel && selectedModel === "Pay Yourself First") ? pyfSavingsTarget : 0;
-      const totalMonthlyTarget = modelSaving + pyfSaving;
+      const totalMonthlyTarget = monthlySavings(projSavingsModel, projIncludeModel, projIncludePYF, monthlyIncome, pyfSavingsTarget).total;
       const activePotsMonthly = projIncludePots ? monthlyNonSacrificedPotContributions : 0;
       const afterExpenses = monthlyIncome - livingCosts - recurringMortgage - totalAgreementMonthly - activePotsMonthly;
       const actualSaving = Math.min(totalMonthlyTarget, Math.max(0, afterExpenses));
@@ -1447,17 +1432,7 @@ export default function FinanceCalculator() {
   };
 
   const snapshot = useMemo(() => {
-    const models = ["50/30/20", "70/20/10", "Pay Yourself First"];
-    const selectedModel = models[projSavingsModel];
-    let monthlySavingsGoal = 0;
-    if (projIncludeModel) {
-      if (selectedModel === "50/30/20") monthlySavingsGoal = totalMonthlyNet * 0.2;
-      else if (selectedModel === "70/20/10") monthlySavingsGoal = totalMonthlyNet * 0.2;
-      else monthlySavingsGoal = pyfSavingsTarget;
-    }
-    if (projIncludePYF && !(projIncludeModel && selectedModel === "Pay Yourself First")) {
-      monthlySavingsGoal += pyfSavingsTarget;
-    }
+    const { modelName: selectedModel, extraPYF, total: monthlySavingsGoal } = monthlySavings(projSavingsModel, projIncludeModel, projIncludePYF, totalMonthlyNet, pyfSavingsTarget);
     const activePotsMonthly = projIncludePots ? monthlyNonSacrificedPotContributions : 0;
     const monthlyMortgage = mortgage.monthlyPayment;
 
@@ -1475,7 +1450,7 @@ export default function FinanceCalculator() {
       if (activePotCount > 0) activeVehicles.push(`${activePotCount} pot${activePotCount === 1 ? "" : "s"} (${fmt(activePotsMonthly)}/mo)`);
     }
     if (projIncludeModel) activeVehicles.push(selectedModel);
-    if (projIncludePYF && !(projIncludeModel && selectedModel === "Pay Yourself First")) activeVehicles.push(`PYF (${fmt(pyfSavingsTarget)}/mo)`);
+    if (extraPYF) activeVehicles.push(`PYF (${fmt(pyfSavingsTarget)}/mo)`);
     return { monthlySavingsGoal, monthlyMortgage, preCommitted, preDisposable, postHousingMonthly, postCommitted, postDisposable, projEnd, selectedModel, activeVehicles, activePotsMonthly };
   }, [totalMonthlyNet, totalExpenses, totalAgreementMonthly, projSavingsModel, pyfSavingsTarget, mortgage.monthlyPayment, postLivingExpenses, overpayMonthly, councilTax, purchasePlan.monthlyTotal, projectionData, projIncludeModel, projIncludePYF, projIncludePots, monthlyNonSacrificedPotContributions, pots]);
 
@@ -2997,8 +2972,8 @@ export default function FinanceCalculator() {
                 <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0" }}>Toggle which savings strategies to include in the projection. Layer multiple to see combined impact.</p>
                 {[
                   { key: "pots", label: `Savings Pots (${pots.length})`, sub: pots.length === 0 ? "No pots configured" : `${fmt(totalMonthlyPotContributions)}/mo across ${pots.length} pot${pots.length === 1 ? "" : "s"} · ${blendedRate.toFixed(2)}% blended`, active: projIncludePots, set: setProjIncludePots, color: "#8b5cf6" },
-                  { key: "model", label: "Savings Model", sub: `${["50/30/20", "70/20/10", "Pay Yourself First"][projSavingsModel]}`, active: projIncludeModel, set: setProjIncludeModel, color: "#6366f1" },
-                  { key: "pyf", label: "Pay Yourself First (Extra)", sub: `${fmt(pyfSavingsTarget)}/mo fixed target`, active: projIncludePYF, set: setProjIncludePYF, color: "#ec4899", disabled: projIncludeModel && projSavingsModel === 2 },
+                  { key: "model", label: "Savings Model", sub: `${SAVINGS_MODELS[projSavingsModel]?.name}`, active: projIncludeModel, set: setProjIncludeModel, color: "#6366f1" },
+                  { key: "pyf", label: "Pay Yourself First (Extra)", sub: `${fmt(pyfSavingsTarget)}/mo fixed target`, active: projIncludePYF, set: setProjIncludePYF, color: "#ec4899", disabled: projIncludeModel && projSavingsModel === SAVINGS_MODEL_PYF },
                 ].map(v => (
                   <label key={v.key} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: v.active ? `${v.color}11` : "#f8fafc", borderRadius: 10, marginBottom: 6, cursor: v.disabled ? "not-allowed" : "pointer", border: v.active ? `2px solid ${v.color}` : "2px solid #e2e8f0", opacity: v.disabled ? 0.5 : 1, transition: "all 0.15s" }}>
                     <div style={{ position: "relative", width: 40, height: 22, background: v.active ? v.color : "#cbd5e1", borderRadius: 11, flexShrink: 0, transition: "background 0.2s", cursor: v.disabled ? "not-allowed" : "pointer" }}
@@ -3011,7 +2986,7 @@ export default function FinanceCalculator() {
                     </div>
                   </label>
                 ))}
-                {projIncludePYF && projIncludeModel && projSavingsModel === 2 && (
+                {projIncludePYF && projIncludeModel && projSavingsModel === SAVINGS_MODEL_PYF && (
                   <div style={{ fontSize: 11, color: "#f59e0b", padding: "4px 8px", background: "#fffbeb", borderRadius: 6, marginTop: 4 }}>
                     PYF is already included via the savings model — extra PYF toggle disabled to avoid double-counting.
                   </div>
@@ -3023,17 +2998,17 @@ export default function FinanceCalculator() {
               <Card title="Savings Model Selection" color="#6366f1">
                 <div style={{ marginBottom: 12 }}>
                   <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 8 }}>Apply Model to Projection</label>
-                  {["50/30/20", "70/20/10", "Pay Yourself First"].map((m, i) => (
+                  {SAVINGS_MODELS.map(({ name: m }, i) => (
                     <label key={m} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", background: projSavingsModel === i ? "#f0f0ff" : "#f8fafc", borderRadius: 8, marginBottom: 4, cursor: "pointer", border: projSavingsModel === i ? "2px solid #6366f1" : "2px solid transparent", opacity: projIncludeModel ? 1 : 0.5 }}>
                       <input type="radio" checked={projSavingsModel === i} onChange={() => setProjSavingsModel(i)} disabled={!projIncludeModel} />
                       <span style={{ fontWeight: projSavingsModel === i ? 700 : 500 }}>{m}</span>
                     </label>
                   ))}
                 </div>
-                {projSavingsModel === 2 && projIncludeModel && (
+                {projSavingsModel === SAVINGS_MODEL_PYF && projIncludeModel && (
                   <InputGroup label="PYF Monthly Target" value={pyfSavingsTarget} onChange={setPyfSavingsTarget} />
                 )}
-                {projIncludePYF && !(projIncludeModel && projSavingsModel === 2) && (
+                {projIncludePYF && !(projIncludeModel && projSavingsModel === SAVINGS_MODEL_PYF) && (
                   <InputGroup label="Extra PYF Monthly Target" value={pyfSavingsTarget} onChange={setPyfSavingsTarget} />
                 )}
                 {!projIncludeModel && <p style={{ fontSize: 12, color: "#94a3b8", margin: "8px 0 0 0" }}>Enable the "Savings Model" vehicle above to use this.</p>}
