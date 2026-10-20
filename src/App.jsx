@@ -712,22 +712,25 @@ export default function FinanceCalculator() {
     if (data.councilTax !== undefined) setCouncilTax(data.councilTax);
     if (data.housePriceGrowth !== undefined) setHousePriceGrowth(data.housePriceGrowth);
 
+    const purchaseSetters = {
+      paymentTiming: setPaymentTiming,
+      firstPaymentDays: setFirstPaymentDays,
+      paymentOverride: setPaymentOverride,
+      firstPaymentOverride: setFirstPaymentOverride,
+      reserveFirstPayment: setReserveFirstPayment,
+      productFee: setProductFee,
+      productFeeAddToLoan: setProductFeeAddToLoan,
+      productFeePaid: setProductFeePaid,
+      fixedRateEndDate: setFixedRateEndDate,
+      followOnRate: setFollowOnRate,
+      completionDate: setCompletionDate,
+      depositPaid: setDepositPaid,
+      stampDutyPaid: setStampDutyPaid,
+      includeExtrasInProjection: setIncludeExtrasInProjection,
+      councilTaxInBills: setCouncilTaxInBills,
+    };
     if (!Array.isArray(data.purchaseCosts)) {
-      setPaymentTiming(PURCHASE_DEFAULTS.paymentTiming);
-      setFirstPaymentDays(PURCHASE_DEFAULTS.firstPaymentDays);
-      setPaymentOverride(PURCHASE_DEFAULTS.paymentOverride);
-      setFirstPaymentOverride(PURCHASE_DEFAULTS.firstPaymentOverride);
-      setReserveFirstPayment(PURCHASE_DEFAULTS.reserveFirstPayment);
-      setProductFee(PURCHASE_DEFAULTS.productFee);
-      setProductFeeAddToLoan(PURCHASE_DEFAULTS.productFeeAddToLoan);
-      setProductFeePaid(PURCHASE_DEFAULTS.productFeePaid);
-      setFixedRateEndDate(PURCHASE_DEFAULTS.fixedRateEndDate);
-      setFollowOnRate(PURCHASE_DEFAULTS.followOnRate);
-      setCompletionDate(PURCHASE_DEFAULTS.completionDate);
-      setDepositPaid(PURCHASE_DEFAULTS.depositPaid);
-      setStampDutyPaid(PURCHASE_DEFAULTS.stampDutyPaid);
-      setIncludeExtrasInProjection(PURCHASE_DEFAULTS.includeExtrasInProjection);
-      setCouncilTaxInBills(PURCHASE_DEFAULTS.councilTaxInBills);
+      for (const [key, value] of Object.entries(PURCHASE_DEFAULTS)) purchaseSetters[key](value);
     }
     if (data.paymentTiming === "advance" || data.paymentTiming === "arrears") setPaymentTiming(data.paymentTiming);
     if (data.firstPaymentDays !== undefined) setFirstPaymentDays(Math.max(0, Number(data.firstPaymentDays) || 0));
