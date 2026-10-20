@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, Area, AreaChart, ReferenceLine } from "recharts";
 
 const TAX_FREE_ALLOWANCE = 12570;
+const PA_TAPER_THRESHOLD = 100000;
 const BASIC_RATE_LIMIT = 50270;
 const HIGHER_RATE_LIMIT = 125140;
 const BASIC_RATE = 0.20;
@@ -35,8 +36,8 @@ const STAMP_DUTY_FTB_BANDS = [
 
 function calculateIncomeTax(gross) {
   let personalAllowance = TAX_FREE_ALLOWANCE;
-  if (gross > 100000) {
-    personalAllowance = Math.max(0, TAX_FREE_ALLOWANCE - (gross - 100000) / 2);
+  if (gross > PA_TAPER_THRESHOLD) {
+    personalAllowance = Math.max(0, TAX_FREE_ALLOWANCE - (gross - PA_TAPER_THRESHOLD) / 2);
   }
   // Bands apply to income above the allowance, so the £37,700 basic band doesn't widen as the allowance tapers.
   // The allowance is nil from £125,140, where taxable income equals gross.
