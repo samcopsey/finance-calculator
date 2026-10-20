@@ -170,20 +170,24 @@ function isIsoDateOrEmpty(v) {
   return typeof v === "string" && (v === "" || ISO_DATE_RE.test(v));
 }
 
+function parseIsoDate(iso) {
+  return iso.split("-").map(Number);
+}
+
 function calendarMonthsBetween(fromISO, toISO) {
-  const [fy, fm] = fromISO.split("-").map(Number);
-  const [ty, tm] = toISO.split("-").map(Number);
+  const [fy, fm] = parseIsoDate(fromISO);
+  const [ty, tm] = parseIsoDate(toISO);
   return (ty - fy) * 12 + (tm - fm);
 }
 
 function wholeMonthsBetween(fromISO, toISO) {
-  const [fy, fm, fd] = fromISO.split("-").map(Number);
-  const [ty, tm, td] = toISO.split("-").map(Number);
+  const [fy, fm, fd] = parseIsoDate(fromISO);
+  const [ty, tm, td] = parseIsoDate(toISO);
   return (ty - fy) * 12 + (tm - fm) - (td < fd ? 1 : 0);
 }
 
 function dateAfterMonths(fromISO, months) {
-  const [y, m] = fromISO.split("-").map(Number);
+  const [y, m] = parseIsoDate(fromISO);
   return new Date(y, m - 1 + months, 1);
 }
 
@@ -251,7 +255,7 @@ function fmt2(n) {
 
 function fmtDate(iso) {
   if (!iso) return "";
-  const [y, m, d] = iso.split("-").map(Number);
+  const [y, m, d] = parseIsoDate(iso);
   return new Date(y, m - 1, d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
 
