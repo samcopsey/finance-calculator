@@ -274,6 +274,14 @@ const QUICK_ADD_COSTS = [
   { name: "Furnishings", renews: "once", category: "extra" },
 ];
 
+function isPaidAnnually(c) {
+  return c.renews === "yearly" && c.payment === "upfront";
+}
+
+function isPaidMonthly(c) {
+  return c.renews === "yearly" && c.payment === "monthly";
+}
+
 function normalisePurchaseCost(c, i) {
   const renews = c.renews === "yearly" ? "yearly" : "once";
   return {
@@ -1152,7 +1160,7 @@ export default function FinanceCalculator() {
     const monthlyTotal = monthlyItems.reduce((s, r) => s + r.monthly, 0);
     const monthlyProjectionTotal = monthlyItems.filter(inProjection).reduce((s, r) => s + r.monthly, 0);
     const annualItems = purchaseCosts
-      .filter((c) => c.payment === "upfront" && c.renews === "yearly" && (c.upfront || 0) > 0)
+      .filter((c) => isPaidAnnually(c) && (c.upfront || 0) > 0)
       .map((c) => ({ id: c.id, name: c.name, annual: c.upfront, category: c.category }));
     const annualTotal = annualItems.reduce((s, r) => s + r.annual, 0);
     const annualRenewalTotal = annualItems.filter(inProjection).reduce((s, r) => s + r.annual, 0);
@@ -2407,7 +2415,7 @@ export default function FinanceCalculator() {
                   <option value="essential">Essential</option>
                   <option value="extra">Extra</option>
                 </select>
-                {mode === MODE.HOUSEHOLD && (yearly && c.payment === "monthly" ? (
+                {mode === MODE.HOUSEHOLD && (isPaidMonthly(c) ? (
                   <select value={c.splitType || "shared"} onChange={(e) => updatePurchaseCost(c.id, "splitType", e.target.value)} style={{ ...cellSelect, background: c.splitType === "p1" ? "#eef2ff" : c.splitType === "p2" ? "#f5f3ff" : "#f0fdf4" }} title="Who pays this cost each month after you move in">
                     <option value="shared">Shared</option>
                     <option value="p1">P1 only</option>
