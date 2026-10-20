@@ -1,7 +1,6 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, Area, AreaChart, ReferenceLine } from "recharts";
 
-// ─── UK Tax & NI Constants (2026/27) ───
 const TAX_FREE_ALLOWANCE = 12570;
 const BASIC_RATE_LIMIT = 50270;
 const HIGHER_RATE_LIMIT = 125140;
@@ -12,17 +11,13 @@ const NI_LOWER = 12570;
 const NI_UPPER = 50270;
 const NI_RATE_MAIN = 0.08;
 const NI_RATE_UPPER = 0.02;
-// Class 4 NI applies to self-employed profits (paid via Self Assessment, not PAYE).
-// 2026/27: 6% on profits between £12,570 and £50,270; 2% above.
 const CLASS4_NI_LOWER = 12570;
 const CLASS4_NI_UPPER = 50270;
 const CLASS4_NI_RATE_MAIN = 0.06;
 const CLASS4_NI_RATE_UPPER = 0.02;
-// Student loans: 9% of earnings above the plan's yearly threshold.
 const STUDENT_LOAN_RATE = 0.09;
 const STUDENT_LOAN_THRESHOLDS = { 1: 26900, 2: 29385 };
 
-// Stamp duty rates (residential, from April 2025)
 const STAMP_DUTY_BANDS = [
   { limit: 125000, rate: 0 },
   { limit: 250000, rate: 0.02 },
@@ -30,7 +25,6 @@ const STAMP_DUTY_BANDS = [
   { limit: 1500000, rate: 0.10 },
   { limit: Infinity, rate: 0.12 },
 ];
-// FTB relief: 0% up to £300k, 5% on £300k-£500k (only if price ≤ £500k)
 const STAMP_DUTY_FTB_BANDS = [
   { limit: 300000, rate: 0 },
   { limit: 500000, rate: 0.05 },
@@ -40,7 +34,6 @@ const STAMP_DUTY_FTB_BANDS = [
 ];
 
 function calculateIncomeTax(gross) {
-  // Personal allowance tapers by £1 for every £2 over £100k
   let personalAllowance = TAX_FREE_ALLOWANCE;
   if (gross > 100000) {
     personalAllowance = Math.max(0, TAX_FREE_ALLOWANCE - (gross - 100000) / 2);
@@ -100,7 +93,6 @@ function calculateStampDuty(price, firstTimeBuyer) {
   return duty;
 }
 
-// ─── Mortgage engine ───
 const MORTGAGE_EPS = 0.005;
 
 // "advance" collects each payment at the start of the month, so interest accrues on the balance after it.
@@ -146,7 +138,6 @@ function runMortgage(p, overpayMonthly, overpayAnnual, followOnPayment) {
     } else {
       bal = avail - pay - over - lump;
     }
-    // Lenders absorb rounding leftovers into the final payment; anything bigger is a genuine shortfall.
     if (m === months && bal < Math.max(1, due * 0.01)) {
       pay += bal;
       bal = 0;
@@ -161,14 +152,12 @@ function runMortgage(p, overpayMonthly, overpayAnnual, followOnPayment) {
   return { rows, totalInterest, totalPaid, residual: bal, payoffMonth, negAmMonth, followOnPayment: followOn };
 }
 
-// After the fix ends, the overpayment run keeps paying the contractual (base) payment, so overpaying shortens the term.
 function buildMortgageSchedule(p) {
   const base = runMortgage(p, 0, 0, null);
   const op = runMortgage(p, p.overpayMonthly, p.overpayAnnual, base.followOnPayment);
   return { base, op };
 }
 
-// ─── Dates (ISO "YYYY-MM-DD" strings; parsed by parts to avoid UTC shifts) ───
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 function isoToday() {
@@ -180,7 +169,6 @@ function isIsoDateOrEmpty(v) {
   return typeof v === "string" && (v === "" || ISO_DATE_RE.test(v));
 }
 
-// The completion month is covered by the first payment's extra interest, so schedule month 1 is the next calendar month.
 function calendarMonthsBetween(fromISO, toISO) {
   const [fy, fm] = fromISO.split("-").map(Number);
   const [ty, tm] = toISO.split("-").map(Number);
@@ -198,7 +186,6 @@ function dateAfterMonths(fromISO, months) {
   return new Date(y, m - 1 + months, 1);
 }
 
-// ─── Purchase plan ───
 const PLANNER_HORIZON_MONTHS = 120;
 
 const PURCHASE_DEFAULTS = {
@@ -236,7 +223,6 @@ const QUICK_ADD_COSTS = [
   { name: "Furnishings", renews: "once", category: "extra" },
 ];
 
-// One-off costs can only be paid upfront; only yearly (renewing) costs offer a monthly alternative.
 function normalisePurchaseCost(c, i) {
   const renews = c.renews === "yearly" ? "yearly" : "once";
   return {
@@ -404,35 +390,27 @@ function Toggle({ value, onChange, labels }) {
   );
 }
 
-// ─── Main App ───
 export default function FinanceCalculator() {
   const [tab, setTab] = useState(0);
   const tabs = ["Overview", "Savings Models", "Mortgage", "Purchase Plan", "Savings & Investments", "Finance Agreements", "Projections", "Expense Log", "Report"];
 
-  // Mode: 0 = single, 1 = household
   const [mode, setMode] = useState(0);
 
-  // Person 1
   const [salary1, setSalary1] = useState(35000);
   const [otherIncome1, setOtherIncome1] = useState(0);
-  // "paye" = additional employment income taxed via PAYE (e.g. taxable benefits, second PAYE job)
-  // "selfEmployed" = SE / sole-trader profit — taxed via Self Assessment, no PAYE NI but Class 4 NI applies
   const [otherIncomeType1, setOtherIncomeType1] = useState("paye");
   const [pension1, setPension1] = useState(5);
-  const [studentLoan1, setStudentLoan1] = useState(0); // 0=none,1=plan1,2=plan2
+  const [studentLoan1, setStudentLoan1] = useState(0);
 
-  // Person 2
   const [salary2, setSalary2] = useState(30000);
   const [otherIncome2, setOtherIncome2] = useState(0);
   const [otherIncomeType2, setOtherIncomeType2] = useState("paye");
   const [pension2, setPension2] = useState(5);
   const [studentLoan2, setStudentLoan2] = useState(0);
 
-  // Household contribution split: 0 = ratio of earnings, 1 = custom percentage
   const [splitMode, setSplitMode] = useState(0);
   const [customSplitP1, setCustomSplitP1] = useState(50);
 
-  // Monthly expenses
   const [rent, setRent] = useState(900);
   const [bills, setBills] = useState(250);
   const [food, setFood] = useState(350);
@@ -440,7 +418,6 @@ export default function FinanceCalculator() {
   const [subscriptions, setSubscriptions] = useState(50);
   const [otherExpenses, setOtherExpenses] = useState(200);
 
-  // Custom expenses (user-defined line items)
   const [customExpenses, setCustomExpenses] = useState([]);
   const [newCustomExpName, setNewCustomExpName] = useState("");
   const [newCustomExpAmount, setNewCustomExpAmount] = useState(0);
@@ -455,11 +432,8 @@ export default function FinanceCalculator() {
   const updateCustomExpenseSplit = (id, splitType) => setCustomExpenses(customExpenses.map((e) => e.id === id ? { ...e, splitType } : e));
   const customExpensesTotal = customExpenses.reduce((s, e) => s + e.amount, 0);
 
-  // Savings model custom
   const [pyfSavingsTarget, setPyfSavingsTarget] = useState(500);
 
-  // Savings & investment pots — unified model. Each pot has its own owner/type/rate/compounding mode.
-  // Replaces the legacy single-value isa/currentAccount/otherSavings/investment fields.
   const POT_TYPES = ["current", "savings", "isa", "lisa", "investment", "pension", "shareScheme", "other"];
   const POT_TYPE_LABELS = {
     current: "current",
@@ -481,11 +455,6 @@ export default function FinanceCalculator() {
     shareScheme: "#0ea5e9",
     other: "#94a3b8",
   };
-  // Compounding mode controls how interest is applied. Real UK products differ:
-  // monthly = interest credited & re-invested each month (S&S ISAs, investments, pensions)
-  // annual  = contributions accumulate; interest applied once a year on year-end balance (most cash ISAs, fixed savings)
-  // simple  = interest only on the starting principal — no compounding on contributions or gains (some bonds)
-  // none    = no interest (e.g. standard current accounts)
   const POT_COMPOUNDING = ["monthly", "annual", "simple", "none"];
   const COMPOUNDING_LABELS = { monthly: "Monthly", annual: "Annual", simple: "Simple", none: "None" };
   const defaultCompoundingFor = (type) => {
@@ -496,10 +465,7 @@ export default function FinanceCalculator() {
       default: return "monthly";
     }
   };
-  // Share-save / SIP-style schemes deduct from gross pay before tax & NI. Default the flag on for shareScheme;
-  // any other pot type can still opt in (e.g. employer-matched pension via salary sacrifice).
   const defaultSalarySacrificeFor = (type) => type === "shareScheme";
-  // Liquid pot types count towards the house purchase by default; long-term investments, pensions and share schemes don't.
   const defaultForPurchaseFor = (type) => type === "current" || type === "savings" || type === "isa" || type === "lisa";
   const [pots, setPots] = useState([
     { id: 1, name: "Current Account", owner: "p1", type: "current", startingBalance: 0, monthlyContribution: 0, rate: 0, compounding: "none", salarySacrifice: false, forPurchase: true },
@@ -516,19 +482,16 @@ export default function FinanceCalculator() {
   const updatePot = (id, field, value) => setPots(pots.map((p) => {
     if (p.id !== id) return p;
     const next = { ...p, [field]: value };
-    // When the type changes, suggest a sensible compounding default and toggle salary sacrifice for share schemes.
     if (field === "type") {
       next.compounding = defaultCompoundingFor(value);
       next.salarySacrifice = defaultSalarySacrificeFor(value);
       next.forPurchase = defaultForPurchaseFor(value);
     }
-    // Joint pots can't be salary-sacrificed (sacrifice is per individual's payroll).
     if (field === "owner" && value === "joint") next.salarySacrifice = false;
     return next;
   }));
   const removePot = (id) => setPots(pots.filter((p) => p.id !== id));
 
-  // Mortgage
   const [housePrice, setHousePrice] = useState(250000);
   const [deposit, setDeposit] = useState(25000);
   const [mortgageTerm, setMortgageTerm] = useState(25);
@@ -537,11 +500,9 @@ export default function FinanceCalculator() {
   const [overpayMonthly, setOverpayMonthly] = useState(0);
   const [overpayAnnual, setOverpayAnnual] = useState(0);
   const [councilTax, setCouncilTax] = useState(150);
-  // Council tax already counted in the Bills expense; it's removed after purchase so the new council tax replaces it.
   const [councilTaxInBills, setCouncilTaxInBills] = useState(PURCHASE_DEFAULTS.councilTaxInBills);
   const [housePriceGrowth, setHousePriceGrowth] = useState(3);
 
-  // Lender deal
   const [paymentTiming, setPaymentTiming] = useState(PURCHASE_DEFAULTS.paymentTiming);
   const [firstPaymentDays, setFirstPaymentDays] = useState(PURCHASE_DEFAULTS.firstPaymentDays);
   const [paymentOverride, setPaymentOverride] = useState(PURCHASE_DEFAULTS.paymentOverride);
@@ -553,7 +514,6 @@ export default function FinanceCalculator() {
   const [fixedRateEndDate, setFixedRateEndDate] = useState(PURCHASE_DEFAULTS.fixedRateEndDate);
   const [followOnRate, setFollowOnRate] = useState(PURCHASE_DEFAULTS.followOnRate);
 
-  // Purchase plan
   const [completionDate, setCompletionDate] = useState(PURCHASE_DEFAULTS.completionDate);
   const [depositPaid, setDepositPaid] = useState(PURCHASE_DEFAULTS.depositPaid);
   const [stampDutyPaid, setStampDutyPaid] = useState(PURCHASE_DEFAULTS.stampDutyPaid);
@@ -580,37 +540,30 @@ export default function FinanceCalculator() {
   }));
   const removePurchaseCost = (id) => setPurchaseCosts(purchaseCosts.filter((c) => c.id !== id));
 
-  // Long-horizon projection window for the Savings & Investments tab (years).
   const [investYears, setInvestYears] = useState(10);
 
-  // Finance agreements
   const [agreements, setAgreements] = useState([
     { name: "Car Finance", amount: 15000, rate: 6.9, termMonths: 48, monthlyPayment: 0 },
   ]);
 
-  // Projection
   const [projectionMonths, setProjectionMonths] = useState(24);
   const [salaryGrowth, setSalaryGrowth] = useState(2);
   const [inflationRate, setInflationRate] = useState(3);
   const [projSavingsModel, setProjSavingsModel] = useState(0);
 
-  // Savings vehicle toggles for projections
-  const [projIncludePots, setProjIncludePots] = useState(true);    // Roll all pots into projection
-  const [projIncludeModel, setProjIncludeModel] = useState(true);  // Savings model (50/30/20 etc.)
-  const [projIncludePYF, setProjIncludePYF] = useState(false);     // Pay Yourself First (extra on top)
+  const [projIncludePots, setProjIncludePots] = useState(true);
+  const [projIncludeModel, setProjIncludeModel] = useState(true);
+  const [projIncludePYF, setProjIncludePYF] = useState(false);
 
-  // Expense log
   const [expenseLog, setExpenseLog] = useState([]);
   const [newExpenseName, setNewExpenseName] = useState("");
   const [newExpenseAmount, setNewExpenseAmount] = useState(0);
   const [newExpenseCategory, setNewExpenseCategory] = useState("Other");
   const [newExpenseDate, setNewExpenseDate] = useState(new Date().toISOString().slice(0, 10));
 
-  // Save notification
   const [saveNotice, setSaveNotice] = useState("");
   const fileInputRef = useRef(null);
 
-  // ─── Save / Load ───
   const getAllState = () => ({
     _version: 3,
     _savedAt: new Date().toISOString(),
@@ -655,7 +608,6 @@ export default function FinanceCalculator() {
     if (data.customExpenses !== undefined) setCustomExpenses(data.customExpenses.map(e => ({ splitType: "shared", ...e })));
     if (data.pyfSavingsTarget !== undefined) setPyfSavingsTarget(data.pyfSavingsTarget);
 
-    // Pots: prefer the new array; otherwise migrate from legacy single-value fields.
     if (Array.isArray(data.pots)) {
       setPots(data.pots.map((p, i) => {
         const type = p.type ?? "savings";
@@ -681,7 +633,6 @@ export default function FinanceCalculator() {
         legacy.push(mk("current", { id: nextId++, name: "Current Account", owner: "p1", startingBalance: data.currentAccount, monthlyContribution: 0, rate: 0 }));
       }
       if (data.isaBalance !== undefined || data.isaMonthly !== undefined) {
-        // Legacy saves held a single ISA return rate, usually a stocks & shares figure, so it migrates with monthly compounding.
         legacy.push({ id: nextId++, name: "S&S ISA", owner: "p1", type: "isa", startingBalance: data.isaBalance ?? 0, monthlyContribution: data.isaMonthly ?? 0, rate: data.isaReturnRate ?? 7, compounding: "monthly", salarySacrifice: false, forPurchase: defaultForPurchaseFor("isa") });
       }
       if (data.otherSavings !== undefined && data.otherSavings !== null && data.otherSavings !== 0) {
@@ -703,8 +654,6 @@ export default function FinanceCalculator() {
     if (data.councilTax !== undefined) setCouncilTax(data.councilTax);
     if (data.housePriceGrowth !== undefined) setHousePriceGrowth(data.housePriceGrowth);
 
-    // Files saved before the Purchase Plan (no purchaseCosts array) reset the purchase settings to defaults,
-    // so reloading an old save always gives the same figures however the session has been changed since.
     if (!Array.isArray(data.purchaseCosts)) {
       setPaymentTiming(PURCHASE_DEFAULTS.paymentTiming);
       setFirstPaymentDays(PURCHASE_DEFAULTS.firstPaymentDays);
@@ -738,7 +687,6 @@ export default function FinanceCalculator() {
     if (data.includeExtrasInProjection !== undefined) setIncludeExtrasInProjection(Boolean(data.includeExtrasInProjection));
     if (data.councilTaxInBills !== undefined) setCouncilTaxInBills(Number(data.councilTaxInBills) || 0);
 
-    // Purchase costs: prefer the saved list; otherwise migrate the legacy single-value fee fields.
     if (Array.isArray(data.purchaseCosts)) {
       setPurchaseCosts(data.purchaseCosts.filter((c) => c && typeof c === "object").map(normalisePurchaseCost));
     } else {
@@ -747,7 +695,6 @@ export default function FinanceCalculator() {
       if (data.solicitorFees !== undefined) pushLegacy({ name: "Solicitor / conveyancing", upfront: data.solicitorFees });
       if (data.surveyFees !== undefined) pushLegacy({ name: "Survey", upfront: data.surveyFees });
       if (data.homeInsurance !== undefined) {
-        // Old saves only held a monthly premium; the annual figure is a 12x placeholder until a real quote is entered.
         const monthly = Number(data.homeInsurance) || 0;
         pushLegacy({ name: "Home insurance", upfront: Math.round(monthly * 1200) / 100, monthly, payment: "monthly", renews: "yearly" });
       }
@@ -824,8 +771,6 @@ export default function FinanceCalculator() {
     return Object.entries(cats).map(([name, value]) => ({ name, value }));
   }, [expenseLog]);
 
-  // ─── Calculated values ───
-  // Annual salary-sacrifice contributions per person — reduce taxable gross before tax/NI.
   const annualSacrificeP1 = useMemo(
     () => pots.filter((p) => p.owner === "p1" && p.salarySacrifice).reduce((s, p) => s + (p.monthlyContribution || 0) * 12, 0),
     [pots]
@@ -835,10 +780,6 @@ export default function FinanceCalculator() {
     [pots]
   );
 
-  // Compute take-home for one person. Self-employed `otherIncome` is split out: it doesn't go through PAYE,
-  // so payroll only deducts tax/NI on the salary side. The SE profit creates a Self Assessment bill paid
-  // separately (income tax on the SE marginal + Class 4 NI). The monthly figure is the smoothed annual
-  // total across both, but `payeMonthly` is what actually hits the bank each month.
   const computeCalc = (salary, otherIncome, otherType, pensionPct, studentLoanPlan, sacrificeAmt) => {
     const seIncome = otherType === "selfEmployed" ? (otherIncome || 0) : 0;
     const payeOther = otherType === "selfEmployed" ? 0 : (otherIncome || 0);
@@ -851,7 +792,6 @@ export default function FinanceCalculator() {
     const payeSL = slThreshold && payeTaxable > slThreshold ? (payeTaxable - slThreshold) * STUDENT_LOAN_RATE : 0;
     const payeNet = salary + payeOther - payeTax - payeNi - pensionAmt - sacrificeAmt - payeSL;
 
-    // Self Assessment liability when SE income is present.
     let saExtraTax = 0, class4Ni = 0, saExtraSL = 0;
     if (seIncome > 0) {
       const combinedTaxable = payeTaxable + seIncome;
@@ -890,22 +830,16 @@ export default function FinanceCalculator() {
   const totalMonthlyNet = calc1.monthly + calc2.monthly;
   const totalExpenses = rent + bills + food + transport + subscriptions + otherExpenses + customExpensesTotal;
   const disposable = totalMonthlyNet - totalExpenses;
-  // After buying: rent goes, and the council tax already inside Bills is replaced by the new home's council tax.
   const councilTaxInBillsApplied = Math.min(Math.max(0, councilTaxInBills), bills);
   const postLivingExpenses = totalExpenses - rent - councilTaxInBillsApplied;
 
-  // ─── Pots: aggregations & per-owner views ───
   const totalExistingSavings = useMemo(() => pots.reduce((s, p) => s + (p.startingBalance || 0), 0), [pots]);
   const totalMonthlyPotContributions = useMemo(() => pots.reduce((s, p) => s + (p.monthlyContribution || 0), 0), [pots]);
-  // Salary-sacrifice pot contributions are deducted from gross before calc.monthly is computed, so they
-  // must NOT also be subtracted from net cash in the projections (that would double-count). Track the
-  // post-tax-only portion of monthly contributions for cash-flow subtraction.
   const monthlySacrificedContributions = useMemo(
     () => pots.filter((p) => p.salarySacrifice).reduce((s, p) => s + (p.monthlyContribution || 0), 0),
     [pots]
   );
   const monthlyNonSacrificedPotContributions = totalMonthlyPotContributions - monthlySacrificedContributions;
-  // Money-weighted blended rate based on starting balances (Σ rate*bal / Σ bal).
   const blendedRate = useMemo(() => {
     const denom = pots.reduce((s, p) => s + (p.startingBalance || 0), 0);
     if (denom <= 0) {
@@ -916,7 +850,6 @@ export default function FinanceCalculator() {
     return pots.reduce((s, p) => s + (p.startingBalance || 0) * (p.rate || 0), 0) / denom;
   }, [pots]);
 
-  // Per-owner pot subtotals
   const potsByOwner = useMemo(() => {
     const owners = { p1: { starting: 0, monthly: 0, count: 0 }, p2: { starting: 0, monthly: 0, count: 0 }, joint: { starting: 0, monthly: 0, count: 0 } };
     pots.forEach((p) => {
@@ -928,14 +861,11 @@ export default function FinanceCalculator() {
     return owners;
   }, [pots]);
 
-  // Forward-project each pot month-by-month using its own rate. Returns per-pot series + aggregate.
-  // Used by the Savings & Investments tab (long horizon) and consumed by projection memos via `monthsAhead`.
-  // Project a given set of pots forward. `sourcePots` lets the post-purchase model run from a drained set.
   const projectPotsFrom = useCallback((sourcePots, monthsAhead, includeFlag = true) => {
     const months = Math.max(0, Math.floor(monthsAhead));
     const series = sourcePots.map((p) => ({ id: p.id, name: p.name, owner: p.owner, type: p.type, rate: p.rate, compounding: p.compounding || defaultCompoundingFor(p.type), history: [] }));
     const balances = sourcePots.map((p) => p.startingBalance || 0);
-    const principals = sourcePots.map((p) => p.startingBalance || 0); // for simple-interest mode, interest accrues on this only
+    const principals = sourcePots.map((p) => p.startingBalance || 0);
     for (let m = 0; m <= months; m++) {
       sourcePots.forEach((p, i) => {
         if (m > 0 && includeFlag) {
@@ -945,14 +875,11 @@ export default function FinanceCalculator() {
           if (mode === "monthly") {
             balances[i] = balances[i] * (1 + rateAnnual / 12) + contrib;
           } else if (mode === "annual") {
-            // Contributions accumulate every month; interest credited only at year-end on year-end balance.
             balances[i] += contrib;
             if (m % 12 === 0) balances[i] *= 1 + rateAnnual;
           } else if (mode === "simple") {
-            // Interest accrues on the original principal only — no compounding on contributions or accrued interest.
             balances[i] += contrib + principals[i] * rateAnnual / 12;
           } else {
-            // none — no interest at all
             balances[i] += contrib;
           }
         }
@@ -968,10 +895,6 @@ export default function FinanceCalculator() {
 
   const buildPotsProjection = useCallback((monthsAhead, includeFlag = true) => projectPotsFrom(pots, monthsAhead, includeFlag), [projectPotsFrom, pots]);
 
-  // Drain the upfront cost from the pots ticked for the purchase, in liquidity priority — most-liquid first so we
-  // don't unnecessarily liquidate long-term pots before touching cash. ISAs split by compounding mode: cash-style
-  // (annual / simple / none) drains before S&S-style (monthly). Unticked pots are never touched: whatever the ticked
-  // pots can't cover becomes the shortfall.
   const drainPotsForUpfront = useCallback((amount) => {
     const isMonthlyCompounded = (p) => (p.compounding || defaultCompoundingFor(p.type)) === "monthly";
     const drainTiers = [
@@ -1005,20 +928,16 @@ export default function FinanceCalculator() {
     return { drainedPots: next, drawdown, shortfall: remaining };
   }, [pots]);
 
-  // Long-horizon projection used by the Savings & Investments tab (years → months).
   const potsLongProjection = useMemo(() => buildPotsProjection(investYears * 12, true), [buildPotsProjection, investYears]);
 
-  // Household contribution split
   const splitP1Pct = useMemo(() => {
     if (mode === 0) return 100;
     if (splitMode === 1) return customSplitP1;
-    // Ratio of earnings
     const total = calc1.monthly + calc2.monthly;
     return total > 0 ? (calc1.monthly / total) * 100 : 50;
   }, [mode, splitMode, customSplitP1, calc1.monthly, calc2.monthly]);
   const splitP2Pct = 100 - splitP1Pct;
 
-  // Build expense rows with per-person split amounts (respecting splitType on custom expenses)
   const splitExpenseRows = useMemo(() => {
     const standard = [
       { name: "Rent / Mortgage", amount: rent },
@@ -1040,7 +959,6 @@ export default function FinanceCalculator() {
   const splitTotalP1 = splitExpenseRows.reduce((s, e) => s + e.p1, 0);
   const splitTotalP2 = splitExpenseRows.reduce((s, e) => s + e.p2, 0);
 
-  // Finance agreement monthly payments
   const agreementPayments = useMemo(() => {
     return agreements.map((a) => {
       const r = a.rate / 100 / 12;
@@ -1053,10 +971,8 @@ export default function FinanceCalculator() {
 
   const totalAgreementMonthly = agreementPayments.reduce((s, a) => s + a.monthlyPayment, 0);
 
-  // Savings models
-  // Categorise actual expenses for savings model comparison
-  const needsExpenses = rent + bills + food + transport; // essential costs
-  const wantsExpenses = subscriptions + otherExpenses + customExpensesTotal; // discretionary
+  const needsExpenses = rent + bills + food + transport;
+  const wantsExpenses = subscriptions + otherExpenses + customExpensesTotal;
   const allExpenses = totalExpenses;
 
   const savingsModels = useMemo(() => {
@@ -1091,7 +1007,6 @@ export default function FinanceCalculator() {
     };
   }, [totalMonthlyNet, pyfSavingsTarget, needsExpenses, wantsExpenses, allExpenses, totalAgreementMonthly]);
 
-  // Mortgage calculations — the only place where state is turned into schedule inputs.
   const mortgage = useMemo(() => {
     const requestedLoan = Math.max(0, housePrice - deposit);
     const feeAddedToLoan = productFeeAddToLoan ? Math.max(0, productFee) : 0;
@@ -1118,7 +1033,6 @@ export default function FinanceCalculator() {
     const schedule = buildMortgageSchedule({ ...scheduleInputs, principal: totalBorrowing, payment: monthlyPayment, firstPayment, stubInterest, overpayMonthly, overpayAnnual });
     const { base } = schedule;
     const repaidBeforeFixEnd = hasFollowOn && base.payoffMonth !== null && base.payoffMonth <= fixedMonths;
-    // The "if completed today" projection counts the fixed period from today rather than from a future completion date.
     const fixFromToday = fixedRateEndDate && completionDate > todayISO ? calendarMonthsBetween(todayISO, fixedRateEndDate) : null;
     const fixedMonthsToday = fixFromToday > 0 ? Math.min(fixFromToday, n) : fixedMonths;
     const projectionSchedule = !fixExpired && fixedMonthsToday !== fixedMonths
@@ -1137,7 +1051,6 @@ export default function FinanceCalculator() {
       feeLoanCost = { monthly: withFee.pay - withoutFee.pay, interest: withFee.run.totalInterest - withoutFee.run.totalInterest };
     }
 
-    // A manual first payment below the monthly payment shrinks only month 1; don't report that as ongoing negative amortisation.
     const lowFirstPayment = isFirstPaymentOverridden && firstPaymentOverride < monthlyPayment - MORTGAGE_EPS;
     const laterNegAm = base.rows.findIndex((r, i) => i >= 2 && r.balance > base.rows[i - 1].balance + MORTGAGE_EPS);
     const negAmFrom = lowFirstPayment && base.negAmMonth === 1 ? (laterNegAm > 0 ? laterNegAm : null) : base.negAmMonth;
@@ -1171,7 +1084,6 @@ export default function FinanceCalculator() {
     };
   }, [housePrice, deposit, mortgageTerm, mortgageRate, firstTimeBuyer, productFee, productFeeAddToLoan, paymentTiming, paymentOverride, firstPaymentOverride, firstPaymentDays, completionDate, todayISO, fixedRateEndDate, followOnRate, overpayMonthly, overpayAnnual]);
 
-  // Purchase plan — the cash needed to buy, what the ticked pots provide, and the gap between them.
   const purchasePlan = useMemo(() => {
     const autoRows = [
       { key: "deposit", name: "Deposit", amount: deposit, counted: true, paid: depositPaid, canMarkPaid: true },
@@ -1194,8 +1106,6 @@ export default function FinanceCalculator() {
     const drainAmount = essentialsToPay + (includeExtrasInProjection ? extrasToPay : 0);
     const otherEssentialRows = upfrontRows.filter((r) => !r.isAuto && r.category === "essential");
 
-    // Monthly-paid costs come out of the monthly budget; yearly costs paid annually come out of savings (now and at each
-    // renewal), so they stay out of the monthly figures. The buy projection skips extras when "Essentials only" is chosen.
     const inProjection = (c) => c.category === "essential" || includeExtrasInProjection;
     const monthlyItems = purchaseCosts
       .filter((c) => c.payment === "monthly" && (c.monthly || 0) > 0)
@@ -1287,7 +1197,6 @@ export default function FinanceCalculator() {
     return `${fmtMonthYear(date)} (in ${month} month${month === 1 ? "" : "s"})`;
   };
 
-  // Post-mortgage expense rows: rent → mortgage + council tax + purchase costs paid monthly (current council tax leaves Bills)
   const postMortgageSplitRows = useMemo(() => {
     const standard = [
       { name: "Mortgage Payment", amount: mortgage.monthlyPayment },
@@ -1313,7 +1222,6 @@ export default function FinanceCalculator() {
   const postSplitTotalP2 = postMortgageSplitRows.reduce((s, e) => s + e.p2, 0);
   const postSplitTotal = postMortgageSplitRows.reduce((s, e) => s + e.amount, 0);
 
-  // Compute savings goal early so it's available for commitment rows
   const activeSavingsGoal = useMemo(() => {
     const models = ["50/30/20", "70/20/10", "Pay Yourself First"];
     const selectedModel = models[projSavingsModel];
@@ -1329,7 +1237,6 @@ export default function FinanceCalculator() {
     return { amount: goal, label: projIncludeModel ? models[projSavingsModel] : (projIncludePYF ? "Pay Yourself First" : "") };
   }, [projSavingsModel, projIncludeModel, projIncludePYF, totalMonthlyNet, pyfSavingsTarget]);
 
-  // Personal commitments (savings goal, pot contributions, agreements). Assigned to each pot's owner.
   const personalCommitmentRows = useMemo(() => {
     const rows = [];
     if (activeSavingsGoal.amount > 0) rows.push({ name: `Savings Goal (${activeSavingsGoal.label})`, amount: activeSavingsGoal.amount, person: "p1" });
@@ -1343,17 +1250,14 @@ export default function FinanceCalculator() {
     if (totalAgreementMonthly > 0) rows.push({ name: "Finance Agreements", amount: totalAgreementMonthly, person: "p1" });
     return rows;
   }, [activeSavingsGoal, projIncludePots, pots, totalAgreementMonthly]);
-  // Joint commitments are split per the household contribution split.
   const commitP1 = personalCommitmentRows.reduce((s, r) => s + (r.person === "p1" ? r.amount : r.person === "joint" ? r.amount * splitP1Pct / 100 : 0), 0);
   const commitP2 = personalCommitmentRows.reduce((s, r) => s + (r.person === "p2" ? r.amount : r.person === "joint" ? r.amount * splitP2Pct / 100 : 0), 0);
   const commitTotal = commitP1 + commitP2;
 
-  // 12/24 month projection — composable savings vehicles. Per-pot rolling values come from `buildPotsProjection`.
   const projectionPotSeries = useMemo(() => buildPotsProjection(projectionMonths, projIncludePots), [buildPotsProjection, projectionMonths, projIncludePots]);
 
   const projectionData = useMemo(() => {
     const data = [];
-    // Free-cash savings (from savings model + PYF) accumulate at 0%; treated as uninvested cash on top of pots.
     let cashSavings = 0;
     let monthlyIncome = totalMonthlyNet;
     let monthlyExp = totalExpenses;
@@ -1373,8 +1277,6 @@ export default function FinanceCalculator() {
       const pyfSaving = projIncludePYF && !(projIncludeModel && selectedModel === "Pay Yourself First") ? pyfSavingsTarget : 0;
 
       const totalMonthlyTarget = modelSaving + pyfSaving;
-      // Salary-sacrifice contributions are already excluded from monthlyIncome (calc.monthly), so only
-      // subtract the non-sacrificed portion here to avoid double-counting.
       const activePotsMonthly = projIncludePots ? monthlyNonSacrificedPotContributions : 0;
       const afterExpenses = monthlyIncome - monthlyExp - totalAgreementMonthly;
       const afterCommitments = afterExpenses - activePotsMonthly;
@@ -1398,7 +1300,6 @@ export default function FinanceCalculator() {
     return data;
   }, [projectionMonths, totalMonthlyNet, totalExpenses, totalAgreementMonthly, salaryGrowth, inflationRate, projSavingsModel, pyfSavingsTarget, projIncludeModel, projIncludePYF, projIncludePots, monthlyNonSacrificedPotContributions, projectionPotSeries]);
 
-  // Mortgage amortisation (yearly summary) — with and without overpayments, from the shared monthly schedule
   const mortgageAmortisation = useMemo(() => {
     const { base, op } = mortgage.schedule;
     const n = mortgage.n;
@@ -1439,17 +1340,12 @@ export default function FinanceCalculator() {
     };
   }, [mortgage]);
 
-  // Post-purchase pot projection — the ticked pots fund the upfront cost, then everything is projected forward.
-  // Whatever the ticked pots can't cover becomes a `cashShortfall` that post-purchase savings must recover.
   const postPurchasePots = useMemo(() => {
     const { drainedPots, drawdown, shortfall } = drainPotsForUpfront(purchasePlan.drainAmount);
     const projection = projectPotsFrom(drainedPots, projectionMonths, projIncludePots);
     return { projection, drawdown, shortfall, drainAmount: purchasePlan.drainAmount };
   }, [drainPotsForUpfront, projectPotsFrom, purchasePlan.drainAmount, projectionMonths, projIncludePots]);
 
-  // Post-purchase projection ("if completed today") — rent is replaced by the mortgage, council tax and purchase costs
-  // paid monthly. One-off cash events (a first payment taken from income, annual lump-sum overpayments and yearly
-  // renewals) come straight out of cash; recurring outgoings go through the monthly budget. Only living costs inflate.
   const postPurchaseData = useMemo(() => {
     const data = [];
     let cash = -postPurchasePots.shortfall;
@@ -1530,7 +1426,6 @@ export default function FinanceCalculator() {
     setAgreements(agreements.filter((_, i) => i !== idx));
   };
 
-  // ─── Unified financial snapshot (wires all tabs together) ───
   const snapshot = useMemo(() => {
     const models = ["50/30/20", "70/20/10", "Pay Yourself First"];
     const selectedModel = models[projSavingsModel];
@@ -1546,17 +1441,14 @@ export default function FinanceCalculator() {
     const activePotsMonthly = projIncludePots ? monthlyNonSacrificedPotContributions : 0;
     const monthlyMortgage = mortgage.monthlyPayment;
 
-    // PRE-PURCHASE: current reality (rent, no mortgage, no overpayments)
     const preCommitted = totalExpenses + totalAgreementMonthly + monthlySavingsGoal + activePotsMonthly;
     const preDisposable = totalMonthlyNet - preCommitted;
 
-    // POST-PURCHASE: rent → mortgage + overpayments + council tax + purchase costs paid monthly
     const postHousingMonthly = monthlyMortgage + overpayMonthly + councilTax + purchasePlan.monthlyTotal;
     const postCommitted = postLivingExpenses + postHousingMonthly + totalAgreementMonthly + monthlySavingsGoal + activePotsMonthly;
     const postDisposable = totalMonthlyNet - postCommitted;
 
     const projEnd = projectionData[projectionData.length - 1];
-    // Build active vehicles label
     const activeVehicles = [];
     if (projIncludePots && pots.length > 0) {
       const activePotCount = pots.filter((p) => (p.monthlyContribution || 0) > 0 || (p.startingBalance || 0) > 0).length;
@@ -1579,7 +1471,6 @@ export default function FinanceCalculator() {
 
   return (
     <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", background: "#f8fafc", minHeight: "100vh", color: "#1e293b" }}>
-      {/* Header */}
       <div style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)", padding: "24px 32px", color: "#fff" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800 }}>Personal Finance Calculator</h1>
@@ -1602,7 +1493,6 @@ export default function FinanceCalculator() {
         </div>
       </div>
 
-      {/* Tabs */}
       <div style={{ maxWidth: 1200, margin: "0 auto", borderBottom: "1px solid #e2e8f0", display: "flex", overflowX: "auto", background: "#fff" }}>
         {tabs.map((t, i) => (
           <button key={t} style={TAB_STYLE(tab === i)} onClick={() => setTab(i)}>
@@ -1612,10 +1502,8 @@ export default function FinanceCalculator() {
       </div>
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 16px" }}>
-        {/* ═══ OVERVIEW TAB ═══ */}
         {tab === 0 && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
-            {/* Income inputs */}
             <Card title="Income — Person 1" color="#6366f1">
               <InputGroup label="Annual Salary" value={salary1} onChange={setSalary1} />
               <InputGroup label="Other Annual Income" value={otherIncome1} onChange={setOtherIncome1} />
@@ -1740,7 +1628,6 @@ export default function FinanceCalculator() {
               </>
             )}
 
-            {/* Household Contribution Split */}
             {mode === 1 && (
               <div style={{ gridColumn: "1 / -1" }}>
                 <Card title="Household Contribution Split" color="#ec4899">
@@ -1828,7 +1715,6 @@ export default function FinanceCalculator() {
               </div>
             )}
 
-            {/* Savings & Investment Pots — summary view; manage on the Savings & Investments tab */}
             <Card title="Savings & Investment Pots" color="#8b5cf6">
               {pots.length === 0 ? (
                 <p style={{ color: "#94a3b8", fontSize: 13, margin: "0 0 12px 0" }}>No pots yet — add accounts, ISAs and investments on the <strong>Savings &amp; Investments</strong> tab.</p>
@@ -1876,7 +1762,6 @@ export default function FinanceCalculator() {
               </div>
             </Card>
 
-            {/* Expenses */}
             <Card title="Monthly Expenses" color="#f59e0b">
               <InputGroup label="Rent / Mortgage" value={rent} onChange={setRent} />
               <InputGroup label="Bills (council tax, utilities, etc.)" value={bills} onChange={setBills} />
@@ -1885,7 +1770,6 @@ export default function FinanceCalculator() {
               <InputGroup label="Subscriptions" value={subscriptions} onChange={setSubscriptions} />
               <InputGroup label="Other" value={otherExpenses} onChange={setOtherExpenses} />
 
-              {/* Custom expenses */}
               {customExpenses.length > 0 && (
                 <div style={{ borderTop: "1px solid #e2e8f0", paddingTop: 12, marginTop: 8 }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 8 }}>Custom Expenses</div>
@@ -1933,7 +1817,6 @@ export default function FinanceCalculator() {
               </div>
             </Card>
 
-            {/* Summary */}
             <div>
               <Card title="Monthly Summary" color="#10b981">
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
@@ -1967,7 +1850,6 @@ export default function FinanceCalculator() {
           </div>
         )}
 
-        {/* ═══ SAVINGS MODELS TAB ═══ */}
         {tab === 1 && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
             <Card title="50 / 30 / 20 Rule" color="#6366f1">
@@ -2065,7 +1947,6 @@ export default function FinanceCalculator() {
               </div>
             </Card>
 
-            {/* Comparison */}
             <div style={{ gridColumn: "1 / -1" }}>
               <Card title="Model Comparison — Budget vs Actual Savings" color="#8b5cf6">
                 <ResponsiveContainer width="100%" height={300}>
@@ -2092,7 +1973,6 @@ export default function FinanceCalculator() {
           </div>
         )}
 
-        {/* ═══ MORTGAGE TAB ═══ */}
         {tab === 2 && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
             <Card title="Property Details" color="#6366f1">
@@ -2371,7 +2251,6 @@ export default function FinanceCalculator() {
               </div>
             </div>
 
-            {/* Overpayment impact */}
             {(overpayMonthly > 0 || overpayAnnual > 0) && (
               <div style={{ gridColumn: "1 / -1" }}>
                 <Card title="Overpayment Impact" color="#10b981">
@@ -2391,7 +2270,6 @@ export default function FinanceCalculator() {
               </div>
             )}
 
-            {/* Amortisation chart */}
             <div style={{ gridColumn: "1 / -1" }}>
               <Card title={overpayMonthly > 0 || overpayAnnual > 0 ? "Mortgage Balance — Standard vs Overpayment" : "Mortgage Balance Over Time"} color="#6366f1">
                 <ResponsiveContainer width="100%" height={350}>
@@ -2416,7 +2294,6 @@ export default function FinanceCalculator() {
           </div>
         )}
 
-        {/* ═══ PURCHASE PLAN TAB ═══ */}
         {tab === 3 && (() => {
           const pp = purchasePlan;
           const costCols = mode === 1
@@ -2583,12 +2460,10 @@ export default function FinanceCalculator() {
 
           return (
             <div>
-              {/* Gap band */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12, marginBottom: 24 }}>
                 {tiles.map(bandTile)}
               </div>
 
-              {/* Purchase costs */}
               <div style={{ marginBottom: 24 }}>
                 <Card title="Purchase Costs" color="#f59e0b">
                   <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0", lineHeight: 1.5 }}>
@@ -2669,7 +2544,6 @@ export default function FinanceCalculator() {
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
-                {/* Funding */}
                 <Card title="Funding" color="#10b981">
                   <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0", lineHeight: 1.5 }}>
                     Tick the pots you'll use for the purchase. Balances come from the <button style={LINK_BTN} onClick={() => setTab(4)}>Savings &amp; Investments</button> tab.{pp.completionInFuture ? " The forecast assumes each pot's rate and monthly contribution carry on until completion." : ""}
@@ -2725,7 +2599,6 @@ export default function FinanceCalculator() {
                   </div>
                 </Card>
 
-                {/* Completion forecast */}
                 <Card title="Completion Forecast" color="#6366f1">
                   <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
                     <div style={{ flex: 1 }}>
@@ -2795,7 +2668,6 @@ export default function FinanceCalculator() {
                 </Card>
               </div>
 
-              {/* Upfront or monthly */}
               <Card title="Upfront or Monthly?" color="#8b5cf6">
                 <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0" }}>Some costs, like insurance, can be paid once a year or monthly. Paying annually comes out of savings — more cash before you move and again at each renewal — but frees up your monthly budget. Paying monthly keeps the cash but adds to your monthly outgoings.</p>
                 {pp.comparisonRows.length === 0 ? (
@@ -2856,7 +2728,6 @@ export default function FinanceCalculator() {
           );
         })()}
 
-        {/* ═══ SAVINGS & INVESTMENTS TAB ═══ */}
         {tab === 4 && (() => {
           const months = investYears * 12;
           const longSeries = potsLongProjection.series;
@@ -2876,7 +2747,6 @@ export default function FinanceCalculator() {
           const totalContributed = pots.reduce((s, p) => s + (p.startingBalance || 0) + (p.monthlyContribution || 0) * months, 0);
           const finalValue = longTotal[months] || 0;
           const growth = finalValue - totalContributed;
-          // Money-weighted return: IRR approximation via geometric mean of pot rates weighted by contribution + balance.
           const blendedFwd = (() => {
             const totalIn = pots.reduce((s, p) => s + (p.startingBalance || 0) + (p.monthlyContribution || 0) * months, 0);
             if (totalIn <= 0) return 0;
@@ -2888,7 +2758,6 @@ export default function FinanceCalculator() {
 
           return (
             <div>
-              {/* Summary band */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }}>
                 <div style={{ background: "#f5f3ff", borderRadius: 12, padding: 14, textAlign: "center", border: "1px solid #ddd6fe" }}>
                   <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600 }}>TOTAL BALANCE TODAY</div>
@@ -2912,7 +2781,6 @@ export default function FinanceCalculator() {
                 </div>
               </div>
 
-              {/* Pot list (editable) — full width so all values are readable */}
               <div style={{ marginBottom: 24 }}>
                 <Card title="Manage Pots" color="#8b5cf6">
                   <p style={{ fontSize: 12, color: "#64748b", margin: "0 0 12px 0" }}>Each pot compounds at its own rate and cadence. Cash ISAs and most savings accounts pay interest <strong>annually</strong>; stocks &amp; shares ISAs, investments and pensions effectively compound <strong>monthly</strong>. Tick <strong>Sacrifice</strong> for pots paid from gross pay before tax, such as Share Incentive Plan (SIP) partnership shares, so the contribution reduces income tax & NI. A pension entered as Pension Contribution % on the Overview tab is already taken before tax, so don't tick Sacrifice for it too. Pots ticked <strong>Purchase</strong> count towards buying a house on the Purchase Plan tab; current accounts, savings, ISAs and LISAs start ticked.</p>
@@ -3023,7 +2891,6 @@ export default function FinanceCalculator() {
                 </Card>
               </div>
 
-              {/* Long-horizon projection chart */}
               <Card title={`Pot Growth Over ${investYears} Years`} color="#10b981">
                 <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
                   <label style={{ fontSize: 13, fontWeight: 600, color: "#475569" }}>Horizon</label>
@@ -3050,7 +2917,6 @@ export default function FinanceCalculator() {
           );
         })()}
 
-        {/* ═══ FINANCE AGREEMENTS TAB ═══ */}
         {tab === 5 && (
           <div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
@@ -3099,7 +2965,6 @@ export default function FinanceCalculator() {
           </div>
         )}
 
-        {/* ═══ PROJECTIONS TAB ═══ */}
         {tab === 6 && (
           <div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
@@ -3138,7 +3003,6 @@ export default function FinanceCalculator() {
               </Card>
             </div>
 
-            {/* Model selector + outcomes */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
               <Card title="Savings Model Selection" color="#6366f1">
                 <div style={{ marginBottom: 12 }}>
@@ -3180,7 +3044,6 @@ export default function FinanceCalculator() {
               </Card>
             </div>
 
-            {/* Deposit savings tracker */}
             <div style={{ marginBottom: 24 }}>
               <Card title="House Deposit Tracker" color="#ec4899">
                 <div style={{ fontSize: 14, marginBottom: 12 }}>
@@ -3226,7 +3089,6 @@ export default function FinanceCalculator() {
               </Card>
             </div>
 
-            {/* Charts */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 24 }}>
               <Card title="Savings Accumulation" color="#10b981">
                 <ResponsiveContainer width="100%" height={350}>
@@ -3288,7 +3150,6 @@ export default function FinanceCalculator() {
           </div>
         )}
 
-        {/* ═══ EXPENSE LOG TAB ═══ */}
         {tab === 7 && (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
             <Card title="Log an Expense" color="#6366f1">
@@ -3339,7 +3200,6 @@ export default function FinanceCalculator() {
               </Card>
             </div>
 
-            {/* Expense list */}
             <div style={{ gridColumn: "1 / -1" }}>
               <Card title="Expense History" color="#8b5cf6">
                 {expenseLog.length === 0 ? (
@@ -3386,7 +3246,6 @@ export default function FinanceCalculator() {
           </div>
         )}
 
-        {/* ═══ REPORT TAB ═══ */}
         {tab === 8 && (() => {
           const rLine = (label, value, color) => (
             <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", borderBottom: "1px solid #f1f5f9" }}>
@@ -3434,7 +3293,6 @@ export default function FinanceCalculator() {
 
           return (
             <div>
-              {/* Report Header */}
               <div style={{ background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)", borderRadius: 16, padding: "28px 32px", marginBottom: 24, color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em" }}>Personal Finance Report</h2>
@@ -3453,7 +3311,6 @@ export default function FinanceCalculator() {
                 </button>
               </div>
 
-              {/* Key Figures Banner */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 12, marginBottom: 24 }}>
                 <div style={{ background: "#f0fdf4", borderRadius: 12, padding: "14px 16px", textAlign: "center", border: "1px solid #bbf7d0" }}>
                   <div style={{ fontSize: 11, color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Monthly Net Income</div>
@@ -3477,7 +3334,6 @@ export default function FinanceCalculator() {
 
               <div id="report-content" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, fontSize: 13 }}>
 
-                {/* ── SECTION: INCOME ── */}
                 <SectionHeader num={secIncome} title="Income Breakdown" subtitle="Tax, NI, pension & student loan deductions" color="#10b981" />
 
                 <Card title="Person 1 — Income">
@@ -3547,7 +3403,6 @@ export default function FinanceCalculator() {
                   </div>
                 )}
 
-                {/* ── SECTION: EXPENSES ── */}
                 <SectionHeader num={secExpenses} title="Monthly Expenses" subtitle="Living costs, subscriptions & finance agreements" color="#f59e0b" />
 
                 <Card title="Expense Breakdown">
@@ -3589,7 +3444,6 @@ export default function FinanceCalculator() {
                   </div>
                 )}
 
-                {/* ── SECTION: HOUSEHOLD CONTRIBUTIONS (only in household mode) ── */}
                 {mode === 1 && (
                   <>
                     <SectionHeader num={secHousehold} title="Household Contribution Split" subtitle={`Split method: ${splitMode === 0 ? "Ratio of Earnings" : "Custom %"} — Person 1: ${splitP1Pct.toFixed(1)}% · Person 2: ${splitP2Pct.toFixed(1)}%`} color="#ec4899" />
@@ -3732,7 +3586,6 @@ export default function FinanceCalculator() {
                   </>
                 )}
 
-                {/* ── SECTION: SAVINGS & INVESTMENTS ── */}
                 <SectionHeader num={secSavings} title="Savings & Investments" subtitle="Current balances, goals & projected growth" color="#8b5cf6" />
 
                 <Card title="Current Position">
@@ -3840,7 +3693,6 @@ export default function FinanceCalculator() {
                   </div>
                 </Card>
 
-                {/* ── SECTION: MORTGAGE ── */}
                 <SectionHeader num={secMortgage} title="Mortgage Scenario" subtitle="Loan, lender deal, stamp duty & overpayment impact" color="#6366f1" />
 
                 <Card title="Property & Loan">
@@ -3893,7 +3745,6 @@ export default function FinanceCalculator() {
                   </Card>
                 )}
 
-                {/* ── SECTION: PURCHASE PLAN ── */}
                 <SectionHeader num={secPurchase} title="Purchase Plan" subtitle={`Cash needed to buy, savings set aside and the gap · ${completionDate ? `completion ${fmtDate(completionDate)}` : "assumes completion today"}`} color="#f59e0b" />
 
                 <Card title="Upfront Costs">
@@ -3969,7 +3820,6 @@ export default function FinanceCalculator() {
                   {purchasePlan.extraMonthlyNeeded != null && rLine("Extra saving needed by completion", `${fmt2(purchasePlan.extraMonthlyNeeded)}/mo`, "#ef4444")}
                 </Card>
 
-                {/* ── SECTION: COMPLETE BUDGET ── */}
                 <SectionHeader num={secBudget} title="Complete Monthly Budget" subtitle="Full picture after mortgage, savings, investments & agreements" color="#0ea5e9" />
 
                 <div style={{ gridColumn: "1 / -1" }}>
@@ -4060,7 +3910,6 @@ export default function FinanceCalculator() {
                   </Card>
                 </div>
 
-                {/* ── SECTION: CHARTS ── */}
                 <SectionHeader num={secCharts} title="Visual Analysis" subtitle="Charts showing savings trajectory and mortgage impact" color="#ec4899" />
 
                 <div style={{ gridColumn: "1 / -1" }}>
@@ -4101,7 +3950,6 @@ export default function FinanceCalculator() {
                   </div>
                 )}
 
-                {/* ── SECTION: PROJECTION TABLE ── */}
                 <SectionHeader num={secProjection} title={`${projectionMonths}-Month Projection`} subtitle={`Vehicles: ${snapshot.activeVehicles.length > 0 ? snapshot.activeVehicles.join(" + ") : "None"} · ${salaryGrowth}% salary growth · ${inflationRate}% inflation`} color="#0ea5e9" />
 
                 <div style={{ gridColumn: "1 / -1" }}>
@@ -4149,7 +3997,6 @@ export default function FinanceCalculator() {
         })()}
       </div>
 
-      {/* Footer */}
       <div style={{ textAlign: "center", padding: "24px 16px", color: "#94a3b8", fontSize: 12, borderTop: "1px solid #e2e8f0", marginTop: 32 }}>
         Personal Finance Calculator · UK Tax Year 2026/27 · For illustrative purposes only — not financial advice
       </div>
