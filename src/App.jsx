@@ -221,6 +221,13 @@ function dateAfterMonths(fromISO, months) {
 
 const PLANNER_HORIZON_MONTHS = 120;
 
+const COMPOUNDING_MODES = {
+  monthly: { label: "Monthly", grow: (balance, contrib, rate) => balance * (1 + rate / 12) + contrib },
+  annual: { label: "Annual", grow: (balance, contrib, rate, month) => (month % 12 === 0 ? (balance + contrib) * (1 + rate) : balance + contrib) },
+  simple: { label: "Simple", grow: (balance, contrib, rate, month, principal) => balance + (contrib + principal * rate / 12) },
+  none: { label: "None", grow: (balance, contrib) => balance + contrib },
+};
+
 const PURCHASE_DEFAULTS = {
   paymentTiming: "advance",
   firstPaymentDays: 30,
@@ -488,8 +495,6 @@ export default function FinanceCalculator() {
     shareScheme: "#0ea5e9",
     other: "#94a3b8",
   };
-  const POT_COMPOUNDING = ["monthly", "annual", "simple", "none"];
-  const COMPOUNDING_LABELS = { monthly: "Monthly", annual: "Annual", simple: "Simple", none: "None" };
   const defaultCompoundingFor = (type) => {
     switch (type) {
       case "current": return "none";
@@ -903,19 +908,9 @@ export default function FinanceCalculator() {
     for (let m = 0; m <= months; m++) {
       sourcePots.forEach((p, i) => {
         if (m > 0 && includeFlag) {
-          const rateAnnual = (p.rate || 0) / 100;
-          const contrib = p.monthlyContribution || 0;
           const mode = p.compounding || defaultCompoundingFor(p.type);
-          if (mode === "monthly") {
-            balances[i] = balances[i] * (1 + rateAnnual / 12) + contrib;
-          } else if (mode === "annual") {
-            balances[i] += contrib;
-            if (m % 12 === 0) balances[i] *= 1 + rateAnnual;
-          } else if (mode === "simple") {
-            balances[i] += contrib + principals[i] * rateAnnual / 12;
-          } else {
-            balances[i] += contrib;
-          }
+          const { grow } = Object.hasOwn(COMPOUNDING_MODES, mode) ? COMPOUNDING_MODES[mode] : COMPOUNDING_MODES.none;
+          balances[i] = grow(balances[i], p.monthlyContribution || 0, (p.rate || 0) / 100, m, principals[i]);
         }
         series[i].history.push(Math.round(balances[i]));
       });
@@ -2811,7 +2806,7 @@ export default function FinanceCalculator() {
                             <input type="number" value={p.monthlyContribution} onChange={(e) => updatePot(p.id, "monthlyContribution", parseFloat(e.target.value) || 0)} style={{ padding: "6px 8px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, minWidth: 0, width: "100%", textAlign: "right" }} />
                             <input type="number" step={0.1} value={p.rate} onChange={(e) => updatePot(p.id, "rate", parseFloat(e.target.value) || 0)} style={{ padding: "6px 8px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 13, minWidth: 0, width: "100%", textAlign: "right" }} />
                             <select value={compounding} onChange={(e) => updatePot(p.id, "compounding", e.target.value)} title="How interest is applied to this pot" style={{ padding: "6px 6px", border: "1px solid #cbd5e1", borderRadius: 6, fontSize: 12, minWidth: 0, width: "100%" }}>
-                              {POT_COMPOUNDING.map((c) => <option key={c} value={c}>{COMPOUNDING_LABELS[c]}</option>)}
+                              {Object.entries(COMPOUNDING_MODES).map(([c, { label }]) => <option key={c} value={c}>{label}</option>)}
                             </select>
                             <label style={{ display: "flex", justifyContent: "center", alignItems: "center", cursor: sacrificeAllowed ? "pointer" : "not-allowed", opacity: sacrificeAllowed ? 1 : 0.4 }} title={sacrificeAllowed ? "Treat monthly contribution as salary sacrifice — reduces taxable gross" : "Joint pots can't be salary-sacrificed"}>
                               <input type="checkbox" checked={!!p.salarySacrifice} disabled={!sacrificeAllowed} onChange={(e) => updatePot(p.id, "salarySacrifice", e.target.checked)} style={{ width: 18, height: 18, cursor: sacrificeAllowed ? "pointer" : "not-allowed", accentColor: "#0ea5e9" }} />
