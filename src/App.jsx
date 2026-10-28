@@ -1,5 +1,6 @@
-import { useState, useMemo, useCallback, useRef, useId } from "react";
+import { useState, useMemo, useCallback, useRef, useId, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, Area, AreaChart, ReferenceLine } from "recharts";
+import { applyTheme, initialTheme, onSystemThemeChange, saveTheme, storedTheme } from "./theme.js";
 
 const TAX_FREE_ALLOWANCE = 12570;
 const PA_TAPER_THRESHOLD = 100000;
@@ -337,29 +338,16 @@ function fmtSigned2(n) {
   return v === 0 ? "no change" : `${v > 0 ? "+" : "−"}${fmt2(Math.abs(v))}`;
 }
 
-const T = Object.freeze({
-  paper: "#F1F2EF",
-  sheet: "#FFFFFF",
-  rule: "#D7D9D3",
-  ruleStrong: "#23262B",
-  ink: "#23262B",
-  inkSoft: "#5F636B",
-  tax: "#8C8F96",
-  home: "#2F5D8A",
-  living: "#56708A",
-  saved: "#2C7858",
-  left: "#E5A100",
-  neg: "#B3261E",
-  warnBg: "#FBF1D6",
-  warnInk: "#6B4A00",
-  focus: "#2F5D8A",
-});
+const T = Object.freeze(Object.fromEntries(
+  ["paper", "sheet", "rule", "ruleStrong", "ink", "inkSoft", "tax", "home", "living", "saved", "left", "neg", "warnBg", "warnInk", "focus", "onBand", "onPale", "chart6", "chart7", "chart8"]
+    .map((name) => [name, `var(--${name})`]),
+));
 const FONT = Object.freeze({
   display: "'Bricolage Grotesque Variable', system-ui, sans-serif",
   ui: "'Geologica Variable', system-ui, sans-serif",
 });
 const FS = Object.freeze({ small: 12, body: 14, input: 16, heading: 20, figure: 28, hero: 44 });
-const CHART = [T.home, T.saved, T.left, T.tax, T.living, "#7A5C99", "#3E8C8C", "#A0522D"];
+const CHART = [T.home, T.saved, T.left, T.tax, T.living, T.chart6, T.chart7, T.chart8];
 const AXIS = { stroke: T.rule, tick: { fontSize: FS.small, fill: T.inkSoft }, tickLine: false };
 const TOOLTIP = {
   contentStyle: { background: T.sheet, border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.small, color: T.ink },
@@ -478,10 +466,10 @@ function Toggle({ value, onChange, labels, label }) {
 }
 
 const RIVER_BANDS = [
-  { key: "tax", name: "Tax, NI and pension", bg: T.tax, fg: T.ink },
-  { key: "home", name: "Home", bg: T.home, fg: T.sheet },
-  { key: "living", name: "Living and finance", bg: T.living, fg: T.sheet },
-  { key: "saved", name: "Saved", bg: T.saved, fg: T.sheet },
+  { key: "tax", name: "Tax, NI and pension", bg: T.tax, fg: T.onPale },
+  { key: "home", name: "Home", bg: T.home, fg: T.onBand },
+  { key: "living", name: "Living and finance", bg: T.living, fg: T.onBand },
+  { key: "saved", name: "Saved", bg: T.saved, fg: T.onBand },
 ];
 const RIVER_LABEL_MIN_SHARE = 0.06;
 
@@ -491,7 +479,7 @@ function River({ gross, left, ...flows }) {
     ...RIVER_BANDS.map((b) => ({ ...b, value: flows[b.key] })),
     short
       ? { key: "left", name: "Short", value: -left, bg: "transparent", fg: T.neg, outline: T.neg }
-      : { key: "left", name: "Left", value: left, bg: T.left, fg: T.ink },
+      : { key: "left", name: "Left", value: left, bg: T.left, fg: T.onPale },
   ].filter((b) => b.value >= 0.5);
   const total = bands.reduce((sum, b) => sum + b.value, 0);
   const headline = !(gross > 0)
@@ -542,6 +530,15 @@ export default function FinanceCalculator() {
   const tabs = ["Overview", "Savings plans", "Mortgage", "Purchase plan", "Savings & investments", "Loans & finance", "Projections", "Spending log", "Report"];
 
   const [mode, setMode] = useState(MODE.SINGLE);
+
+  const [theme, setTheme] = useState(initialTheme);
+  useEffect(() => applyTheme(theme), [theme]);
+  useEffect(() => onSystemThemeChange((system) => { if (!storedTheme()) setTheme(system); }), []);
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    saveTheme(next);
+    setTheme(next);
+  };
 
   const [salary1, setSalary1] = useState(35000);
   const [otherIncome1, setOtherIncome1] = useState(0);
@@ -1579,7 +1576,7 @@ export default function FinanceCalculator() {
   ].filter((d) => d.value > 0);
 
   return (
-    <div className="app" style={{ fontFamily: FONT.ui, fontVariantNumeric: "tabular-nums", fontSize: FS.body, lineHeight: 1.45, background: T.paper, minHeight: "100vh", color: T.ink, "--focus": T.focus }}>
+    <div className="app" style={{ fontFamily: FONT.ui, fontVariantNumeric: "tabular-nums", fontSize: FS.body, lineHeight: 1.45, background: T.paper, minHeight: "100vh", color: T.ink }}>
       <header className="masthead no-print" style={{ background: T.paper }}>
         <div style={{ borderBottom: `1px solid ${T.rule}` }}>
           <div className="topbar" style={{ maxWidth: 1232, margin: "0 auto", padding: "14px 16px 0", display: "flex", alignItems: "center", flexWrap: "wrap", gap: "8px 24px" }}>
@@ -1588,6 +1585,7 @@ export default function FinanceCalculator() {
             <div className="actions" style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
               {saveNotice && <span role="status" style={{ fontSize: FS.small, color: T.inkSoft }}>{saveNotice}</span>}
               <Toggle label="Who this is for" value={mode} onChange={setMode} labels={["Just me", "Household"]} />
+              <button type="button" aria-pressed={theme === "dark"} onClick={toggleTheme} style={ACTION_BTN}>Dark mode</button>
               <button type="button" onClick={handleSave} style={ACTION_BTN}>Save data</button>
               <button type="button" onClick={() => fileInputRef.current?.click()} style={ACTION_BTN}>Load data</button>
               <input ref={fileInputRef} type="file" accept=".json" onChange={handleLoad} style={{ display: "none" }} />
@@ -1744,7 +1742,7 @@ export default function FinanceCalculator() {
                     <div style={{ flex: "0 0 280px" }}>
                       <div style={{ marginBottom: 12 }}>
                         <label style={{ display: "block", fontSize: FS.body, fontWeight: 500, color: T.ink, marginBottom: 6 }}>Split method</label>
-                        <Toggle value={splitMode} onChange={setSplitMode} labels={["Ratio of earnings", "Custom %"]} />
+                        <Toggle label="Split method" value={splitMode} onChange={setSplitMode} labels={["Ratio of earnings", "Custom %"]} />
                       </div>
                       {splitMode === SPLIT_MODE.CUSTOM_PERCENT && (
                         <InputGroup label="Person 1 contribution %" value={customSplitP1} onChange={setCustomSplitP1} prefix="" suffix="%" min={0} max={100} />
@@ -1920,7 +1918,7 @@ export default function FinanceCalculator() {
                       <input type="number" placeholder="0" value={newCustomExpAmount || ""} onChange={(e) => setNewCustomExpAmount(parseFloat(e.target.value) || 0)} style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body }} />
                     </div>
                   </div>
-                  <button onClick={addCustomExpense} style={{ padding: "8px 14px", background: T.left, color: T.sheet, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body, whiteSpace: "nowrap" }}>+</button>
+                  <button onClick={addCustomExpense} style={{ padding: "8px 14px", background: T.left, color: T.onPale, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body, whiteSpace: "nowrap" }}>+</button>
                 </div>
               </div>
             </Card>
@@ -2090,7 +2088,7 @@ export default function FinanceCalculator() {
               <InputGroup label="Initial interest rate" value={mortgageRate} onChange={setMortgageRate} prefix="" suffix="%" step={0.01} />
               <div style={{ marginBottom: 16 }}>
                 <label style={{ display: "block", fontSize: FS.body, fontWeight: 500, color: T.ink, marginBottom: 6 }}>First time buyer?</label>
-                <Toggle value={firstTimeBuyer} onChange={setFirstTimeBuyer} labels={["No", "Yes"]} />
+                <Toggle label="First time buyer" value={firstTimeBuyer} onChange={setFirstTimeBuyer} labels={["No", "Yes"]} />
               </div>
 
               <div style={{ borderTop: `1.5px solid ${T.ruleStrong}`, paddingTop: 16, marginTop: 16 }}>
@@ -2108,7 +2106,7 @@ export default function FinanceCalculator() {
                     <span style={{ color: T.ink, cursor: "help" }}>ⓘ</span>
                   </InfoTip>
                 </div>
-                <Toggle value={paymentTiming === "advance" ? 0 : 1} onChange={(i) => setPaymentTiming(i === 0 ? "advance" : "arrears")} labels={["In advance", "Standard (in arrears)"]} />
+                <Toggle label="Payment timing" value={paymentTiming === "advance" ? 0 : 1} onChange={(i) => setPaymentTiming(i === 0 ? "advance" : "arrears")} labels={["In advance", "Standard (in arrears)"]} />
                 <p style={{ fontSize: FS.small, color: T.inkSoft, margin: "8px 0 16px", lineHeight: 1.5 }}>
                   Paying in advance means each month's payment is collected first, so interest is charged on the balance after that payment. Some lenders illustrate payments this way, so choose whichever method matches your mortgage illustration. The standard formula charges a full month's interest before each payment, giving {fmt2(mortgage.paymentArrears)} rather than {fmt2(mortgage.paymentAdvance)} on {fmt(mortgage.totalBorrowing)} at {mortgage.initialRate}% over {mortgageTerm} years. A product fee paid upfront doesn't change the payment; adding it to the loan raises it.
                   {mortgage.isFirstPaymentOverridden
@@ -2119,12 +2117,12 @@ export default function FinanceCalculator() {
                 <div style={HINT_STYLE}>Interest from completion to the start of your first full month: {firstPaymentDays} days' interest is {fmt2(mortgage.dailyInterest * Math.max(0, firstPaymentDays))}{mortgage.isFirstPaymentOverridden ? " (calculated — your manual first payment is used instead)." : ", added to your first payment."}</div>
                 <div style={{ marginBottom: 16 }}>
                   <label style={{ display: "block", fontSize: FS.body, fontWeight: 500, color: T.ink, marginBottom: 6 }}>First payment in your upfront costs?</label>
-                  <Toggle value={reserveFirstPayment ? 0 : 1} onChange={(i) => setReserveFirstPayment(i === 0)} labels={["Set aside upfront", "Pay from income"]} />
+                  <Toggle label="First payment in your upfront costs" value={reserveFirstPayment ? 0 : 1} onChange={(i) => setReserveFirstPayment(i === 0)} labels={["Set aside upfront", "Pay from income"]} />
                 </div>
                 <InputGroup label="Product fee" value={productFee} onChange={setProductFee} step={0.01} />
                 {productFee > 0 && (
                   <div style={{ marginTop: -8, marginBottom: 16 }}>
-                    <Toggle value={productFeeAddToLoan ? 1 : 0} onChange={(i) => setProductFeeAddToLoan(i === 1)} labels={["Pay upfront", "Add to loan"]} />
+                    <Toggle label="How to pay the product fee" value={productFeeAddToLoan ? 1 : 0} onChange={(i) => setProductFeeAddToLoan(i === 1)} labels={["Pay upfront", "Add to loan"]} />
                     {!productFeeAddToLoan && (
                       <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: FS.body, color: T.inkSoft, marginTop: 8, cursor: "pointer" }} title="Tick if you've already paid it — it won't count towards the cash you still need">
                         <input type="checkbox" checked={productFeePaid} onChange={(e) => setProductFeePaid(e.target.checked)} style={{ width: 16, height: 16, accentColor: T.saved, cursor: "pointer" }} />
@@ -2617,8 +2615,8 @@ export default function FinanceCalculator() {
                       <span style={{ color: T.inkSoft, fontWeight: 600 }}>£</span>
                       <input type="number" step={0.01} placeholder="Upfront" value={newCostUpfront || ""} onChange={(e) => setNewCostUpfront(parseFloat(e.target.value) || 0)} style={{ width: "100%", padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body }} />
                     </div>
-                    <button onClick={() => addPurchaseCost("essential")} style={{ padding: "8px 14px", background: T.home, color: T.sheet, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body, whiteSpace: "nowrap" }}>+ Essential</button>
-                    <button onClick={() => addPurchaseCost("extra")} style={{ padding: "8px 14px", background: T.home, color: T.sheet, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body, whiteSpace: "nowrap" }}>+ Extra</button>
+                    <button onClick={() => addPurchaseCost("essential")} style={{ padding: "8px 14px", background: T.home, color: T.onBand, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body, whiteSpace: "nowrap" }}>+ Essential</button>
+                    <button onClick={() => addPurchaseCost("extra")} style={{ padding: "8px 14px", background: T.home, color: T.onBand, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body, whiteSpace: "nowrap" }}>+ Extra</button>
                   </div>
                   {quickAdd.length > 0 && (
                     <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center", marginTop: 10 }}>
@@ -2632,7 +2630,7 @@ export default function FinanceCalculator() {
                   <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginTop: 16, paddingTop: 12, borderTop: `1px solid ${T.rule}` }}>
                     <span style={{ fontSize: FS.body, fontWeight: 600, color: T.inkSoft }}>Buy projection uses</span>
                     <div style={{ minWidth: 260 }}>
-                      <Toggle value={includeExtrasInProjection ? 1 : 0} onChange={(i) => setIncludeExtrasInProjection(i === 1)} labels={["Essentials only", "Include extras"]} />
+                      <Toggle label="Buy projection uses" value={includeExtrasInProjection ? 1 : 0} onChange={(i) => setIncludeExtrasInProjection(i === 1)} labels={["Essentials only", "Include extras"]} />
                     </div>
                     <span style={{ fontSize: FS.small, color: T.inkSoft, flex: "1 1 260px" }}>
                       Projections and the Report take {fmt2(pp.drainAmount)} from your ticked pots on day one{postPurchasePots.shortfall > 0.005 ? `, leaving a ${fmt2(postPurchasePots.shortfall)} shortfall to recover from monthly savings` : ""}.
@@ -2943,7 +2941,7 @@ export default function FinanceCalculator() {
                   </div>
                   <div style={{ display: "flex", gap: 8, marginTop: 16, alignItems: "center" }}>
                     <input type="text" placeholder="New pot name (e.g. Help to Buy ISA)" value={newPotName} onChange={(e) => setNewPotName(e.target.value)} style={{ flex: 1, padding: "8px 12px", border: `1px solid ${T.rule}`, borderRadius: 6, fontSize: FS.body }} />
-                    <button onClick={addPot} style={{ padding: "8px 18px", background: T.home, color: T.sheet, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body }}>+ Add pot</button>
+                    <button onClick={addPot} style={{ padding: "8px 18px", background: T.home, color: T.onBand, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body }}>+ Add pot</button>
                   </div>
                 </Card>
               </div>
@@ -3047,7 +3045,7 @@ export default function FinanceCalculator() {
               ))}
             </div>
 
-            <button onClick={addAgreement} style={{ padding: "12px 24px", background: T.home, color: T.sheet, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body }}>
+            <button onClick={addAgreement} style={{ padding: "12px 24px", background: T.home, color: T.onBand, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body }}>
               + Add finance agreement
             </button>
 
@@ -3076,7 +3074,7 @@ export default function FinanceCalculator() {
               <Card title="Projection settings">
                 <div style={{ marginBottom: 16 }}>
                   <label style={{ display: "block", fontSize: FS.body, fontWeight: 500, color: T.ink, marginBottom: 6 }}>Projection period</label>
-                  <Toggle value={projectionMonths === 12 ? 0 : 1} onChange={(v) => setProjectionMonths(v === 0 ? 12 : 24)} labels={["12 months", "24 months"]} />
+                  <Toggle label="Projection period" value={projectionMonths === 12 ? 0 : 1} onChange={(v) => setProjectionMonths(v === 0 ? 12 : 24)} labels={["12 months", "24 months"]} />
                 </div>
                 <InputGroup label="Annual salary growth" value={salaryGrowth} onChange={setSalaryGrowth} prefix="" suffix="%" step={0.5} />
                 <InputGroup label="Annual inflation rate" value={inflationRate} onChange={setInflationRate} prefix="" suffix="%" step={0.5} />
@@ -3275,7 +3273,7 @@ export default function FinanceCalculator() {
               <InputGroup label="Date" value={newExpenseDate} onChange={setNewExpenseDate} prefix="" type="date" />
               <button
                 onClick={addExpenseEntry}
-                style={{ width: "100%", padding: "12px", background: T.home, color: T.sheet, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body, marginTop: 8 }}
+                style={{ width: "100%", padding: "12px", background: T.home, color: T.onBand, border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 700, fontSize: FS.body, marginTop: 8 }}
               >
                 + Add expense
               </button>

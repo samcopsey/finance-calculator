@@ -1,3 +1,58 @@
+:root {
+  color-scheme: light;
+  --paper: #F1F2EF;
+  --sheet: #FFFFFF;
+  --rule: #D7D9D3;
+  --ruleStrong: #23262B;
+  --ink: #23262B;
+  --inkSoft: #5F636B;
+  --tax: #8C8F96;
+  --home: #2F5D8A;
+  --living: #56708A;
+  --saved: #2C7858;
+  --left: #E5A100;
+  --neg: #B3261E;
+  --warnBg: #FBF1D6;
+  --warnInk: #6B4A00;
+  --focus: #2F5D8A;
+  --onBand: #FFFFFF;
+  --onPale: #23262B;
+  --chart6: #7A5C99;
+  --chart7: #3E8C8C;
+  --chart8: #A0522D;
+}
+
+/* Print always uses the light palette, so the dark one is screen-only. */
+@media screen {
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: #191B1E;
+    --sheet: #22252A;
+    --rule: #363A40;
+    --ruleStrong: #E8E9E5;
+    --ink: #E8E9E5;
+    --inkSoft: #A4A8AF;
+    --tax: #9EA2A9;
+    --home: #7FA8D4;
+    --living: #93A9BF;
+    --saved: #6CC49A;
+    --left: #E8AE2A;
+    --neg: #F28B82;
+    --warnBg: #3A3018;
+    --warnInk: #F3D58A;
+    --focus: #8DB8E6;
+    --onBand: #191B1E;
+    --onPale: #191B1E;
+    --chart6: #B49AD6;
+    --chart7: #6FC2C2;
+    --chart8: #D99A6C;
+  }
+}
+
+body {
+  background: var(--paper);
+}
+
 * {
   margin: 0;
   padding: 0;
